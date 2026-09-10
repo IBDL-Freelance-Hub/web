@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #1d1d39;
+  --color-brand-secondary: #e11119;
+  --color-brand-complementary: #419257;
+  --color-brand-surface: #f8fafc;
+  --color-brand-border: #e2e8f0;
+
+  --color-status-ok: #419257;
+  --color-status-wait: #f59e0b;
+  --color-status-stop: #e11119;
+  --color-status-info: #1d1d39;
+  --color-status-mute: #64748b;
+
+  --font-sans: "Calibri", system-ui, -apple-system, sans-serif;
+  --font-arabic: var(--font-cairo), sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-primary min-h-screen font-sans text-slate-50 antialiased;
+  }
+
+  [dir="rtl"] body {
+    font-family: var(--font-cairo), sans-serif;
+  }
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.13);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+
+.hero__photo {
+  position: absolute;
+  inset: -8% 0 -8%;
+  background-image: url("/img/header-bg.jpg");
+  background-position: center 40%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.92;
+  animation: heroZoom 24s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__photo {
+    animation: none;
+    transform: scale(1.02);
+  }
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: 0.42;
+}
+
+.orb--1 {
+  width: 660px;
+  height: 660px;
+  inset-block-start: -190px;
+  inset-inline-end: -160px;
+  background: radial-gradient(circle, rgba(225, 17, 25, 0.52), transparent 66%);
+}
+
+.orb--2 {
+  width: 560px;
+  height: 560px;
+  inset-block-end: -190px;
+  inset-inline-start: -140px;
+  background: radial-gradient(circle, rgba(65, 146, 87, 0.58), transparent 66%);
+}
+
+.orb--3 {
+  width: 520px;
+  height: 520px;
+  inset-block-start: 34%;
+  inset-inline-start: 44%;
+  background: radial-gradient(circle, rgba(94, 94, 190, 0.42), transparent 66%);
+}
+
+.hero__glow {
+  position: absolute;
+  width: 1500px;
+  height: 820px;
+  border-radius: 50%;
+  inset-block-end: -52%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse,
+    rgba(225, 17, 25, 0.22),
+    transparent 62%
+  );
+  pointer-events: none;
+}
