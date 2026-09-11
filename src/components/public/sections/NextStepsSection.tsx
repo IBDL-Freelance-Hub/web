@@ -1,65 +1,47 @@
 "use client";
 
-import React from "react";
-import { useLocale } from "@/components/common/DirectionProvider";
+import React, { useEffect, useRef, useState } from "react";
+import { NEXT_STEPS_DATA } from "@/data/nextStepsData";
+import { NextStepsHeader } from "./next-steps/NextStepsHeader";
+import { NextStepCard, NextStepsGrid } from "./next-steps/NextStepCard";
 
 export function NextStepsSection() {
-  const { formatNumber } = useLocale();
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  const steps = [
-    {
-      num: "01",
-      title: "Complete Essential Registration",
-      desc: "Fill out your trainer details and upload your CV in under 2 minutes.",
-    },
-    {
-      num: "02",
-      title: "Access Free PQP™ Voucher",
-      desc: "Receive immediate specimen credentials and access your complimentary diagnostic test.",
-    },
-    {
-      num: "03",
-      title: "Explore Simulation Catalog",
-      desc: "Review 8 business games and diagnostic toolkits with 15% member discount.",
-    },
-    {
-      num: "04",
-      title: "Deliver & Scale Engagements",
-      desc: "Deploy IBDL-backed tools to enterprise clients and earn certified facilitator status.",
-    },
-  ];
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.unobserve(node);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="border-brand-border/10 border-b bg-slate-950 px-4 py-20 text-start sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-12">
-        <div className="mx-auto max-w-2xl space-y-3 text-center">
-          <h2 className="text-2xl font-extrabold text-white sm:text-4xl">
-            What Happens Next?
-          </h2>
-          <p className="text-sm text-slate-400 sm:text-base">
-            Your 4-step journey to unlocking enterprise support.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {steps.map((step) => (
-            <div
-              key={step.num}
-              className="bg-brand-primary/80 border-brand-border/15 relative space-y-3 rounded-2xl border p-6"
-            >
-              <span className="text-brand-secondary block font-mono text-2xl font-extrabold">
-                {formatNumber(step.num)}
-              </span>
-              <h3 className="text-base leading-snug font-bold text-white">
-                {step.title}
-              </h3>
-              <p className="text-xs leading-relaxed text-slate-400">
-                {step.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+    <section
+      id="next-steps"
+      ref={sectionRef}
+      className="section relative overflow-hidden bg-white py-[110px] text-start text-[#16162c]"
+    >
+      <div className="wrap mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
+        <NextStepsHeader isInView={isInView} />
+        <NextStepsGrid steps={NEXT_STEPS_DATA} isInView={isInView} />
       </div>
     </section>
   );
 }
+
+// Attach sub-components for Compound Component pattern compliance
+NextStepsSection.Header = NextStepsHeader;
+NextStepsSection.Step = NextStepCard;
+NextStepsSection.Grid = NextStepsGrid;

@@ -1,30 +1,52 @@
 "use client";
 
-import React from "react";
-import { Button } from "@/components/ui/Button";
-import { useRegistration } from "../registration/RegistrationProvider";
-import { ShieldCheck } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { CloseCtaContent } from "./cta/CloseCtaContent";
 
 export function CloseCtaSection() {
-  const { openRegistration } = useRegistration();
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.unobserve(node);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="bg-brand-primary border-brand-border/10 border-b px-4 py-20 text-center sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-          Elevate your freelance training business today.
-        </h2>
-        <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
-          No setup fees. No mandatory credit card. Join hundreds of accredited
-          trainers scaling their practice with IBDL.
-        </p>
-        <div className="flex justify-center pt-2">
-          <Button variant="primary" size="lg" onClick={openRegistration}>
-            <ShieldCheck className="me-2 h-5 w-5" />
-            Join the Hub — Free Permanently
-          </Button>
-        </div>
+    <section
+      id="cta-close"
+      ref={sectionRef}
+      className="band--close relative w-full overflow-hidden bg-gradient-to-r from-[#0d0d1c] via-[#1d1d39] to-[#2c0e28] px-6 py-[92px] text-center text-white"
+    >
+      {/* Dual Ambient Glow Orbs */}
+      <div className="band__orb--1 pointer-events-none absolute -top-[160px] left-[15%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(225,17,25,0.35),transparent_65%)] blur-[80px]" />
+      <div className="band__orb--2 pointer-events-none absolute right-[15%] -bottom-[160px] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,25,75,0.45),transparent_65%)] blur-[85px]" />
+
+      <div
+        className={`transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isInView
+            ? "translate-y-0 opacity-100 filter-none"
+            : "translate-y-10 opacity-0 blur-[5px]"
+        }`}
+      >
+        <CloseCtaContent />
       </div>
     </section>
   );
 }
+
+// Sub-component export for backward compatibility
+CloseCtaSection.Content = CloseCtaContent;

@@ -1,75 +1,82 @@
 "use client";
 
-import React from "react";
-import { useLocale } from "@/components/common/DirectionProvider";
-import { Award, Globe, Users, CheckCircle2 } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { WhyHeader } from "./why/WhyHeader";
+import { WhyStatTile, WhyStatsMatrix } from "./why/WhyStatTile";
+import { WhyReasonItem, WhyReasonsList } from "./why/WhyReasonItem";
+import { AnimatedStatNumber } from "./why/AnimatedStatNumber";
 
 export function WhySection() {
-  const { formatNumber } = useLocale();
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  const achievements = [
-    {
-      icon: <Award className="text-brand-secondary h-6 w-6" />,
-      title: `${formatNumber(15)}+ Years`,
-      desc: "Of global business management education leadership.",
-    },
-    {
-      icon: <Globe className="text-brand-secondary h-6 w-6" />,
-      title: `${formatNumber(45)}+ Countries`,
-      desc: "Active network of certified trainers and institutions.",
-    },
-    {
-      icon: <Users className="text-brand-secondary h-6 w-6" />,
-      title: `${formatNumber(120000)}+ Candidates`,
-      desc: "Assessed & certified across MENA and international markets.",
-    },
-  ];
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.unobserve(node);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="bg-brand-primary border-brand-border/10 border-b px-4 py-20 text-start sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-12">
-        <div className="mx-auto max-w-2xl space-y-3 text-center">
-          <h2 className="text-2xl font-extrabold text-white sm:text-4xl">
-            Why Partner with IBDL Learning Group?
-          </h2>
-          <p className="text-sm text-slate-400 sm:text-base">
-            Backed by international certification standards and recognized
-            executive education benchmarks.
-          </p>
+    <section
+      id="why"
+      ref={sectionRef}
+      className="section relative overflow-hidden bg-[#121225] py-[110px] text-start text-white"
+    >
+      <div className="wrap mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
+        <div
+          className={`transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isInView
+              ? "translate-y-0 opacity-100 filter-none"
+              : "-translate-y-8 opacity-0 blur-[5px]"
+          }`}
+        >
+          <WhyHeader />
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {achievements.map((item, idx) => (
-            <div
-              key={idx}
-              className="border-brand-border/15 space-y-3 rounded-2xl border bg-slate-900/80 p-6 text-center"
-            >
-              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl border border-slate-700 bg-slate-800">
-                {item.icon}
-              </div>
-              <h3 className="font-mono text-xl font-extrabold text-white">
-                {item.title}
-              </h3>
-              <p className="text-xs leading-relaxed text-slate-400">
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
+        <div className="mt-12 grid grid-cols-1 gap-12 overflow-hidden py-2 lg:grid-cols-12 lg:items-start">
+          {/* Left Column: 2x2 Stats Box Matrix - Enters from LEFT */}
+          <div
+            className={`lg:col-span-5 transition-all duration-1000 delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isInView
+                ? "translate-x-0 opacity-100 filter-none"
+                : "-translate-x-16 opacity-0 blur-[5px]"
+            }`}
+          >
+            <WhyStatsMatrix isInView={isInView} />
+          </div>
 
-        <div className="border-brand-border/15 mx-auto max-w-3xl space-y-3 rounded-2xl border bg-slate-900 p-6">
-          <h4 className="flex items-center gap-2 text-base font-bold text-white">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-            Institutional Quality & Ethics Guarantee
-          </h4>
-          <p className="text-xs leading-relaxed text-slate-300">
-            All simulation software, assessment engines, and accreditation
-            badges distributed through Freelancers Hub undergo rigorous
-            psychometric and educational validation by the IBDL Global Academic
-            Board.
-          </p>
+          {/* Right Column: Reasons List - Enters from RIGHT */}
+          <div
+            className={`lg:col-span-7 transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isInView
+                ? "translate-x-0 opacity-100 filter-none"
+                : "translate-x-16 opacity-0 blur-[5px]"
+            }`}
+          >
+            <WhyReasonsList />
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+// Attach sub-components for Compound Pattern compliance
+WhySection.Header = WhyHeader;
+WhySection.ReasonItem = WhyReasonItem;
+WhySection.ReasonsList = WhyReasonsList;
+WhySection.StatTile = WhyStatTile;
+WhySection.StatsMatrix = WhyStatsMatrix;
+WhySection.AnimatedStatNumber = AnimatedStatNumber;

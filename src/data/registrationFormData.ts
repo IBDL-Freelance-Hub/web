@@ -1,0 +1,60 @@
+export const EXPERTISE_OPTIONS = [
+  "Leadership Development",
+  "Sales & Negotiation",
+  "Strategy & Planning",
+  "Team Building",
+  "Coaching & Mentoring",
+  "Assessment & Psychometrics",
+  "Change Management",
+  "Marketing & Branding",
+  "Operations & Supply Chain",
+  "HR & Talent Management",
+  "Finance for Non-Finance",
+  "Customer Experience",
+];
+
+export const EXPERIENCE_BANDS = [
+  "Less than 2 years",
+  "2–5 years",
+  "5–10 years",
+  "10–15 years",
+  "15+ years",
+];
+
+export const INDUSTRY_OPTIONS = [
+  "Banking & Financial Services",
+  "Telecommunications",
+  "Oil, Gas & Energy",
+  "Healthcare & Pharmaceuticals",
+  "Government & Public Sector",
+  "Education & Academia",
+  "Manufacturing & Industrial",
+  "Retail & FMCG",
+  "Technology & Software",
+  "Construction & Real Estate",
+  "Hospitality & Tourism",
+  "Logistics & Transport",
+];
+
+export const COUNTRIES = [
+  "Egypt",
+  "Saudi Arabia",
+  "United Arab Emirates",
+  "Qatar",
+  "Kuwait",
+  "Oman",
+  "Bahrain",
+  "Jordan",
+  "Lebanon",
+  "Morocco",
+  "Tunisia",
+  "Algeria",
+  "Iraq",
+  "Sudan",
+  "United States",
+  "United Kingdom",
+  "Canada",
+  "Germany",
+  "France",
+  "Other",
+];
