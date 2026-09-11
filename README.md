@@ -11,6 +11,7 @@
 **IBDL Freelancers Hub** (`/client`) is a modern, high-fidelity web application built with **Next.js 16**, **TypeScript**, and **Tailwind CSS**. It serves as the digital front door and operational ecosystem for independent trainers, business consultants, and learning architects.
 
 The platform provides seamless access to:
+
 - **12 Core Hub Services**: End-to-end support covering Training Needs Analysis (TNA), program mapping, commercial solution proposals, content design, and ROI measurement.
 - **Specialized IBDL Tools**: Exclusive access to Business Simulation Games, Assessment Tools (including PQP™), and IBDL Training Accreditation pathways.
 - **Tiered Membership Ecosystem**: Flexible engagement levels (**Essential**, **Professional**, **Master**) tailored to every stage of a trainer's practice.
@@ -21,28 +22,31 @@ The platform provides seamless access to:
 ## 🎨 Key Features & Architectural Highlights
 
 ### 1. High-Fidelity UI & Design System
+
 - **Deep Glassmorphism Theme**: Crafted with dark navy backgrounds (`#141428`), custom ambient lighting glows, glowing borders (`#5cb374`), and subtle micro-animations.
 - **Compound Component Architecture**: Built strictly using compound component patterns (`Section.Header`, `Section.Grid`, `Section.Card`, `Section.Footer`) to ensure modularity, state decoupling, and 0 boolean-prop layout pollution.
 - **Scroll-Triggered Entrance Animations**: Performant `IntersectionObserver` integrations for staggered reveal animations and dynamic counting-up numeric indices.
 
 ### 2. Localization & Accessibility (WCAG 2.1 AA)
+
 - **Native LTR & RTL Support**: Driven by a custom `DirectionProvider` context that automatically switches layout direction, logical margins/paddings, and icon flips (`ArrowRight` / `ArrowLeft`).
 - **Numeral Formatting**: Arabic-Indic numerals for Arabic locale and standard Latin numerals for English locale, maintaining strict brand consistency.
 
 ### 3. Integrated 3-Step Registration Engine
+
 - **Modal & Floating CTA**: Accessible interactive 3-step registration flow accessible from any section or floating CTA button.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Category | Technology |
-| :--- | :--- |
-| **Framework** | [Next.js 16 (App Router & Turbopack)](https://nextjs.org/) |
-| **Language** | [TypeScript 5+ (Strict Mode)](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) & Custom CSS Design Tokens |
-| **Iconography** | [Lucide React](https://lucide.dev/) |
-| **Tooling & Linting** | ESLint, Prettier, Husky |
+| Category              | Technology                                                          |
+| :-------------------- | :------------------------------------------------------------------ |
+| **Framework**         | [Next.js 16 (App Router & Turbopack)](https://nextjs.org/)          |
+| **Language**          | [TypeScript 5+ (Strict Mode)](https://www.typescriptlang.org/)      |
+| **Styling**           | [Tailwind CSS](https://tailwindcss.com/) & Custom CSS Design Tokens |
+| **Iconography**       | [Lucide React](https://lucide.dev/)                                 |
+| **Tooling & Linting** | ESLint, Prettier, Husky                                             |
 
 ---
 
@@ -80,18 +84,21 @@ client/
 ## ⚡ Getting Started
 
 ### Prerequisites
+
 - **Node.js**: `v18.17.0` or higher
 - **npm**: `v9.0.0` or higher
 
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/IBDL-Freelance-Hub/web.git
    cd web
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
@@ -127,4 +134,3 @@ npm run build
 ## 📄 License
 
 Copyright © 2026 **IBDL Learning Group & Freelancers Hub**. All rights reserved.
-

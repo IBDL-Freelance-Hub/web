@@ -39,10 +39,13 @@ export function DirectionProvider({ children }: { children: React.ReactNode }) {
     (num: number | string): string => {
       const str = String(num);
       if (locale !== "ar") return str;
-      return str.replace(
-        /\d/g,
-        (digit) => ARABIC_INDIC_DIGITS[parseInt(digit, 10)]
-      );
+      let formatted = str
+        .replace(/\d/g, (digit) => ARABIC_INDIC_DIGITS[parseInt(digit, 10)])
+        .replace(/,/g, "٬");
+      if (formatted.endsWith("+")) {
+        formatted = "+" + formatted.slice(0, -1);
+      }
+      return formatted;
     },
     [locale]
   );

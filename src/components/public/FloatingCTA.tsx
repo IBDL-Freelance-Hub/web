@@ -45,8 +45,8 @@ export function FloatingCTA() {
         onClick={openRegistration}
         aria-label={
           locale === "ar"
-            ? "احصل على PQP مجاناً — إتاحة محدودة"
-            : "Get Your Free PQP — Limited Phase 1 access"
+            ? "احصل على التقييم المجاني — إتاحة محدودة"
+            : "Get Your Free Assessment — Limited Phase 1 access"
         }
         className="group relative inline-flex items-center gap-3.5 rounded-full bg-[#e11119] px-5 py-2.5 text-white shadow-[0_10px_30px_rgba(225,17,25,0.45)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#c90d14] hover:shadow-[0_14px_36px_rgba(225,17,25,0.6)] active:scale-[0.98]"
       >
@@ -56,7 +56,7 @@ export function FloatingCTA() {
 
         <div className="flex flex-col text-start">
           <span className="text-xs leading-tight font-bold tracking-tight text-white sm:text-sm">
-            {locale === "ar" ? "احصل على PQP مجاناً" : "Get Your Free PQP"}
+            {locale === "ar" ? "احصل على التقييم المجاني" : "Free Assessment"}
           </span>
           <span className="mt-0.5 text-[10px] leading-none font-medium text-white/85">
             {locale === "ar"

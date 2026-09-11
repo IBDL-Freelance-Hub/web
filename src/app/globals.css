@@ -7,6 +7,20 @@
   --color-brand-surface: #f8fafc;
   --color-brand-border: #e2e8f0;
 
+  --color-navy: #1d1d39;
+  --color-navy-deep: #141428;
+  --color-navy-abyss: #0d0d1c;
+  --color-red-brand: #e11119;
+  --color-red-hover: #b60d14;
+  --color-green-brand: #419257;
+  --color-green-lit: #5cb374;
+  --color-ink-primary: #16162c;
+  --color-ink-secondary: #3e3e5c;
+  --color-ink-muted: #6a6a86;
+  --color-line-border: #e2e2ec;
+  --color-paper: #ffffff;
+  --color-paper-muted: #f6f6fa;
+
   --color-status-ok: #419257;
   --color-status-wait: #f59e0b;
   --color-status-stop: #e11119;
@@ -19,7 +33,7 @@
 
 @layer base {
   body {
-    @apply bg-brand-primary min-h-screen font-sans text-slate-50 antialiased;
+    @apply bg-navy min-h-screen font-sans text-slate-50 antialiased;
   }
 
   [dir="rtl"] body {
@@ -27,30 +41,131 @@
   }
 }
 
-@keyframes heroZoom {
-  from {
-    transform: scale(1.13);
+/* Background photo entrance from the right on reload */
+@keyframes heroPhotoEntrance {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) scale(1.18);
+    filter: brightness(0.4);
   }
-  to {
-    transform: scale(1.02);
+  100% {
+    opacity: 0.85;
+    transform: translateX(0) scale(1);
+    filter: brightness(1);
   }
 }
 
 .hero__photo {
   position: absolute;
-  inset: -8% 0 -8%;
+  inset: 0;
   background-image: url("/img/header-bg.jpg");
-  background-position: center 40%;
+  background-position: right 35%;
   background-size: cover;
   background-repeat: no-repeat;
-  opacity: 0.92;
-  animation: heroZoom 24s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  opacity: 0.85;
+  mix-blend-mode: luminosity;
+  will-change: transform, opacity, filter;
+  animation: heroPhotoEntrance 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cascading stagger animation for Hero elements (Badge -> Title -> Paragraph -> Buttons -> Stats) */
+@keyframes heroFadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero__anim-1 {
+  animation: heroFadeSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.hero__anim-2 {
+  animation: heroFadeSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.hero__anim-3 {
+  animation: heroFadeSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.hero__anim-4 {
+  animation: heroFadeSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+.hero__anim-5 {
+  animation: heroFadeSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+
+/* Section 2 (About) Directional Scroll Animations */
+@keyframes animFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-45px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes animFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-from-top {
+  will-change: transform, opacity;
+  animation: animFromTop 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-from-left {
+  will-change: transform, opacity;
+  animation: animFromLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-from-right {
+  will-change: transform, opacity;
+  animation: animFromRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero__photo {
     animation: none;
-    transform: scale(1.02);
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  .hero__anim-1,
+  .hero__anim-2,
+  .hero__anim-3,
+  .hero__anim-4,
+  .hero__anim-5,
+  .anim-from-top,
+  .anim-from-left,
+  .anim-from-right {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

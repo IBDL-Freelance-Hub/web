@@ -41,6 +41,7 @@ export default function RootLayout({
       lang="en"
       dir="ltr"
       className={`${cairo.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="bg-brand-primary flex min-h-full flex-col font-sans text-slate-50">
         <DirectionProvider>
