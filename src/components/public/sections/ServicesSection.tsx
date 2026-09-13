@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { SERVICES_DATA } from "@/data/servicesData";
+import { SERVICES_DATA, ServiceItem } from "@/data/servicesData";
 import { ServicesHeader } from "./services/ServicesHeader";
 import { ServiceCard, ServicesGrid } from "./services/ServiceCard";
 import { ServicesCarousel, ServicesFooter } from "./services/ServicesCarousel";
 import { ServiceCardNumber } from "./services/ServiceCardNumber";
+import { ServiceModal } from "./services/ServiceModal";
 
 export function ServicesSection() {
   const [isInView, setIsInView] = useState(false);
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,9 +49,18 @@ export function ServicesSection() {
 
       <div className="wrap mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
         <ServicesHeader isInView={isInView} />
-        <ServicesGrid services={SERVICES_DATA} isInView={isInView} />
+        <ServicesGrid
+          services={SERVICES_DATA}
+          isInView={isInView}
+          onSelectService={(item) => setSelectedService(item)}
+        />
         <ServicesFooter />
       </div>
+
+      <ServiceModal
+        service={selectedService}
+        onClose={() => setSelectedService(null)}
+      />
     </section>
   );
 }
@@ -61,3 +72,4 @@ ServicesSection.CardNumber = ServiceCardNumber;
 ServicesSection.Grid = ServicesGrid;
 ServicesSection.Carousel = ServicesCarousel;
 ServicesSection.Footer = ServicesFooter;
+ServicesSection.Modal = ServiceModal;

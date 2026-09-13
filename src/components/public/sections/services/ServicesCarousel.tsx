@@ -11,11 +11,13 @@ import { cn } from "@/lib/utils";
 export interface ServicesCarouselProps {
   services?: ServiceItem[];
   isInView?: boolean;
+  onSelectService?: (item: ServiceItem) => void;
 }
 
 export function ServicesCarousel({
   services = SERVICES_DATA,
   isInView = true,
+  onSelectService,
 }: ServicesCarouselProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -62,6 +64,7 @@ export function ServicesCarousel({
             item={item}
             index={idx}
             isInView={isInView}
+            onSelect={onSelectService}
           />
         ))}
       </div>

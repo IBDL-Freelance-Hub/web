@@ -25,7 +25,7 @@ export function AnimatedStatNumber({
 
     let startTime: number | null = null;
     let animationFrameId: number;
-    const duration = 1100;
+    const duration = 350;
 
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;

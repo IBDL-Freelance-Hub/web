@@ -21,7 +21,7 @@ export function ServiceCardNumber({
 
     let startTime: number | null = null;
     let animationFrameId: number;
-    const duration = 1000;
+    const duration = 350;
 
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
