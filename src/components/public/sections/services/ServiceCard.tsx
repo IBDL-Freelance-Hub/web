@@ -57,10 +57,7 @@ export interface ServicesGridProps {
   isInView?: boolean;
 }
 
-export function ServicesGrid({
-  services,
-  isInView = true,
-}: ServicesGridProps) {
+export function ServicesGrid({ services, isInView = true }: ServicesGridProps) {
   return (
     <div className="grid grid-cols-1 gap-[22px] sm:grid-cols-2 lg:grid-cols-4">
       {services.map((item, idx) => (

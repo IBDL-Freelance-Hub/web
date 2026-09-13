@@ -61,7 +61,7 @@ export function AccreditationSectionClient({
 
           {/* Right Column: Recognition Pathway Details - Enters from RIGHT */}
           <div
-            className={`text-start transition-all duration-1000 delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`text-start transition-all delay-200 duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               isInView
                 ? "translate-x-0 opacity-100 filter-none"
                 : "translate-x-16 opacity-0 blur-[5px]"

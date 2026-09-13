@@ -273,7 +273,7 @@ export function RegistrationModal() {
                   step >= 1 ? "text-[#1d1d39]" : "text-[#6a6a86]"
                 )}
               >
-                {locale === "ar" ? "1. بياناتك الشخصية" : "1. Your details"}
+                {locale === "ar" ? "بياناتك الشخصية" : "Your details"}
               </span>
             </div>
 
@@ -299,7 +299,7 @@ export function RegistrationModal() {
                   step >= 2 ? "text-[#1d1d39]" : "text-[#6a6a86]"
                 )}
               >
-                {locale === "ar" ? "2. ممارستك المهنية" : "2. Your practice"}
+                {locale === "ar" ? "ممارستك المهنية" : "Your practice"}
               </span>
             </div>
 
@@ -323,7 +323,7 @@ export function RegistrationModal() {
                   step === 3 ? "text-[#1d1d39]" : "text-[#6a6a86]"
                 )}
               >
-                {locale === "ar" ? "3. التأكيد" : "3. Confirm"}
+                {locale === "ar" ? "التأكيد" : "Confirm"}
               </span>
             </div>
           </div>

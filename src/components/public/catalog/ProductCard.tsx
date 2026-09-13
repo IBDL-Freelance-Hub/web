@@ -114,7 +114,9 @@ export function ProductCard({
         {/* Footer CTA Trigger (.pcard__foot) */}
         <div className="pcard__foot mt-auto flex items-center justify-between border-t border-[#f0f0f5] pt-4">
           <span className="text-[13.5px] font-extrabold text-[#16162c] transition-colors duration-200 group-hover:text-[#e11119]">
-            {isArabic ? "استعرض الكتالوج والملفات" : "Explore Profile & Materials"}
+            {isArabic
+              ? "استعرض الكتالوج والملفات"
+              : "Explore Profile & Materials"}
           </span>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f4f4f8] text-[#16162c] transition-colors duration-200 group-hover:bg-[#e11119] group-hover:text-white">
             <ArrowIcon className="h-4 w-4" />

@@ -48,7 +48,7 @@ export function WhySection() {
         <div className="mt-12 grid grid-cols-1 gap-12 overflow-hidden py-2 lg:grid-cols-12 lg:items-start">
           {/* Left Column: 2x2 Stats Box Matrix - Enters from LEFT */}
           <div
-            className={`lg:col-span-5 transition-all duration-1000 delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`transition-all delay-200 duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] lg:col-span-5 ${
               isInView
                 ? "translate-x-0 opacity-100 filter-none"
                 : "-translate-x-16 opacity-0 blur-[5px]"
@@ -59,7 +59,7 @@ export function WhySection() {
 
           {/* Right Column: Reasons List - Enters from RIGHT */}
           <div
-            className={`lg:col-span-7 transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`transition-all delay-300 duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] lg:col-span-7 ${
               isInView
                 ? "translate-x-0 opacity-100 filter-none"
                 : "translate-x-16 opacity-0 blur-[5px]"

@@ -80,7 +80,7 @@ export function AboutContent() {
       {/* Section Heading Area - Comes Down From Top */}
       <div
         className={`head mb-12 ${
-          isVisible ? "anim-from-top" : "opacity-0 -translate-y-10"
+          isVisible ? "anim-from-top" : "-translate-y-10 opacity-0"
         }`}
       >
         {/* Eyebrow with leading dash line */}

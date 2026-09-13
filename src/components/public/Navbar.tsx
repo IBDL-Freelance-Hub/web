@@ -29,6 +29,7 @@ export function Navbar() {
 
   // Close mobile drawer on route changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileMenuOpen(false);
   }, [pathname]);
 
@@ -91,7 +92,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Links — Positioned in the exact center of the Navbar */}
-        <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 text-xs sm:text-sm lg:flex">
+        <nav className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 text-xs sm:text-sm lg:flex">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -99,7 +100,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 whitespace-nowrap",
+                  "rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200",
                   isActive
                     ? "bg-slate-700/80 font-bold text-white shadow-inner"
                     : "text-slate-300 hover:bg-white/10 hover:text-white"
