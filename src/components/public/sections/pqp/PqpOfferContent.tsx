@@ -85,14 +85,14 @@ export function PqpOfferContent() {
 
             <h2 className="mb-6 text-[clamp(28px,3.2vw,42px)] leading-tight font-extrabold text-[#16162c]">
               {isArabic
-                ? "احصل على تقييم مجاني معتمد عند الانضمام لمنصة المستقلين"
-                : "Claim a Complimentary Assessment Upon Joining the Hub"}
+                ? "احصل على استخدام مجاني لمرة واحدة لـ ٣ تقييمات تشخيصية عند الانضمام لمنصة المستقلين"
+                : "Claim 1 Free Use for 3 Diagnostic Assessments Upon Joining the Hub"}
             </h2>
 
             <p className="mb-8 text-[16.5px] leading-relaxed text-[#4b5563]">
               {isArabic
-                ? "اختر أداة تقييم عالمية واحدة تجتازها مجاناً كمدرب مستقل مسجل. جرب قوة التقييمات العلمية بنفسك واستخدم نتائجك لتعزيز مصداقيتك المهنية أمام العملاء."
-                : "Select one complimentary assessment from our world-class diagnostic portfolio upon completing your freelancer registration. Experience the analytical depth firsthand before using it with clients."}
+                ? "احصل على صلاحية استخدام مجاني لمرة واحدة لأدوات التقييم الثلاث (PQP™ و CPAT™ و Management Drives®) كعضو مستقل مسجل. جرب قوة التقييمات العلمية واستخدم نتائجك لتعزيز مصداقيتك المهنية."
+                : "Enjoy 1 single-use complimentary access for all 3 diagnostic assessment tools (PQP™, CPAT™, and Management Drives®) upon completing your freelancer registration."}
             </p>
 
             {/* Checklist */}

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { LanguageToggle } from "@/components/common/LanguageToggle";
+import { loginAction, forgotPasswordAction } from "@/actions/authActions";
 import {
   ArrowRight,
   ArrowLeft,
@@ -13,26 +14,33 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
-export function LoginForm() {
+function LoginFormContent() {
   const { locale } = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isActivated = searchParams.get("activated") === "true";
 
   const [view, setView] = useState<"login" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [lockoutTitle, setLockoutTitle] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError(null);
     setPasswordError(null);
     setGeneralError(null);
+    setLockoutTitle(null);
     setSuccessMessage(null);
 
     let hasError = false;
@@ -64,16 +72,44 @@ export function LoginForm() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const res = await loginAction({ email, password });
       setIsLoading(false);
-      router.push("/dashboard");
-    }, 1000);
+
+      if (!res.success) {
+        if (res.fieldErrors) {
+          if (res.fieldErrors.email?.[0]) setEmailError(res.fieldErrors.email[0]);
+          if (res.fieldErrors.password?.[0]) setPasswordError(res.fieldErrors.password[0]);
+        }
+        if (res.title || res.code === "ACCOUNT_LOCKED") {
+          setLockoutTitle(
+            res.title ||
+              (locale === "ar"
+                ? "تم قفل الحساب مؤقتاً"
+                : "Account temporarily locked")
+          );
+          setGeneralError(res.error);
+        } else {
+          setGeneralError(res.error);
+        }
+      } else {
+        router.push("/dashboard");
+      }
+    } catch {
+      setIsLoading(false);
+      setGeneralError(
+        locale === "ar"
+          ? "حدث خطأ أثناء محاولة تسجيل الدخول. يرجى المحاولة مرة أخرى."
+          : "An unexpected error occurred during login. Please try again."
+      );
+    }
   };
 
-  const handleForgotSubmit = (e: React.FormEvent) => {
+  const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError(null);
     setGeneralError(null);
+    setLockoutTitle(null);
     setSuccessMessage(null);
 
     if (!email.trim()) {
@@ -94,14 +130,28 @@ export function LoginForm() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const res = await forgotPasswordAction({ email });
       setIsLoading(false);
-      setSuccessMessage(
+
+      if (res.success) {
+        setSuccessMessage(
+          res.message ||
+            (locale === "ar"
+              ? "تم إرسال رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني."
+              : "Reset link sent successfully to your email address.")
+        );
+      } else {
+        setGeneralError(res.error);
+      }
+    } catch {
+      setIsLoading(false);
+      setGeneralError(
         locale === "ar"
-          ? "تم إرسال رابط إعادة ضبط كلمة المرور إلى بريدك الإلكتروني."
-          : "Reset link sent successfully to your email address."
+          ? "فشل إرسال رابط إعادة تعيين كلمة المرور."
+          : "Failed to send reset link."
       );
-    }, 1000);
+    }
   };
 
   const ArrowIcon = locale === "ar" ? ArrowLeft : ArrowRight;
@@ -139,10 +189,46 @@ export function LoginForm() {
               </p>
             </div>
 
+            {(isActivated || successMessage) && !generalError && (
+              <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-sm text-emerald-950 tracking-tight">
+                      {locale === "ar"
+                        ? "تم تفعيل الحساب بنجاح!"
+                        : "Account Activated!"}
+                    </h4>
+                    <p className="leading-relaxed text-emerald-800">
+                      {successMessage ||
+                        (locale === "ar"
+                          ? "تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول."
+                          : "Account activated successfully! You can now log in.")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {generalError && (
-              <div className="mb-6 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-700">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{generalError}</span>
+              <div
+                className={`mb-6 rounded-xl border p-4 text-xs transition-all ${
+                  lockoutTitle
+                    ? "border-red-300 bg-red-50 text-red-900 shadow-sm"
+                    : "border-red-200 bg-red-50 text-red-700"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-red-600 mt-0.5" />
+                  <div className="space-y-1">
+                    {lockoutTitle && (
+                      <h4 className="font-bold text-sm text-red-900 tracking-tight">
+                        {lockoutTitle}
+                      </h4>
+                    )}
+                    <p className="leading-relaxed text-red-700/90">{generalError}</p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -182,18 +268,32 @@ export function LoginForm() {
                 >
                   {locale === "ar" ? "كلمة المرور *" : "Password *"}
                 </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className={`w-full rounded-xl border px-4 py-3.5 text-sm text-[#16162c] transition-all focus:outline-none ${
-                    passwordError
-                      ? "border-red-500 ring-2 ring-red-500/20"
-                      : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className={`w-full rounded-xl border px-4 py-3.5 pe-11 text-sm text-[#16162c] transition-all focus:outline-none ${
+                      passwordError
+                        ? "border-red-500 ring-2 ring-red-500/20"
+                        : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
                 {passwordError && (
                   <p className="mt-1.5 text-xs font-medium text-red-600">
                     {passwordError}
@@ -367,5 +467,13 @@ export function LoginForm() {
         © 2026 IBDL Learning Group
       </div>
     </div>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-[#419257]" /></div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }

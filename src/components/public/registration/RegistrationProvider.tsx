@@ -8,6 +8,12 @@ import React, {
   useEffect,
 } from "react";
 import { useToast } from "@/components/ui/Toast";
+import {
+  checkDuplicateAction,
+  registerMemberAction,
+} from "@/actions/registerActions";
+import { RegisterMemberInput, RegistrationLocale } from "@/types/registration";
+import { getLocalizedErrorMessage } from "@/lib/validations/registrationErrors";
 
 export interface RegistrationFormData {
   // Step 1: Your Details
@@ -63,6 +69,7 @@ interface RegistrationContextValue {
   formData: RegistrationFormData;
   emailError: string | null;
   phoneError: string | null;
+  fieldErrors: Record<string, string[]> | null;
   duplicateClashLead: string | null;
   isSubmitting: boolean;
   completionPercentage: number;
@@ -73,17 +80,12 @@ interface RegistrationContextValue {
   updateFormData: (fields: Partial<RegistrationFormData>) => void;
   toggleExpertise: (item: string) => void;
   toggleIndustry: (item: string) => void;
-  validateStep1: () => boolean;
-  validateStep2: () => boolean;
-  submitRegistration: () => Promise<void>;
+  validateStep1: (locale?: RegistrationLocale) => boolean;
+  validateStep2: (locale?: RegistrationLocale) => boolean;
+  checkDuplicate: (locale?: RegistrationLocale) => Promise<boolean>;
+  submitRegistration: (locale?: RegistrationLocale) => Promise<boolean>;
   restoreStep1FromDuplicate: () => void;
 }
-
-const MOCK_EXISTING_REGISTRATIONS = [
-  { email: "trainer@ibdl.net", phone: "201000000000" },
-  { email: "existing@ibdl.net", phone: "966500000000" },
-  { email: "admin@ibdl.net", phone: "20123456789" },
-];
 
 const SESSION_STORAGE_KEY = "flh_registration_snapshot";
 
@@ -118,6 +120,10 @@ export function RegistrationProvider({
     useState<RegistrationFormData>(getInitialFormData);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<
+    string,
+    string[]
+  > | null>(null);
   const [duplicateClashLead, setDuplicateClashLead] = useState<string | null>(
     null
   );
@@ -168,6 +174,7 @@ export function RegistrationProvider({
     setStep(1);
     setEmailError(null);
     setPhoneError(null);
+    setFieldErrors(null);
     setDuplicateClashLead(null);
   }, []);
 
@@ -179,9 +186,9 @@ export function RegistrationProvider({
     (fields: Partial<RegistrationFormData>) => {
       setFormData((prev) => {
         const next = { ...prev, ...fields };
-        // Clear errors immediately when field is typed in
         if (fields.email !== undefined) setEmailError(null);
         if (fields.phone !== undefined) setPhoneError(null);
+        setFieldErrors(null);
         return next;
       });
     },
@@ -198,6 +205,7 @@ export function RegistrationProvider({
           : [...prev.expertise, item],
       };
     });
+    setFieldErrors(null);
   }, []);
 
   const toggleIndustry = useCallback((item: string) => {
@@ -210,107 +218,311 @@ export function RegistrationProvider({
           : [...prev.industries, item],
       };
     });
+    setFieldErrors(null);
   }, []);
 
-  const validateStep1 = useCallback(() => {
-    setEmailError(null);
-    setPhoneError(null);
-    setDuplicateClashLead(null);
+  const validateStep1 = useCallback(
+    (locale: RegistrationLocale = "en"): boolean => {
+      setEmailError(null);
+      setPhoneError(null);
+      setDuplicateClashLead(null);
 
-    const emailTrim = formData.email.trim().toLowerCase();
-    const cleanPhone = formData.phone.replace(/[\s\-\(\)\+]/g, "");
+      const emailTrim = formData.email.trim().toLowerCase();
+      const cleanPhone = formData.phone.replace(/[\s\-\(\)\+]/g, "");
 
-    let isValid = true;
+      let isValid = true;
+      const errors: Record<string, string[]> = {};
 
-    if (!formData.fullName.trim()) isValid = false;
-
-    if (!emailTrim || !/\S+@\S+\.\S+/.test(emailTrim)) {
-      isValid = false;
-    }
-
-    if (!formData.phone.trim() || cleanPhone.length < 7) {
-      isValid = false;
-    }
-
-    if (!formData.country.trim()) isValid = false;
-
-    if (!isValid) return false;
-
-    // Check SCR-18 Duplicate Registrations
-    const duplicateByEmail = MOCK_EXISTING_REGISTRATIONS.find(
-      (r) => r.email === emailTrim
-    );
-    const duplicateByPhone = MOCK_EXISTING_REGISTRATIONS.find(
-      (r) => r.phone === cleanPhone
-    );
-
-    if (duplicateByEmail || duplicateByPhone) {
-      if (duplicateByEmail && duplicateByPhone) {
-        setDuplicateClashLead(
-          "An account with this email address and mobile number already exists."
-        );
-        setEmailError("This email address is already registered.");
-        setPhoneError("This mobile number is already registered.");
-      } else if (duplicateByEmail) {
-        setDuplicateClashLead(
-          "An account with this email address already exists."
-        );
-        setEmailError("This email address is already registered.");
-      } else {
-        setDuplicateClashLead(
-          "An account with this mobile number already exists."
-        );
-        setPhoneError("This mobile number is already registered.");
+      if (!formData.fullName.trim() || formData.fullName.trim().length < 3) {
+        isValid = false;
+        errors.fullName = [
+          getLocalizedErrorMessage("fullName", "required", locale),
+        ];
       }
-      setStep("duplicate");
-      return false;
-    }
 
-    return true;
-  }, [formData]);
+      if (!emailTrim || !/\S+@\S+\.\S+/.test(emailTrim)) {
+        isValid = false;
+        errors.email = [
+          getLocalizedErrorMessage(
+            "email",
+            !emailTrim ? "required" : "invalid",
+            locale
+          ),
+        ];
+      }
 
-  const validateStep2 = useCallback(() => {
-    if (!formData.yearsExperience) return false;
-    if (!formData.cvFileName) return false;
-    return true;
-  }, [formData]);
+      if (!formData.phone.trim() || cleanPhone.length < 7) {
+        isValid = false;
+        errors.mobile = [
+          getLocalizedErrorMessage(
+            "mobile",
+            !formData.phone.trim() ? "required" : "invalid",
+            locale
+          ),
+        ];
+      }
+
+      if (!formData.country.trim()) {
+        isValid = false;
+        errors.country = [
+          getLocalizedErrorMessage("country", "required", locale),
+        ];
+      }
+
+      if (!isValid) {
+        setFieldErrors(errors);
+      }
+
+      return isValid;
+    },
+    [formData]
+  );
+
+  const validateStep2 = useCallback(
+    (locale: RegistrationLocale = "en"): boolean => {
+      let isValid = true;
+      const errors: Record<string, string[]> = {};
+
+      if (!formData.yearsExperience) {
+        isValid = false;
+        errors.yearsOfExperience = [
+          getLocalizedErrorMessage("yearsOfExperience", "required", locale),
+        ];
+      }
+      if (formData.expertise.length === 0) {
+        isValid = false;
+        errors.areasOfExpertise = [
+          getLocalizedErrorMessage("areasOfExpertise", "required", locale),
+        ];
+      }
+      if (formData.industries.length === 0) {
+        isValid = false;
+        errors.industriesServed = [
+          getLocalizedErrorMessage("industriesServed", "required", locale),
+        ];
+      }
+
+      if (!isValid) {
+        setFieldErrors(errors);
+      }
+
+      return isValid;
+    },
+    [formData]
+  );
+
+  const checkDuplicate = useCallback(
+    async (locale: RegistrationLocale = "en"): Promise<boolean> => {
+      setEmailError(null);
+      setPhoneError(null);
+      setDuplicateClashLead(null);
+
+      try {
+        const res = await checkDuplicateAction({
+          email: formData.email,
+          mobile: formData.phone,
+          country: formData.country,
+          locale,
+        });
+
+        if (res.success && res.data) {
+          const { isDuplicate, emailClash, mobileClash } = res.data;
+          if (isDuplicate) {
+            if (emailClash && mobileClash) {
+              setDuplicateClashLead(
+                locale === "ar"
+                  ? "يوجد حساب مسجل بالفعل ببريد الإلكتروني ورقم الجوال هذا."
+                  : "An account with this email address and mobile number already exists."
+              );
+              setEmailError(
+                locale === "ar"
+                  ? "هذا البريد الإلكتروني مسجل بالفعل."
+                  : "This email address is already registered."
+              );
+              setPhoneError(
+                locale === "ar"
+                  ? "رقم الجوال هذا مسجل بالفعل."
+                  : "This mobile number is already registered."
+              );
+            } else if (emailClash) {
+              setDuplicateClashLead(
+                locale === "ar"
+                  ? "يوجد حساب مسجل بالفعل بهذا البريد الإلكتروني."
+                  : "An account with this email address already exists."
+              );
+              setEmailError(
+                locale === "ar"
+                  ? "هذا البريد الإلكتروني مسجل بالفعل."
+                  : "This email address is already registered."
+              );
+            } else {
+              setDuplicateClashLead(
+                locale === "ar"
+                  ? "يوجد حساب مسجل بالفعل برقم الجوال هذا."
+                  : "An account with this mobile number already exists."
+              );
+              setPhoneError(
+                locale === "ar"
+                  ? "رقم الجوال هذا مسجل بالفعل."
+                  : "This mobile number is already registered."
+              );
+            }
+            setStep("duplicate");
+            return false;
+          }
+        }
+      } catch {
+        // Allow progression if offline
+      }
+      return true;
+    },
+    [formData]
+  );
 
   const restoreStep1FromDuplicate = useCallback(() => {
     setStep(1);
   }, []);
 
-  const submitRegistration = useCallback(async () => {
-    if (!formData.consentDeclaration) return;
+  const submitRegistration = useCallback(
+    async (locale: RegistrationLocale = "en"): Promise<boolean> => {
+      if (!formData.consentDeclaration) return false;
 
-    setIsSubmitting(true);
+      setIsSubmitting(true);
+      setFieldErrors(null);
 
-    const firstName = formData.fullName.trim().split(" ")[0].toLowerCase();
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const payload: RegisterMemberInput = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.phone,
+        country: formData.country,
+        linkedinUrl: formData.linkedInUrl || undefined,
+        yearsOfExperience: formData.yearsExperience,
+        areasOfExpertise: formData.expertise,
+        industriesServed: formData.industries,
+        bio: formData.biography || undefined,
+        message: formData.message || undefined,
+        cvFileId: formData.cvFileName || undefined,
+        directoryOptIn: formData.directoryOptIn,
+        termsAccepted: formData.consentDeclaration,
+        locale,
+      };
 
-    const creds: SpecimenCredentials = {
-      username: `flh.${firstName || "freelancer"}`,
-      password: "PQP-2026-DEMO",
-      portalUrl: "https://pqp.ibdl.net/start",
-      pqpKey: `PQP-FLH-2026-${randomSuffix}`,
-      cpatKey: `CPAT-FLH-2026-${randomSuffix}`,
-      managementDrivesKey: `MD-FLH-2026-${randomSuffix}`,
-    };
+      try {
+        const res = await registerMemberAction(payload);
 
-    // Show instant toast feedback
-    showToast(
-      "success",
-      "Diagnostic assessment access assigned to you",
-      `Welcome to Freelancers Hub! Your Essential Membership is being activated.`,
-      "public"
-    );
+        if (!res.success) {
+          const isDuplicate =
+            res.error?.toLowerCase().includes("registered") ||
+            res.error?.includes("مسجل") ||
+            Boolean(
+              res.fieldErrors?.email &&
+              res.fieldErrors.email[0]?.toLowerCase().includes("registered")
+            );
 
-    // Simulate 1100ms API write delay according to SCR-16
-    await new Promise((res) => setTimeout(res, 1100));
+          if (isDuplicate) {
+            setDuplicateClashLead(
+              locale === "ar"
+                ? "يوجد حساب مسجل بالفعل ببيانات التواصل هذه."
+                : "An account with this email address or mobile number already exists."
+            );
+            setStep("duplicate");
+            setIsSubmitting(false);
+            return false;
+          }
 
-    setSpecimenCredentials(creds);
-    setIsSubmitting(false);
-    setStep("success");
-  }, [formData, showToast]);
+          if (res.fieldErrors) {
+            setFieldErrors(res.fieldErrors);
+
+            const hasStep1Error = Object.keys(res.fieldErrors).some((k) =>
+              ["fullName", "email", "mobile", "country"].includes(k)
+            );
+            const hasStep2Error = Object.keys(res.fieldErrors).some((k) =>
+              [
+                "yearsOfExperience",
+                "areasOfExpertise",
+                "industriesServed",
+              ].includes(k)
+            );
+
+            if (hasStep1Error) {
+              setStep(1);
+            } else if (hasStep2Error) {
+              setStep(2);
+            }
+          }
+          if (res.error) {
+            showToast(
+              "error",
+              locale === "ar" ? "فشل التسجيل" : "Registration Failed",
+              res.error,
+              "public"
+            );
+          }
+          setIsSubmitting(false);
+          return false;
+        }
+
+        if (res.data) {
+          const pqp = res.data.pqpAccess;
+          const creds: SpecimenCredentials = {
+            username: pqp.username,
+            password: pqp.password,
+            portalUrl: pqp.assessmentLink.startsWith("http")
+              ? pqp.assessmentLink
+              : `https://${pqp.assessmentLink}`,
+            pqpKey: `PQP-FLH-2026-${res.data.member.id.substring(0, 4)}`,
+            cpatKey: `CPAT-FLH-2026-${res.data.member.id.substring(0, 4)}`,
+            managementDrivesKey: `MD-FLH-2026-${res.data.member.id.substring(0, 4)}`,
+          };
+
+          try {
+            sessionStorage.setItem(
+              SESSION_STORAGE_KEY,
+              JSON.stringify({
+                formData,
+                step: "success",
+                member: res.data.member,
+                credentials: creds,
+                updatedAt: new Date().toISOString(),
+              })
+            );
+          } catch {
+            // Ignore storage write errors
+          }
+
+          showToast(
+            "success",
+            locale === "ar"
+              ? "تم تعيين صلاحيات التقييم التشخيصي لك"
+              : "Diagnostic assessment access assigned to you",
+            locale === "ar"
+              ? "مرحباً بك في منصة المستقلين! تم تفعيل عضويتك الأساسية."
+              : "Welcome to Freelancers Hub! Your Essential Membership is active.",
+            "public"
+          );
+
+          setSpecimenCredentials(creds);
+          setIsSubmitting(false);
+          setStep("success");
+          return true;
+        }
+
+        setIsSubmitting(false);
+        return false;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        showToast(
+          "error",
+          locale === "ar" ? "خطأ في التسجيل" : "Registration Error",
+          message,
+          "public"
+        );
+        setIsSubmitting(false);
+        return false;
+      }
+    },
+    [formData, showToast]
+  );
 
   return (
     <RegistrationContext.Provider
@@ -320,6 +532,7 @@ export function RegistrationProvider({
         formData,
         emailError,
         phoneError,
+        fieldErrors,
         duplicateClashLead,
         isSubmitting,
         completionPercentage,
@@ -332,6 +545,7 @@ export function RegistrationProvider({
         toggleIndustry,
         validateStep1,
         validateStep2,
+        checkDuplicate,
         submitRegistration,
         restoreStep1FromDuplicate,
       }}

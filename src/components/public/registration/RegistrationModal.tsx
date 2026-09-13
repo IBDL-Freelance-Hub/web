@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { useRegistration } from "./RegistrationProvider";
 import { RegistrationSuccess } from "./RegistrationSuccess";
@@ -128,6 +128,7 @@ export function RegistrationModal() {
     formData,
     emailError,
     phoneError,
+    fieldErrors,
     duplicateClashLead,
     isSubmitting,
     closeRegistration,
@@ -137,6 +138,7 @@ export function RegistrationModal() {
     toggleIndustry,
     validateStep1,
     validateStep2,
+    checkDuplicate,
     submitRegistration,
     restoreStep1FromDuplicate,
   } = useRegistration();
@@ -147,6 +149,8 @@ export function RegistrationModal() {
   const [step2Attempted, setStep2Attempted] = useState(false);
   const [showTopErrorBanner, setShowTopErrorBanner] = useState(false);
 
+  const [isPending, startTransition] = useTransition();
+
   if (!isOpen) return null;
 
   const handleNextStep1 = (e: React.FormEvent) => {
@@ -154,8 +158,13 @@ export function RegistrationModal() {
     setStep1Attempted(true);
     setShowTopErrorBanner(false);
 
-    if (validateStep1()) {
-      setStep(2);
+    if (validateStep1(locale as "en" | "ar")) {
+      startTransition(async () => {
+        const isClear = await checkDuplicate(locale as "en" | "ar");
+        if (isClear) {
+          setStep(2);
+        }
+      });
     } else {
       setShowTopErrorBanner(true);
       setTimeout(() => {
@@ -172,7 +181,7 @@ export function RegistrationModal() {
     setStep2Attempted(true);
     setShowTopErrorBanner(false);
 
-    if (validateStep2()) {
+    if (validateStep2(locale as "en" | "ar")) {
       setStep(3);
     } else {
       setShowTopErrorBanner(true);
@@ -236,16 +245,16 @@ export function RegistrationModal() {
           </h2>
           <p className="text-xs text-white/65 sm:text-sm">
             {locale === "ar"
-              ? "التسجيل المرحلة الأولى · وصول مجاني لتقييم PQP™"
-              : "Phase 1 registration · complimentary PQP™ access"}
+              ? "التسجيل المرحلة الأولى · استخدام مجاني لمرة واحدة لـ ٣ تقييمات تشخيصية"
+              : "Phase 1 registration · 1 free use for 3 diagnostic assessments"}
           </p>
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#419257]/50 bg-[#419257]/20 px-3.5 py-1.5 text-xs font-bold text-[#8fe0a7]">
             <span>✦</span>
             <span>
               {locale === "ar"
-                ? "يتضمن وصولاً مجانياً لتقييم PQP™"
-                : "includes free PQP™ assessment access"}
+                ? "يتضمن استخداماً مجانياً لمرة واحدة لـ ٣ تقييمات تشخيصية (PQP™، CPAT™، Management Drives®)"
+                : "includes 1 free use for 3 diagnostic assessments (PQP™, CPAT™, Management Drives®)"}
             </span>
           </div>
         </div>
@@ -332,7 +341,7 @@ export function RegistrationModal() {
         {/* Modal Body Container */}
         <div className="p-6 text-start sm:p-10">
           {/* Top Error Banner when validation fails */}
-          {showTopErrorBanner && typeof step === "number" && step <= 2 && (
+          {showTopErrorBanner && typeof step === "number" && step <= 3 && (
             <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-[#e11119]">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>
@@ -368,18 +377,23 @@ export function RegistrationModal() {
                     }
                     className={cn(
                       "w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-[#16162c] transition-all outline-none placeholder:text-[#6a6a86]/50",
-                      step1Attempted && !formData.fullName.trim()
+                      (step1Attempted && !formData.fullName.trim()) ||
+                        Boolean(fieldErrors?.fullName)
                         ? "border-[#e11119] ring-2 ring-red-500/20"
                         : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
                     )}
                   />
-                  {step1Attempted && !formData.fullName.trim() && (
+                  {fieldErrors?.fullName?.[0] ? (
+                    <p className="mt-1.5 text-xs font-medium text-[#e11119]">
+                      {fieldErrors.fullName[0]}
+                    </p>
+                  ) : step1Attempted && !formData.fullName.trim() ? (
                     <p className="mt-1.5 text-xs font-medium text-[#e11119]">
                       {locale === "ar"
                         ? "هذا الحقل مطلوب"
                         : "Full name is required"}
                     </p>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Email Address */}
@@ -400,12 +414,17 @@ export function RegistrationModal() {
                       (step1Attempted &&
                         (!formData.email.trim() ||
                           !/\S+@\S+\.\S+/.test(formData.email.trim()))) ||
-                        emailError
+                        emailError ||
+                        fieldErrors?.email
                         ? "border-[#e11119] ring-2 ring-red-500/20"
                         : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
                     )}
                   />
-                  {emailError ? (
+                  {fieldErrors?.email?.[0] ? (
+                    <p className="mt-1.5 text-xs font-medium text-[#e11119]">
+                      {fieldErrors.email[0]}
+                    </p>
+                  ) : emailError ? (
                     <p className="mt-1.5 text-xs font-medium text-[#e11119]">
                       {emailError}
                     </p>
@@ -437,12 +456,17 @@ export function RegistrationModal() {
                         (!formData.phone.trim() ||
                           formData.phone.replace(/[\s\-\(\)\+]/g, "").length <
                             7)) ||
-                        phoneError
+                        phoneError ||
+                        fieldErrors?.mobile
                         ? "border-[#e11119] ring-2 ring-red-500/20"
                         : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
                     )}
                   />
-                  {phoneError ? (
+                  {fieldErrors?.mobile?.[0] ? (
+                    <p className="mt-1.5 text-xs font-medium text-[#e11119]">
+                      {fieldErrors.mobile[0]}
+                    </p>
+                  ) : phoneError ? (
                     <p className="mt-1.5 text-xs font-medium text-[#e11119]">
                       {phoneError}
                     </p>
@@ -471,13 +495,20 @@ export function RegistrationModal() {
                     placeholder={
                       locale === "ar" ? "اختر الدولة" : "Select Country"
                     }
-                    hasError={step1Attempted && !formData.country}
+                    hasError={
+                      (step1Attempted && !formData.country) ||
+                      Boolean(fieldErrors?.country)
+                    }
                   />
-                  {step1Attempted && !formData.country && (
+                  {fieldErrors?.country?.[0] ? (
+                    <p className="mt-1.5 text-xs font-medium text-[#e11119]">
+                      {fieldErrors.country[0]}
+                    </p>
+                  ) : step1Attempted && !formData.country ? (
                     <p className="mt-1.5 text-xs font-medium text-[#e11119]">
                       {locale === "ar" ? "اختر الدولة" : "Country is required"}
                     </p>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* LinkedIn URL (Span Full Width) */}
@@ -513,10 +544,22 @@ export function RegistrationModal() {
 
                 <button
                   type="submit"
-                  className="flex cursor-pointer items-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.30)] transition-all hover:scale-[1.01] hover:bg-[#b60d14]"
+                  disabled={isPending || isSubmitting}
+                  className="flex cursor-pointer items-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.30)] transition-all hover:scale-[1.01] hover:bg-[#b60d14] disabled:opacity-50"
                 >
-                  <span>{locale === "ar" ? "المتابعة" : "Continue"}</span>
-                  <ArrowIcon className="h-4 w-4" />
+                  {isPending || isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>
+                        {locale === "ar" ? "جاري التحقق..." : "Checking…"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{locale === "ar" ? "المتابعة" : "Continue"}</span>
+                      <ArrowIcon className="h-4 w-4" />
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -1005,18 +1048,13 @@ export function RegistrationModal() {
               {/* Agreement Checkboxes (.chk) */}
               <div className="mb-6 space-y-3.5">
                 {/* 1. Directory Opt-in (Optional) */}
-                <label
-                  onClick={() =>
-                    updateFormData({
-                      directoryOptIn: !formData.directoryOptIn,
-                    })
-                  }
-                  className="chk flex cursor-pointer items-start gap-3.5 rounded-xl border border-[#e2e2ec] bg-[#f6f6fa] p-4 transition-all hover:border-[#6a6a86]"
-                >
+                <label className="chk flex cursor-pointer items-start gap-3.5 rounded-xl border border-[#e2e2ec] bg-[#f6f6fa] p-4 transition-all hover:border-[#6a6a86]">
                   <input
                     type="checkbox"
                     checked={formData.directoryOptIn}
-                    onChange={() => {}}
+                    onChange={(e) =>
+                      updateFormData({ directoryOptIn: e.target.checked })
+                    }
                     className="mt-0.5 h-4 w-4 rounded border-[#e2e2ec] text-[#e11119] focus:ring-[#e11119]"
                   />
                   <div>
@@ -1035,22 +1073,21 @@ export function RegistrationModal() {
 
                 {/* 2. Data & Terms Consent (Required) */}
                 <label
-                  onClick={() =>
-                    updateFormData({
-                      consentDeclaration: !formData.consentDeclaration,
-                    })
-                  }
                   className={cn(
                     "chk flex cursor-pointer items-start gap-3.5 rounded-xl border p-4 transition-all",
                     formData.consentDeclaration
                       ? "border-[#419257] bg-[#419257]/5"
-                      : "border-[#e2e2ec] bg-[#f6f6fa] hover:border-[#6a6a86]"
+                      : showTopErrorBanner && !formData.consentDeclaration
+                        ? "border-[#e11119] bg-red-50/50 ring-2 ring-red-500/20"
+                        : "border-[#e2e2ec] bg-[#f6f6fa] hover:border-[#6a6a86]"
                   )}
                 >
                   <input
                     type="checkbox"
                     checked={formData.consentDeclaration}
-                    onChange={() => {}}
+                    onChange={(e) =>
+                      updateFormData({ consentDeclaration: e.target.checked })
+                    }
                     className="mt-0.5 h-4 w-4 rounded border-[#e2e2ec] text-[#e11119] focus:ring-[#e11119]"
                   />
                   <div>
@@ -1064,6 +1101,13 @@ export function RegistrationModal() {
                         ? "معلوماتك آمنة ولن تستخدم إلا من قبل IBDL للتواصل حول المنصة والفرص المتعلقة بها. ولن تتم مشاركتها مع أطراف خارجية."
                         : "Your information is kept secure and will only be used by IBDL for Freelancer Hub communication and related opportunities. It will not be shared with any external parties."}
                     </span>
+                    {showTopErrorBanner && !formData.consentDeclaration && (
+                      <p className="mt-1.5 text-xs font-medium text-[#e11119]">
+                        {locale === "ar"
+                          ? "يجب الموافقة على الشروط والأحكام للمتابعة."
+                          : "You must accept the terms and conditions."}
+                      </p>
+                    )}
                   </div>
                 </label>
               </div>
@@ -1073,7 +1117,7 @@ export function RegistrationModal() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isPending}
                   className="cursor-pointer px-5 py-2.5 text-xs font-bold text-[#6a6a86] transition-colors hover:text-[#16162c] disabled:opacity-50"
                 >
                   {locale === "ar" ? "الرجوع" : "Back"}
@@ -1081,11 +1125,26 @@ export function RegistrationModal() {
 
                 <button
                   type="button"
-                  disabled={!formData.consentDeclaration || isSubmitting}
-                  onClick={submitRegistration}
+                  disabled={isSubmitting || isPending}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (!formData.consentDeclaration) {
+                      setShowTopErrorBanner(true);
+                      return;
+                    }
+                    setShowTopErrorBanner(false);
+                    startTransition(async () => {
+                      const ok = await submitRegistration(
+                        locale as "en" | "ar"
+                      );
+                      if (!ok) {
+                        setShowTopErrorBanner(true);
+                      }
+                    });
+                  }}
                   className="flex cursor-pointer items-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.30)] transition-all hover:scale-[1.01] hover:bg-[#b60d14] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {isSubmitting || isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       <span>

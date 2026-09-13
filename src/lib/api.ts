@@ -2,7 +2,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { getSessionCookie } from "./session";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:4000/api/v1";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:5000/api/v1";
 
 async function getClientIpHeader(): Promise<string> {
   try {
@@ -81,6 +81,8 @@ export class ApiClient {
     const data = (await response.json()) as {
       message?: string;
       error?: string;
+      title?: string;
+      code?: string;
       fieldErrors?: Record<string, string[]>;
     };
 
@@ -95,9 +97,13 @@ export class ApiClient {
             : `HTTP ${response.status} error`;
       const error = new Error(errorMessage) as Error & {
         status: number;
+        title?: string;
+        code?: string;
         fieldErrors?: Record<string, string[]>;
       };
       error.status = response.status;
+      error.title = data?.title;
+      error.code = data?.code;
       error.fieldErrors = data?.fieldErrors;
       throw error;
     }
