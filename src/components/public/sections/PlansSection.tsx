@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PLANS_DATA } from "@/data/plansData";
 import { PlansHeader } from "./plans/PlansHeader";
 import { PlanCard, PlansGrid, PlansNote } from "./plans/PlanCard";
+import { PlansAction } from "./plans/PlansAction";
 
 export function PlansSection() {
   const [isInView, setIsInView] = useState(false);
@@ -36,6 +37,7 @@ export function PlansSection() {
       <div className="wrap mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
         <PlansHeader isInView={isInView} />
         <PlansGrid tiers={PLANS_DATA} isInView={isInView} />
+        <PlansAction isInView={isInView} />
         <PlansNote isInView={isInView} />
       </div>
     </section>
@@ -46,4 +48,5 @@ export function PlansSection() {
 PlansSection.Header = PlansHeader;
 PlansSection.Grid = PlansGrid;
 PlansSection.Card = PlanCard;
+PlansSection.Action = PlansAction;
 PlansSection.Note = PlansNote;

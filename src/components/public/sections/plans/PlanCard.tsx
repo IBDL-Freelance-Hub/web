@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Check, Info } from "lucide-react";
-import { useRegistration } from "@/components/public/registration/RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { PlanTierData, CORE_SERVICES_LIST } from "@/data/plansData";
 import { cn } from "@/lib/utils";
@@ -14,7 +13,6 @@ export interface PlanCardProps {
 }
 
 export function PlanCard({ tier, index = 0, isInView = true }: PlanCardProps) {
-  const { openRegistration } = useRegistration();
   const { locale, formatNumber } = useLocale();
   const delayMs = 400 + index * 150;
 
@@ -102,28 +100,9 @@ export function PlanCard({ tier, index = 0, isInView = true }: PlanCardProps) {
       </div>
 
       {/* 8. Fine Print Text */}
-      <p className="tier__fine mb-6 text-[12.2px] leading-relaxed text-[#6a6a86]">
+      <p className="tier__fine mt-auto mb-0 text-[12.2px] leading-relaxed text-[#6a6a86]">
         {isAr ? tier.fineAr : tier.fineEn}
       </p>
-
-      {/* 9. Action Button */}
-      {tier.isTop ? (
-        <button
-          type="button"
-          onClick={openRegistration}
-          className="bg-red-brand hover:bg-red-hover mt-auto w-full cursor-pointer rounded-full px-6 py-3.5 text-center text-[15px] font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.30)] transition-all active:scale-95"
-        >
-          {isAr ? "انضم إلى المنصة — مجاناً" : "Join the Hub — free"}
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={openRegistration}
-          className="border-line-border bg-paper hover:border-navy mt-auto w-full cursor-pointer rounded-full border px-6 py-3.5 text-center text-[15px] font-bold text-[#16162c] transition-all active:scale-95"
-        >
-          {isAr ? "انضم إلى المنصة — مجاناً" : "Join the Hub — free"}
-        </button>
-      )}
     </div>
   );
 }
