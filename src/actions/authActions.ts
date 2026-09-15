@@ -368,12 +368,19 @@ export async function activateAccountAction(
 export async function resendActivationLinkAction(
   payload: unknown
 ): Promise<ActionResponse<null>> {
+  const rawObj =
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : {};
+  const activeLocale = await getActiveLocale(
+    typeof rawObj.locale === "string" ? rawObj.locale : undefined
+  );
   const validated = resendActivationSchema.safeParse(payload);
   if (!validated.success) {
     const fieldErrors = validated.error.flatten().fieldErrors;
     return {
       success: false,
-      error: "Please enter a valid email address.",
+      error: AUTH_STRINGS.validation.emailInvalid[activeLocale],
       fieldErrors: fieldErrors as Record<string, string[]>,
     };
   }
@@ -389,13 +396,35 @@ export async function resendActivationLinkAction(
       data: null,
       message:
         response.message ||
-        "An activation link has been sent to your registered email address. Please check your inbox.",
+        (activeLocale === "ar"
+          ? "تم إرسال رابط التفعيل إلى بريدك الإلكتروني المسجل. يرجى مراجعة صندوق الوارد."
+          : "An activation link has been sent to your registered email address. Please check your inbox."),
     };
   } catch (err: unknown) {
-    const errorObj = err as Error;
+    const errorObj = err as Error & { status?: number; code?: string };
+    const isNetworkOr5xx =
+      !errorObj.status ||
+      errorObj.status >= 500 ||
+      errorObj.code === "ECONNREFUSED" ||
+      errorObj.code === "ENOTFOUND" ||
+      errorObj.message?.includes("fetch failed");
+
+    if (isNetworkOr5xx) {
+      console.error("[ResendActivationLink Network/5xx Error]", err);
+      return {
+        success: false,
+        error: AUTH_STRINGS.common.somethingWentWrong[activeLocale],
+      };
+    }
+
+    // Anti-enumeration: Return generic success for client-safe responses
     return {
-      success: false,
-      error: errorObj?.message || "Failed to send activation link.",
+      success: true,
+      data: null,
+      message:
+        activeLocale === "ar"
+          ? "إذا كان هناك حساب مسجل بهذا البريد وغير مفعل، فقد تم إرسال رابط التفعيل."
+          : "If an account exists and is unactivated, a new link has been sent.",
     };
   }
 }

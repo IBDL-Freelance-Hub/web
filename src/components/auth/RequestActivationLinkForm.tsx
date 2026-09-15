@@ -46,7 +46,10 @@ export function RequestActivationLinkForm({
 
     startTransition(async () => {
       try {
-        const res = await resendActivationLinkAction({ email: trimmed });
+        const res = await resendActivationLinkAction({
+          email: trimmed,
+          locale,
+        });
         if (res.success) {
           setRequestSent(true);
         } else {
