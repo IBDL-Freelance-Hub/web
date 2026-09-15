@@ -262,7 +262,7 @@ export function MemberSidebar({
         <div className="flex h-16 items-center justify-between border-b border-white/5 px-6">
           <Link
             href="/overview"
-            className="inline-flex items-center gap-2 rounded-lg p-1 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+            className="inline-flex items-center gap-2 rounded-lg p-1 focus:ring-2 focus:ring-[#E11119] focus:outline-none"
             onClick={onCloseMobile}
           >
             <Image
@@ -329,7 +329,7 @@ export function MemberSidebar({
                         href={item.href}
                         onClick={onCloseMobile}
                         aria-current={isActive ? "page" : undefined}
-                        className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200 focus:ring-2 focus:ring-amber-500 focus:outline-none ${
+                        className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200 focus:ring-2 focus:ring-[#E11119] focus:outline-none ${
                           isActive
                             ? "bg-[#222442] font-semibold text-white shadow-xs"
                             : "text-slate-300 hover:bg-white/5 hover:text-white"
@@ -338,14 +338,14 @@ export function MemberSidebar({
                         <div className="flex items-center gap-3">
                           <Icon
                             className={`h-4 w-4 shrink-0 ${
-                              isActive ? "text-amber-400" : "text-slate-400"
+                              isActive ? "text-[#E11119]" : "text-slate-400"
                             }`}
                           />
                           <span>{isAr ? item.labelAr : item.labelEn}</span>
                         </div>
                         {isActive && (
                           <span
-                            className="h-1.5 w-1.5 rounded-full bg-amber-400"
+                            className="h-1.5 w-1.5 rounded-full bg-[#E11119]"
                             aria-hidden="true"
                           />
                         )}
