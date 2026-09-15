@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { cookies } from "next/headers";
 import { api } from "../lib/api";
 import {
   setSessionCookie,
@@ -16,7 +17,28 @@ import {
 import {
   activateAccountSchema,
   resendActivationSchema,
+  getForgotPasswordSchema,
+  getResetPasswordSchema,
 } from "../lib/validations/auth";
+import { AUTH_STRINGS, Locale } from "../lib/constants/authStrings";
+
+async function getActiveLocale(overrideLocale?: string): Promise<Locale> {
+  if (overrideLocale === "ar" || overrideLocale === "en") {
+    return overrideLocale;
+  }
+  try {
+    const cookieStore = await cookies();
+    const cookieLocale =
+      cookieStore.get("flh_locale")?.value ||
+      cookieStore.get("NEXT_LOCALE")?.value;
+    if (cookieLocale === "ar" || cookieLocale === "en") {
+      return cookieLocale;
+    }
+  } catch {
+    // Fallback when executed outside request context
+  }
+  return "en";
+}
 
 const loginSchema = z.object({
   email: z
@@ -104,45 +126,170 @@ export async function logoutAction(): Promise<ActionResponse<null>> {
   };
 }
 
-const forgotPasswordSchema = z.object({
-  email: z.string().trim().email("Enter a valid email address."),
-});
-
+/**
+ * Forgot Password Action (SEC-23 & FIX 2 Compliant)
+ * Strictly enforces anti-enumeration by returning a generic success message
+ * for all standard backend responses (matching account, non-existent account,
+ * or silently rate-limited). Only genuine network / 5xx failures return an error.
+ */
 export async function forgotPasswordAction(
   payload: unknown
 ): Promise<ActionResponse<null>> {
+  const rawObj =
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : {};
+  const activeLocale = await getActiveLocale(
+    typeof rawObj.locale === "string" ? rawObj.locale : undefined
+  );
+  const schema = getForgotPasswordSchema(activeLocale);
+  const validated = schema.safeParse(payload);
+
+  if (!validated.success) {
+    const fieldErrors = validated.error.flatten().fieldErrors;
+    return {
+      success: false,
+      error: AUTH_STRINGS.validation.emailInvalid[activeLocale],
+      fieldErrors: fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  const genericSuccessMessage =
+    AUTH_STRINGS.forgotPassword.genericSuccess[activeLocale];
+
   try {
-    const validated = forgotPasswordSchema.safeParse(payload);
-    if (!validated.success) {
+    await api.post<{ success: boolean; message?: string }>(
+      "/auth/forgot-password",
+      { email: validated.data.email }
+    );
+  } catch (err: unknown) {
+    const errorObj = err as Error & { status?: number; code?: string };
+    // The ONLY case that should NOT return the generic success message is a genuine backend/network failure
+    const isNetworkOr5xx =
+      !errorObj.status ||
+      errorObj.status >= 500 ||
+      errorObj.code === "ECONNREFUSED" ||
+      errorObj.code === "ENOTFOUND" ||
+      errorObj.message?.includes("fetch failed");
+
+    if (isNetworkOr5xx) {
+      console.error("[ForgotPassword API Network/5xx Error]", err);
       return {
         success: false,
-        error: "Please enter a valid email address.",
+        error: AUTH_STRINGS.common.somethingWentWrong[activeLocale],
       };
     }
 
+    // For all other cases (user not found, 404, 400, silent rate limit),
+    // SEC-23 anti-enumeration requires returning the generic success message.
+  }
+
+  return {
+    success: true,
+    data: null,
+    message: genericSuccessMessage,
+  };
+}
+
+/**
+ * Reset Password Action (VAL-142 & FIX 1 Compliant)
+ * Strictly distinguishes invalid/expired tokens (RECOVERY STATE)
+ * from genuine 5xx/network errors, and never writes session cookies.
+ */
+export async function resetPasswordAction(
+  payload: unknown
+): Promise<ActionResponse<null>> {
+  const rawObj =
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : {};
+  const activeLocale = await getActiveLocale(
+    typeof rawObj.locale === "string" ? rawObj.locale : undefined
+  );
+  const schema = getResetPasswordSchema(activeLocale);
+  const validated = schema.safeParse(payload);
+
+  if (!validated.success) {
+    const fieldErrors = validated.error.flatten().fieldErrors;
+    return {
+      success: false,
+      error: AUTH_STRINGS.validation.passwordCriteriaFailed[activeLocale],
+      fieldErrors: fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  try {
     const response = await api.post<{ success: boolean; message?: string }>(
-      "/auth/forgot-password",
-      validated.data
+      "/auth/reset-password",
+      {
+        token: validated.data.token,
+        password: validated.data.password,
+        newPassword: validated.data.password,
+        confirmPassword: validated.data.confirmPassword,
+      }
     );
 
+    // Returns { success: true } without writing session cookies
     return {
       success: true,
       data: null,
       message:
         response.message ||
-        "Reset link sent successfully to your email address.",
+        AUTH_STRINGS.resetPassword.successTitle[activeLocale],
     };
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Failed to send reset link.";
+    const errorObj = err as Error & {
+      status?: number;
+      code?: string;
+      title?: string;
+      fieldErrors?: Record<string, string[]>;
+    };
+
+    // VAL-142: Invalid, expired, or already used token detection
+    const isTokenIssue =
+      errorObj.code === "RESET_TOKEN_INVALID" ||
+      errorObj.code === "RESET_LINK_INVALID" ||
+      errorObj.code === "TOKEN_EXPIRED" ||
+      errorObj.code === "TOKEN_INVALID" ||
+      errorObj.status === 404 ||
+      errorObj.status === 410 ||
+      (typeof errorObj.message === "string" &&
+        /(?:token|link).*(?:expired|invalid|not found|already.*used|no longer valid)/i.test(
+          errorObj.message
+        ));
+
+    if (isTokenIssue) {
+      return {
+        success: false,
+        code: "RESET_LINK_INVALID",
+        title: AUTH_STRINGS.recovery.invalidLinkTitle[activeLocale],
+        error: AUTH_STRINGS.recovery.invalidLinkError[activeLocale],
+      };
+    }
+
+    // Server-side validation errors (e.g. password equals email or password criteria)
+    if (errorObj.fieldErrors || errorObj.code === "VALIDATION_ERROR") {
+      return {
+        success: false,
+        error:
+          errorObj.message ||
+          AUTH_STRINGS.validation.passwordCriteriaFailed[activeLocale],
+        fieldErrors: errorObj.fieldErrors,
+      };
+    }
+
+    // Any OTHER failure (e.g. genuine 5xx / network error)
+    console.error("[ResetPassword Internal Error]", err);
     return {
       success: false,
-      error: message,
+      error: AUTH_STRINGS.common.somethingWentWrong[activeLocale],
     };
   }
 }
 
-export async function listSessionsAction(): Promise<ActionResponse<SessionItem[]>> {
+export async function listSessionsAction(): Promise<
+  ActionResponse<SessionItem[]>
+> {
   try {
     const response = await api.get<{
       success: boolean;
@@ -155,7 +302,9 @@ export async function listSessionsAction(): Promise<ActionResponse<SessionItem[]
     };
   } catch (err: unknown) {
     const message =
-      err instanceof Error ? err.message : "Failed to retrieve active sessions.";
+      err instanceof Error
+        ? err.message
+        : "Failed to retrieve active sessions.";
     return {
       success: false,
       error: message,
@@ -182,7 +331,6 @@ export async function revokeSessionAction(
     };
   }
 }
-
 
 export async function activateAccountAction(
   payload: unknown
@@ -252,7 +400,9 @@ export async function resendActivationLinkAction(
   }
 }
 
-export async function revokeAllOtherSessionsAction(): Promise<ActionResponse<null>> {
+export async function revokeAllOtherSessionsAction(): Promise<
+  ActionResponse<null>
+> {
   try {
     await api.delete("/auth/sessions");
     return {

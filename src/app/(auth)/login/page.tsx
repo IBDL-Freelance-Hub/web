@@ -1,13 +1,19 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
-import { useLocale } from "@/components/common/DirectionProvider";
+import Image from "next/image";
+import { cookies } from "next/headers";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Check } from "lucide-react";
 
-export default function LoginPage() {
-  const { locale } = useLocale();
+export const metadata = {
+  title: "Sign In — IBDL Freelancers Hub",
+  description:
+    "Sign in to access your IBDL Freelancers Hub workspace, diagnostics, and profile.",
+};
+
+export default async function LoginPage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("flh_locale")?.value as "en" | "ar") || "en";
 
   const benefits = [
     {
@@ -26,7 +32,7 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-2">
-      {/* Left Column: Dark Branding Panel (Desktop Only) */}
+      {/* Left Column: Server-Rendered Dark Branding Panel (Desktop Only) */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-[#141428] bg-gradient-to-br from-[#141428] via-[#1d1d39] to-[#0d0d1c] px-8 pt-6 pb-8 text-white sm:px-12 sm:pt-8 lg:flex lg:px-16 lg:pt-8 lg:pb-12">
         {/* Background Photo & Ambient Lighting matching Hero Section */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none">
@@ -39,13 +45,16 @@ export default function LoginPage() {
         {/* Top Header: Freelancers Hub White Logo */}
         <div className="relative z-10 flex h-8 items-center">
           <Link href="/" className="inline-block">
-            <img
+            <Image
               src="/Logos/FLH-white.png"
               alt={
                 locale === "ar"
                   ? "شعار منصة المستقلين IBDL"
                   : "IBDL Freelancers Hub Logo"
               }
+              width={160}
+              height={32}
+              priority
               className="h-8 w-auto object-contain"
             />
           </Link>
@@ -83,7 +92,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Column: Authentication Form */}
+      {/* Right Column: Interactive Client Leaf (LoginForm) */}
       <div className="relative flex flex-col items-center justify-center bg-white">
         <LoginForm />
       </div>
