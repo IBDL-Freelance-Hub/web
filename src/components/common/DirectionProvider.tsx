@@ -26,7 +26,13 @@ const DirectionContext = createContext<DirectionContextValue | undefined>(
 const ARABIC_INDIC_DIGITS = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
 
 export function DirectionProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/flh_locale=(en|ar)/);
+      if (match) return match[1] as Locale;
+    }
+    return "en";
+  });
 
   const dir: Direction = locale === "ar" ? "rtl" : "ltr";
   const isRTL = dir === "rtl";
@@ -54,6 +60,7 @@ export function DirectionProvider({ children }: { children: React.ReactNode }) {
     if (typeof document !== "undefined") {
       document.documentElement.lang = locale;
       document.documentElement.dir = dir;
+      document.cookie = `flh_locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
     }
   }, [locale, dir]);
 
