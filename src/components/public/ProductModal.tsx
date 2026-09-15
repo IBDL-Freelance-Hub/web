@@ -55,11 +55,11 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
   return (
     <div
-      className="ov animate-in fade-in fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-[#0a0a18]/70 p-4 backdrop-blur-[10px] duration-200 sm:p-8"
+      className="ov animate-in fade-in fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-[#0a0a18]/70 p-3 backdrop-blur-[10px] duration-200 sm:p-8"
       onClick={onClose}
     >
       <div
-        className="sheet pm animate-in fade-in zoom-in-95 relative my-auto flex max-h-[90vh] w-full max-w-[820px] flex-col overflow-hidden rounded-[32px] bg-white text-start shadow-[0_28px_70px_rgba(20,20,40,0.25)] duration-300"
+        className="sheet pm animate-in fade-in zoom-in-95 relative my-auto flex max-h-[92vh] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl bg-white text-start shadow-[0_28px_70px_rgba(20,20,40,0.25)] duration-300 sm:rounded-[32px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button (.pm__x) */}
@@ -67,15 +67,15 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="pm__x absolute end-6 top-6 z-20 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-[#e2e2ec] bg-white/80 text-[#16162c] shadow-xs transition-all hover:rotate-90 hover:bg-white"
+          className="pm__x absolute end-3 top-3 z-30 grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[#e2e2ec] bg-white/90 text-[#16162c] shadow-xs transition-all hover:rotate-90 hover:bg-white sm:end-6 sm:top-6 sm:h-9 sm:w-9"
         >
           <X className="h-4 w-4" />
         </button>
 
         {/* Modal Header (.pm__head) */}
-        <div className="pm__head relative flex shrink-0 items-center gap-6 border-b border-[#e2e2ec] bg-gradient-to-br from-[#fbfbfe] to-[#eeeef6] p-[32px_40px] pe-16">
+        <div className="pm__head relative flex shrink-0 flex-col items-start gap-4 border-b border-[#e2e2ec] bg-gradient-to-br from-[#fbfbfe] to-[#eeeef6] p-5 pe-12 sm:flex-row sm:items-center sm:gap-6 sm:p-[32px_40px] sm:pe-16">
           {/* Logo Box */}
-          <div className="flex h-[80px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#e2e2ec] bg-white p-3 shadow-2xs">
+          <div className="flex h-[64px] w-[110px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#e2e2ec] bg-white p-2.5 shadow-2xs sm:h-[80px] sm:w-[140px] sm:rounded-2xl sm:p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={product.logoImg}
@@ -86,54 +86,54 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
           {/* Metadata */}
           <div className="pm__meta flex-1">
-            <span className="pm__cat mb-1 block text-[10.5px] font-extrabold tracking-[0.13em] text-[#6a6a86] uppercase">
+            <span className="pm__cat mb-1 block text-[10px] font-extrabold tracking-[0.13em] text-[#6a6a86] uppercase sm:text-[10.5px]">
               {product.category[locale]}
             </span>
-            <h3 className="mb-0.5 text-[24px] font-bold tracking-tight text-[#16162c] sm:text-[26px]">
+            <h3 className="mb-0.5 text-lg font-bold tracking-tight text-[#16162c] sm:text-[26px]">
               {product.title}
             </h3>
-            <p className="pm__tag mb-0 text-[14px] font-semibold text-[#e11119]">
+            <p className="pm__tag mb-0 text-xs font-semibold text-[#e11119] sm:text-[14px]">
               {product.tagline[locale]}
             </p>
           </div>
         </div>
 
         {/* Stats Row (.pm__stats) */}
-        <div className="pm__stats grid shrink-0 grid-cols-3 divide-x divide-[#e2e2ec] border-b border-[#e2e2ec] bg-white px-4 py-6 text-center rtl:divide-x-reverse">
-          <div className="px-2">
-            <b className="mb-0.5 block text-xl font-bold text-[#16162c] sm:text-2xl">
+        <div className="pm__stats grid shrink-0 grid-cols-3 divide-x divide-[#e2e2ec] border-b border-[#e2e2ec] bg-white px-2 py-4 text-center sm:px-4 sm:py-6 rtl:divide-x-reverse">
+          <div className="px-1 sm:px-2">
+            <b className="mb-0.5 block text-base font-bold text-[#16162c] sm:text-2xl">
               {product.stats.stat1.num}
             </b>
-            <span className="block text-[11px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
+            <span className="block text-[10px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
               {product.stats.stat1.label[locale]}
             </span>
           </div>
-          <div className="px-2">
-            <b className="mb-0.5 block text-xl font-bold text-[#16162c] sm:text-2xl">
+          <div className="px-1 sm:px-2">
+            <b className="mb-0.5 block text-base font-bold text-[#16162c] sm:text-2xl">
               {product.stats.stat2.num}
             </b>
-            <span className="block text-[11px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
+            <span className="block text-[10px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
               {product.stats.stat2.label[locale]}
             </span>
           </div>
-          <div className="px-2">
-            <b className="mb-0.5 block text-xl font-bold text-[#16162c] sm:text-2xl">
+          <div className="px-1 sm:px-2">
+            <b className="mb-0.5 block text-base font-bold text-[#16162c] sm:text-2xl">
               {product.stats.stat3.num}
             </b>
-            <span className="block text-[11px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
+            <span className="block text-[10px] leading-tight font-semibold text-[#6a6a86] sm:text-xs">
               {product.stats.stat3.label[locale]}
             </span>
           </div>
         </div>
 
         {/* Modal Scrollable Body (.pm__body) */}
-        <div className="pm__body space-y-7 overflow-y-auto p-[32px_40px]">
+        <div className="pm__body space-y-6 overflow-y-auto p-5 sm:space-y-7 sm:p-[32px_40px]">
           {/* ABOUT THIS PRODUCT */}
           <div>
             <span className="pm__lbl mb-2 block text-[11px] font-extrabold tracking-[0.14em] text-[#419257] uppercase">
               {isArabic ? "نبذة عن المنتج" : "ABOUT THIS PRODUCT"}
             </span>
-            <p className="text-[14.5px] leading-[1.65] text-[#3e3e5c]">
+            <p className="text-xs leading-[1.65] text-[#3e3e5c] sm:text-[14.5px]">
               {product.about[locale]}
             </p>
           </div>
@@ -145,7 +145,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               <span className="pm__lbl mb-3 block text-[11px] font-extrabold tracking-[0.14em] text-[#419257] uppercase">
                 {isArabic ? "الفئة المستهدفة" : "TARGET AUDIENCE"}
               </span>
-              <ul className="space-y-2.5 text-[13.5px] text-[#3e3e5c]">
+              <ul className="space-y-2.5 text-xs text-[#3e3e5c] sm:text-[13.5px]">
                 {product.targetAudience[locale].map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <span className="me-2.5 mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#e11119]" />
@@ -160,7 +160,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               <span className="pm__lbl mb-3 block text-[11px] font-extrabold tracking-[0.14em] text-[#419257] uppercase">
                 {isArabic ? "مجالات الاستخدام" : "USE CASES"}
               </span>
-              <ul className="space-y-2.5 text-[13.5px] text-[#3e3e5c]">
+              <ul className="space-y-2.5 text-xs text-[#3e3e5c] sm:text-[13.5px]">
                 {product.useCases[locale].map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <span className="me-2.5 mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#419257]" />
@@ -180,7 +180,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               {product.keyLearningAreas[locale].map((chip, idx) => (
                 <span
                   key={idx}
-                  className="chip rounded-full border border-[#e2e2ec] bg-[#f6f6fa] px-3.5 py-1.5 text-[12px] font-semibold text-[#3e3e5c]"
+                  className="chip rounded-full border border-[#e2e2ec] bg-[#f6f6fa] px-3.5 py-1.5 text-[11px] font-semibold text-[#3e3e5c] sm:text-[12px]"
                 >
                   {chip}
                 </span>
@@ -240,27 +240,27 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="flex shrink-0 items-center justify-between border-t border-[#e2e2ec] bg-white p-[20px_40px]">
+        <div className="flex shrink-0 flex-col-reverse gap-2.5 border-t border-[#e2e2ec] bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-[20px_40px]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full cursor-pointer rounded-full border border-[#e2e2ec] px-6 py-2.5 text-xs font-bold text-[#3e3e5c] transition-all hover:bg-[#f6f6fa] sm:w-auto sm:text-sm"
+          >
+            {isArabic ? "إغلاق" : "Close"}
+          </button>
+
           <button
             type="button"
             onClick={() => {
               onClose();
               openRegistration();
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-xs font-bold text-white shadow-[0_10px_25px_rgba(225,17,25,0.3)] transition-all hover:bg-[#b60d14] sm:text-sm"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-xs font-bold text-white shadow-[0_10px_25px_rgba(225,17,25,0.3)] transition-all hover:bg-[#b60d14] sm:w-auto sm:text-sm"
           >
             <span>
               {isArabic ? "طلب شراء هذا المنتج" : "Request This Product"}
             </span>
             <span>{ArrowChar}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="cursor-pointer rounded-full border border-[#e2e2ec] px-6 py-2.5 text-xs font-bold text-[#3e3e5c] transition-all hover:bg-[#f6f6fa] sm:text-sm"
-          >
-            {isArabic ? "إغلاق" : "Close"}
           </button>
         </div>
       </div>

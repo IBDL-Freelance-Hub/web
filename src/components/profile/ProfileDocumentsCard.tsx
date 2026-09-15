@@ -31,13 +31,13 @@ export function ProfileDocumentsCard({ member }: ProfileDocumentsCardProps) {
         </CardHeader>
 
         <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <FileText className="h-5 w-5" />
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900">
+              <div className="min-w-0 flex-1">
+                <h4 className="truncate text-xs font-bold text-slate-900">
                   {member.fullNameEn
                     ? `${member.fullNameEn.replace(/\s+/g, "-")}-CV.pdf`
                     : "Curriculum-Vitae.pdf"}
@@ -50,7 +50,7 @@ export function ProfileDocumentsCard({ member }: ProfileDocumentsCardProps) {
             <button
               type="button"
               disabled
-              className="cursor-not-allowed rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 opacity-60 select-none"
+              className="w-full shrink-0 cursor-not-allowed rounded-lg border border-slate-300 bg-white px-3.5 py-1.5 text-center text-xs font-semibold whitespace-nowrap text-slate-600 opacity-60 select-none sm:w-auto"
             >
               {isAr ? "استبدال السيرة" : "Replace CV"}
             </button>

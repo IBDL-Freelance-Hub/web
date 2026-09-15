@@ -77,6 +77,11 @@ interface RegistrationContextValue {
   specimenCredentials: SpecimenCredentials | null;
   openRegistration: () => void;
   closeRegistration: () => void;
+  safeCloseRegistration: () => void;
+  credentialsAcknowledged: boolean;
+  setCredentialsAcknowledged: (ack: boolean) => void;
+  showCredentialsConfirm: boolean;
+  setShowCredentialsConfirm: (show: boolean) => void;
   setStep: (step: StepNumber) => void;
   updateFormData: (fields: Partial<RegistrationFormData>) => void;
   toggleExpertise: (item: string) => void;
@@ -131,6 +136,8 @@ export function RegistrationProvider({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [specimenCredentials, setSpecimenCredentials] =
     useState<SpecimenCredentials | null>(null);
+  const [credentialsAcknowledged, setCredentialsAcknowledged] = useState(false);
+  const [showCredentialsConfirm, setShowCredentialsConfirm] = useState(false);
 
   const { showToast } = useToast();
 
@@ -177,11 +184,23 @@ export function RegistrationProvider({
     setPhoneError(null);
     setFieldErrors(null);
     setDuplicateClashLead(null);
+    setCredentialsAcknowledged(false);
+    setShowCredentialsConfirm(false);
   }, []);
 
   const closeRegistration = useCallback(() => {
     setIsOpen(false);
+    setShowCredentialsConfirm(false);
   }, []);
+
+  const safeCloseRegistration = useCallback(() => {
+    if (step === "success" && !credentialsAcknowledged) {
+      setShowCredentialsConfirm(true);
+    } else {
+      setIsOpen(false);
+      setShowCredentialsConfirm(false);
+    }
+  }, [step, credentialsAcknowledged]);
 
   const updateFormData = useCallback(
     (fields: Partial<RegistrationFormData>) => {
@@ -529,6 +548,11 @@ export function RegistrationProvider({
         specimenCredentials,
         openRegistration,
         closeRegistration,
+        safeCloseRegistration,
+        credentialsAcknowledged,
+        setCredentialsAcknowledged,
+        showCredentialsConfirm,
+        setShowCredentialsConfirm,
         setStep,
         updateFormData,
         toggleExpertise,

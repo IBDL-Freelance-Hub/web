@@ -22,6 +22,7 @@ import {
   MessageSquare,
   X,
 } from "lucide-react";
+import { SecureLogoutButton } from "@/components/dashboard/SecureLogoutButton";
 import type { MemberDto, MembershipDto } from "@/types/api";
 
 interface MemberSidebarProps {
@@ -259,7 +260,7 @@ export function MemberSidebar({
     >
       {/* Top Header with Logo */}
       <div>
-        <div className="flex h-16 items-center justify-between border-b border-white/5 px-6">
+        <div className="flex h-16 items-center justify-between border-b border-white/5 px-4 sm:px-6">
           <Link
             href="/overview"
             className="inline-flex items-center gap-2 rounded-lg p-1 focus:ring-2 focus:ring-[#E11119] focus:outline-none"
@@ -268,10 +269,10 @@ export function MemberSidebar({
             <Image
               src="/Logos/FLH-white.png"
               alt="IBDL Freelancers Hub"
-              width={160}
-              height={32}
+              width={140}
+              height={28}
               priority
-              className="h-8 w-auto object-contain"
+              className="h-7 w-auto object-contain"
             />
           </Link>
           {isMobile && (
@@ -359,8 +360,8 @@ export function MemberSidebar({
         </nav>
       </div>
 
-      {/* Bottom Membership Summary Card */}
-      <div className="border-t border-white/5 bg-[#101124] p-4">
+      {/* Bottom Membership Summary Card & Mobile Logout */}
+      <div className="space-y-3 border-t border-white/5 bg-[#101124] p-4">
         <div className="rounded-xl border border-white/10 bg-[#191b35] p-3.5 shadow-xs">
           <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
             {isAr ? "عضويتك الحالية" : "YOUR MEMBERSHIP"}
@@ -393,6 +394,9 @@ export function MemberSidebar({
             </span>
           </div>
         </div>
+
+        {/* Mobile Sign Out Button */}
+        {isMobile && <SecureLogoutButton variant="full" />}
       </div>
     </aside>
   );

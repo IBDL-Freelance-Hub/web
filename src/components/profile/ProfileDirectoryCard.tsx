@@ -74,7 +74,7 @@ export function ProfileDirectoryCard({
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <p
                   className={`text-xs font-bold ${
                     meetsDirectoryRequirements
@@ -87,7 +87,7 @@ export function ProfileDirectoryCard({
                     : "Publish my profile in the IBDL Trainer Directory"}
                 </p>
                 {member.directoryOptIn && (
-                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                  <span className="inline-flex shrink-0 items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
                     {isAr ? "تم تسجيل رغبتك (نعم)" : "Opt-in saved (Yes)"}
                   </span>
                 )}
@@ -180,7 +180,7 @@ export function ProfileDirectoryCard({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-[11px] text-slate-500">
+      <div className="mt-4 flex flex-col gap-1.5 border-t border-slate-100 pt-3 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:gap-0 sm:border-t-0 sm:pt-0">
         <span>
           {isAr ? "مستوى اكتمال الملف:" : "Profile completion:"}{" "}
           <strong className="text-slate-900">{completionRate}%</strong>

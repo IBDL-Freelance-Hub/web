@@ -139,12 +139,12 @@ export function MemberDashboard({
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold tracking-wider text-amber-400 uppercase">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-[11px] font-semibold tracking-wider text-amber-400 uppercase sm:text-xs">
                   {isAr ? "مساحة عمل المدرب" : "Trainer Workspace"}
                 </span>
                 <span className="h-1 w-1 rounded-full bg-white/40" />
-                <span className="text-xs text-white/70">
+                <span className="text-[11px] font-medium text-white/70 sm:text-xs">
                   {getTierDisplay(membership?.tier)}
                 </span>
               </div>

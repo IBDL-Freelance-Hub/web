@@ -1,15 +1,33 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRegistration } from "./RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
-import { Check, ExternalLink, KeyRound, UserCheck } from "lucide-react";
+import {
+  Check,
+  ExternalLink,
+  KeyRound,
+  UserCheck,
+  Copy,
+  AlertTriangle,
+} from "lucide-react";
 
 export function RegistrationSuccess() {
   const { locale } = useLocale();
-  const { formData, specimenCredentials, closeRegistration } =
-    useRegistration();
+  const {
+    formData,
+    specimenCredentials,
+    closeRegistration,
+    credentialsAcknowledged,
+    setCredentialsAcknowledged,
+    showCredentialsConfirm,
+    setShowCredentialsConfirm,
+  } = useRegistration();
+
+  const [copiedUsername, setCopiedUsername] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
+  const [copiedAll, setCopiedAll] = useState(false);
 
   const firstName = useMemo(() => {
     return formData.fullName.trim().split(" ")[0] || "Freelancer";
@@ -20,6 +38,87 @@ export function RegistrationSuccess() {
   }, [specimenCredentials, firstName]);
 
   const passwordSpecimen = specimenCredentials?.password || "PQP-2026-DEMO";
+
+  const copyText = async (text: string): Promise<boolean> => {
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+      // fallback
+    }
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const res = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return res;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopyUsername = async () => {
+    const ok = await copyText(usernameSpecimen);
+    if (ok) {
+      setCopiedUsername(true);
+      setCredentialsAcknowledged(true);
+      setTimeout(() => setCopiedUsername(false), 2500);
+    }
+  };
+
+  const handleCopyPassword = async () => {
+    const ok = await copyText(passwordSpecimen);
+    if (ok) {
+      setCopiedPassword(true);
+      setCredentialsAcknowledged(true);
+      setTimeout(() => setCopiedPassword(false), 2500);
+    }
+  };
+
+  const handleCopyAll = async () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const text =
+      locale === "ar"
+        ? `بيانات الدخول لمنصة المستقلين IBDL Freelancers Hub:\nاسم المستخدم: ${usernameSpecimen}\nكلمة المرور: ${passwordSpecimen}\nرابط المنصة: ${origin}/login`
+        : `IBDL Freelancers Hub Credentials:\nUsername: ${usernameSpecimen}\nPassword: ${passwordSpecimen}\nLogin URL: ${origin}/login`;
+    const ok = await copyText(text);
+    if (ok) {
+      setCopiedAll(true);
+      setCredentialsAcknowledged(true);
+      setTimeout(() => setCopiedAll(false), 3000);
+    }
+  };
+
+  const handleProceedToWorkspace = (e: React.MouseEvent) => {
+    if (!credentialsAcknowledged) {
+      e.preventDefault();
+      setShowCredentialsConfirm(true);
+    } else {
+      closeRegistration();
+    }
+  };
+
+  const handleBackToWebsite = () => {
+    if (!credentialsAcknowledged) {
+      setShowCredentialsConfirm(true);
+    } else {
+      closeRegistration();
+    }
+  };
+
+  const handleCopyAndClose = async () => {
+    await handleCopyAll();
+    setCredentialsAcknowledged(true);
+    setTimeout(() => {
+      closeRegistration();
+    }, 450);
+  };
 
   const { currentDateFormatted, nextYearDateFormatted } = useMemo(() => {
     const now = new Date();
@@ -318,32 +417,132 @@ export function RegistrationSuccess() {
         </div>
 
         {/* The Unified Login Details (Only 1 Username & 1 Password) */}
-        <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {/* Single Unified Username */}
-          <div className="flex items-center justify-between rounded-xl border border-[#e2e2ec] bg-white p-3.5 shadow-2xs">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-[#e2e2ec] bg-white p-3.5 shadow-2xs">
             <span className="flex items-center gap-1.5 text-xs font-semibold text-[#6a6a86]">
-              <UserCheck className="h-4 w-4 text-[#419257]" />
-              <span>
-                {locale === "ar" ? "اسم المستخدم الموحد" : "ⓘ Username"}
+              <UserCheck className="h-4 w-4 shrink-0 text-[#419257]" />
+              <span>{locale === "ar" ? "اسم المستخدم" : "Username"}</span>
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="rounded-lg border border-[#e2e2ec] bg-[#f6f6fa] px-2.5 py-1 font-mono text-xs font-bold text-[#1d1d39]">
+                {usernameSpecimen}
               </span>
-            </span>
-            <span className="rounded-lg border border-[#e2e2ec] bg-[#f6f6fa] px-3 py-1 font-mono text-xs font-bold text-[#1d1d39]">
-              {usernameSpecimen}
-            </span>
+              <button
+                type="button"
+                onClick={handleCopyUsername}
+                title={locale === "ar" ? "نسخ اسم المستخدم" : "Copy username"}
+                aria-label={
+                  locale === "ar" ? "نسخ اسم المستخدم" : "Copy username"
+                }
+                className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-bold transition-all ${
+                  copiedUsername
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                    : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                }`}
+              >
+                {copiedUsername ? (
+                  <>
+                    <Check className="h-3 w-3 text-emerald-600" />
+                    <span>{locale === "ar" ? "تم" : "Copied"}</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3 w-3 text-slate-500" />
+                    <span>{locale === "ar" ? "نسخ" : "Copy"}</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Single Unified Password */}
-          <div className="flex items-center justify-between rounded-xl border border-[#e2e2ec] bg-white p-3.5 shadow-2xs">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-[#e2e2ec] bg-white p-3.5 shadow-2xs">
             <span className="flex items-center gap-1.5 text-xs font-semibold text-[#6a6a86]">
-              <KeyRound className="h-4 w-4 text-[#e11119]" />
-              <span>
-                {locale === "ar" ? "كلمة المرور الموحدة" : "ⓘ Password"}
+              <KeyRound className="h-4 w-4 shrink-0 text-[#e11119]" />
+              <span>{locale === "ar" ? "كلمة المرور" : "Password"}</span>
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="rounded-lg border border-[#e2e2ec] bg-[#f6f6fa] px-2.5 py-1 font-mono text-xs font-bold text-[#1d1d39]">
+                {passwordSpecimen}
               </span>
-            </span>
-            <span className="rounded-lg border border-[#e2e2ec] bg-[#f6f6fa] px-3 py-1 font-mono text-xs font-bold text-[#1d1d39]">
-              {passwordSpecimen}
-            </span>
+              <button
+                type="button"
+                onClick={handleCopyPassword}
+                title={locale === "ar" ? "نسخ كلمة المرور" : "Copy password"}
+                aria-label={
+                  locale === "ar" ? "نسخ كلمة المرور" : "Copy password"
+                }
+                className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-bold transition-all ${
+                  copiedPassword
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                    : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                }`}
+              >
+                {copiedPassword ? (
+                  <>
+                    <Check className="h-3 w-3 text-emerald-600" />
+                    <span>{locale === "ar" ? "تم" : "Copied"}</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3 w-3 text-slate-500" />
+                    <span>{locale === "ar" ? "نسخ" : "Copy"}</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
+        </div>
+
+        {/* Master Copy All Button */}
+        <div className="mb-4 space-y-2">
+          <button
+            type="button"
+            onClick={handleCopyAll}
+            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-bold transition-all ${
+              copiedAll
+                ? "border-emerald-500 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                : "border-emerald-600/30 bg-emerald-50/90 text-emerald-800 hover:bg-emerald-100"
+            }`}
+          >
+            {copiedAll ? (
+              <>
+                <Check className="h-4 w-4" />
+                <span>
+                  {locale === "ar"
+                    ? "✓ تم نسخ جميع بيانات الدخول بنجاح!"
+                    : "✓ All Credentials Copied to Clipboard!"}
+                </span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-4 w-4" />
+                <span>
+                  {locale === "ar"
+                    ? "نسخ جميع بيانات الدخول (اسم المستخدم وكلمة المرور)"
+                    : "Copy All Login Credentials (Username & Password)"}
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Confirmation Checkbox */}
+        <div className="mb-6">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-start transition-colors select-none hover:bg-amber-500/15">
+            <input
+              type="checkbox"
+              checked={credentialsAcknowledged}
+              onChange={(e) => setCredentialsAcknowledged(e.target.checked)}
+              className="mt-0.5 h-4 w-4 cursor-pointer rounded border-amber-400 text-[#e11119] focus:ring-[#e11119]"
+            />
+            <span className="text-xs font-semibold text-amber-950">
+              {locale === "ar"
+                ? "أؤكد أنني قمت بحفظ وتدوين اسم المستخدم وكلمة المرور للدخول للتقييمات لاحقاً."
+                : "I confirm that I have recorded and saved my username and password securely."}
+            </span>
+          </label>
         </div>
 
         {/* The 3 Direct Assessment Links */}
@@ -429,7 +628,7 @@ export function RegistrationSuccess() {
       <div className="space-y-3">
         <Link
           href="/login?activate=1"
-          onClick={closeRegistration}
+          onClick={handleProceedToWorkspace}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] py-4 text-center text-sm font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-[#b60d14]"
         >
           <span>
@@ -441,7 +640,7 @@ export function RegistrationSuccess() {
 
         <button
           type="button"
-          onClick={closeRegistration}
+          onClick={handleBackToWebsite}
           className="w-full cursor-pointer py-2.5 text-center text-xs font-bold text-[#6a6a86] transition-colors hover:text-[#16162c]"
         >
           {locale === "ar" ? "العودة للموقع" : "Back to the website"}
@@ -453,6 +652,100 @@ export function RegistrationSuccess() {
             : "Session demo mode · No actual email was dispatched."}
         </p>
       </div>
+
+      {/* 7. Safety Confirmation Guard Modal */}
+      {showCredentialsConfirm && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="animate-in fade-in fixed inset-0 z-[1100] flex items-center justify-center bg-[#0a0a18]/70 p-4 backdrop-blur-xs duration-200"
+        >
+          <div className="animate-in zoom-in-95 relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-start shadow-2xl duration-200">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-amber-500/15 text-amber-700">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  {locale === "ar"
+                    ? "تنبيه: هل حفظت بيانات الدخول؟"
+                    : "Wait! Did you save your credentials?"}
+                </h3>
+                <p className="text-[11px] font-medium text-slate-500">
+                  {locale === "ar"
+                    ? "تأكيد هام قبل مغادرة الصفحة"
+                    : "Important check before leaving"}
+                </p>
+              </div>
+            </div>
+
+            <p className="mb-4 text-xs leading-relaxed text-slate-600">
+              {locale === "ar"
+                ? "لن تتمكن من رؤية كلمة المرور هذه مرة أخرى بعد إغلاق هذه النافذة. يرجى التأكد من نسخها أولاً حتى تتمكن من بدء التقييمات لاحقاً."
+                : "You will not be able to view this password again after closing this window. Please copy or save it first so you can complete your assessments."}
+            </p>
+
+            {/* Quick credentials card */}
+            <div className="mb-4 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3.5 font-mono text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-sans text-[11px] text-slate-500">
+                  {locale === "ar" ? "اسم المستخدم:" : "Username:"}
+                </span>
+                <span className="font-bold text-slate-900">
+                  {usernameSpecimen}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-sans text-[11px] text-slate-500">
+                  {locale === "ar" ? "كلمة المرور:" : "Password:"}
+                </span>
+                <span className="font-bold text-[#e11119]">
+                  {passwordSpecimen}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handleCopyAndClose}
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#e11119] py-3 text-xs font-bold text-white shadow-md shadow-red-600/25 transition-all hover:bg-[#b60d14]"
+              >
+                <Copy className="h-4 w-4" />
+                <span>
+                  {locale === "ar"
+                    ? "نسخ البيانات كاملة وإغلاق النافذة"
+                    : "Copy Credentials & Close Window"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCredentialsAcknowledged(true);
+                  closeRegistration();
+                }}
+                className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white py-2.5 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                {locale === "ar"
+                  ? "نعم، قمت بحفظها بالفعل (إغلاق)"
+                  : "Yes, I've Already Saved Them (Close)"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowCredentialsConfirm(false)}
+                className="w-full cursor-pointer py-1.5 text-center text-xs font-medium text-slate-400 transition-colors hover:text-slate-600"
+              >
+                {locale === "ar"
+                  ? "الرجوع للبقاء في الصفحة"
+                  : "Cancel & Stay on Page"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
