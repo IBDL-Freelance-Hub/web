@@ -674,7 +674,12 @@ export function RegistrationModal() {
                           )}
                         >
                           {isSelected && <span>✓</span>}
-                          <span>{item}</span>
+                          <span>
+                            {locale === "ar" &&
+                            (item === "Others" || item === "Other")
+                              ? "أخرى"
+                              : item}
+                          </span>
                         </button>
                       );
                     })}
@@ -835,7 +840,12 @@ export function RegistrationModal() {
                           )}
                         >
                           {isSelected && <span>✓</span>}
-                          <span>{item}</span>
+                          <span>
+                            {locale === "ar" &&
+                            (item === "Others" || item === "Other")
+                              ? "أخرى"
+                              : item}
+                          </span>
                         </button>
                       );
                     })}

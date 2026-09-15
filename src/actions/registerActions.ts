@@ -102,6 +102,10 @@ export async function registerMemberAction(
     const schema = getRegisterMemberSchema(activeLocale);
     const validation = schema.safeParse(payload);
     if (!validation.success) {
+      console.error(
+        "[registerMemberAction Validation FAILED]:",
+        JSON.stringify(validation.error.issues, null, 2)
+      );
       const fieldErrors: Record<string, string[]> = {};
       validation.error.issues.forEach((err) => {
         const path = err.path.join(".");
@@ -120,11 +124,15 @@ export async function registerMemberAction(
       };
     }
 
+    console.log(
+      "[registerMemberAction] Submitting to backend /members/register..."
+    );
     const res = await api.post<{
       success: boolean;
       data: RegisterMemberResponseData;
       message?: string;
     }>("/members/register", validation.data);
+    console.log("[registerMemberAction SUCCESS]:", res.data?.member?.email);
 
     return {
       success: true,
@@ -136,6 +144,7 @@ export async function registerMemberAction(
           : "Registration successful"),
     };
   } catch (err: unknown) {
+    console.error("[registerMemberAction Backend FAILED]:", err);
     const errorObj = err as Error & {
       status?: number;
       fieldErrors?: Record<string, string[]>;

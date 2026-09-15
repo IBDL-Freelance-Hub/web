@@ -14,6 +14,7 @@ import {
 } from "@/actions/registerActions";
 import { RegisterMemberInput, RegistrationLocale } from "@/types/registration";
 import { getLocalizedErrorMessage } from "@/lib/validations/registrationErrors";
+import { normalizeLinkedInUrl } from "@/lib/validations/registration";
 
 export interface RegistrationFormData {
   // Step 1: Your Details
@@ -289,18 +290,7 @@ export function RegistrationProvider({
           getLocalizedErrorMessage("yearsOfExperience", "required", locale),
         ];
       }
-      if (formData.expertise.length === 0) {
-        isValid = false;
-        errors.areasOfExpertise = [
-          getLocalizedErrorMessage("areasOfExpertise", "required", locale),
-        ];
-      }
-      if (formData.industries.length === 0) {
-        isValid = false;
-        errors.industriesServed = [
-          getLocalizedErrorMessage("industriesServed", "required", locale),
-        ];
-      }
+      // Areas of expertise and industries served are optional in Step 2 per UI and backend schema
 
       if (!isValid) {
         setFieldErrors(errors);
@@ -395,7 +385,7 @@ export function RegistrationProvider({
         email: formData.email,
         mobile: formData.phone,
         country: formData.country,
-        linkedinUrl: formData.linkedInUrl || undefined,
+        linkedinUrl: normalizeLinkedInUrl(formData.linkedInUrl),
         yearsOfExperience: formData.yearsExperience,
         areasOfExpertise: formData.expertise,
         industriesServed: formData.industries,

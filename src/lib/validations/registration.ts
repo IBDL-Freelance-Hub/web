@@ -48,6 +48,18 @@ export const getCheckDuplicateSchema = (locale: Locale = "en") =>
     country: z.string().trim().optional().or(z.literal("")),
   });
 
+export const normalizeLinkedInUrl = (
+  val?: string | null
+): string | undefined => {
+  if (!val) return undefined;
+  const trimmed = val.trim();
+  if (!trimmed) return undefined;
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+};
+
 export const getRegisterMemberSchema = (locale: Locale = "en") =>
   z.object({
     fullName: z
@@ -78,6 +90,7 @@ export const getRegisterMemberSchema = (locale: Locale = "en") =>
       .trim()
       .optional()
       .or(z.literal(""))
+      .transform((val) => normalizeLinkedInUrl(val))
       .refine((val) => !val || z.string().url().safeParse(val).success, {
         message:
           locale === "ar"
@@ -89,12 +102,8 @@ export const getRegisterMemberSchema = (locale: Locale = "en") =>
       .trim()
       .min(1, getLocalizedErrorMessage("yearsOfExperience", "required", locale))
       .transform((val) => normalizeExperienceBand(val)),
-    areasOfExpertise: z
-      .array(z.string())
-      .min(1, getLocalizedErrorMessage("areasOfExpertise", "required", locale)),
-    industriesServed: z
-      .array(z.string())
-      .min(1, getLocalizedErrorMessage("industriesServed", "required", locale)),
+    areasOfExpertise: z.array(z.string()).default([]),
+    industriesServed: z.array(z.string()).default([]),
     bio: z.string().trim().optional().or(z.literal("")).nullable(),
     message: z.string().trim().optional().or(z.literal("")).nullable(),
     cvFileId: z.string().trim().optional().or(z.literal("")).nullable(),

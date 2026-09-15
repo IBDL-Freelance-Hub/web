@@ -11,6 +11,7 @@ export const EXPERTISE_OPTIONS = [
   "HR & Talent Management",
   "Finance for Non-Finance",
   "Customer Experience",
+  "Others",
 ];
 
 export const EXPERIENCE_BANDS = [
@@ -34,6 +35,7 @@ export const INDUSTRY_OPTIONS = [
   "Construction & Real Estate",
   "Hospitality & Tourism",
   "Logistics & Transport",
+  "Others",
 ];
 
 export const COUNTRIES = [
