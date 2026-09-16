@@ -65,6 +65,10 @@ export function PqpOfferContent() {
       en: "Zero financial commitment — complimentary upon registration",
       ar: "بدون أي التزام مالي — مجاني تماماً بمجرد التسجيل",
     },
+    {
+      en: "Instant report delivery",
+      ar: "استلام فوري للتقرير",
+    },
   ];
 
   return (
@@ -110,7 +114,7 @@ export function PqpOfferContent() {
             </ul>
 
             {/* Action CTA */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex sm:items-center">
               <button
                 type="button"
                 onClick={() => openRegistration()}
@@ -120,9 +124,6 @@ export function PqpOfferContent() {
                   ? "سجل الآن واحصل على تقييمك المجاني"
                   : "Register Now & Claim Free Assessment"}
               </button>
-              <span className="text-xs font-medium text-[#6b7280]">
-                {isArabic ? "استلام فوري للتقرير" : "Instant Report Delivery"}
-              </span>
             </div>
           </div>
 

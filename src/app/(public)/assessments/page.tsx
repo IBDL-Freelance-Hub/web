@@ -1,6 +1,5 @@
 import React from "react";
 import { PageHeader } from "@/components/public/catalog/PageHeader";
-import { BackHomeCard } from "@/components/public/catalog/BackHomeCard";
 import { CloseCtaSection } from "@/components/public/sections/CloseCtaSection";
 import { ASSESSMENT_TOOLS_DATA } from "@/data/catalogData";
 import { AssessmentsHeaderArea } from "@/components/public/catalog/AssessmentsHeaderArea";
@@ -33,12 +32,8 @@ export default function AssessmentsPage() {
       {/* 3. Full-width Closing CTA Band */}
       <CloseCtaSection />
 
-      {/* 4. Bottom Back Home Card */}
-      <section className="bg-white py-[60px]">
-        <div className="wrap mx-auto max-w-[1240px] px-7">
-          <BackHomeCard />
-        </div>
-      </section>
+      {/* 4. Bottom Empty Section */}
+      <section className="bg-white" />
     </main>
   );
 }
