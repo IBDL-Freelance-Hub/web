@@ -2,13 +2,19 @@ import "server-only";
 import { cookies } from "next/headers";
 
 export const SESSION_COOKIE_NAME = "flh_session";
+export const DEFAULT_SESSION_TIMEOUT_MINUTES = 30;
 
 export async function setSessionCookie(
   token: string,
-  sessionTimeoutMinutes: number = 1440
+  sessionTimeoutMinutes: number = DEFAULT_SESSION_TIMEOUT_MINUTES
 ): Promise<void> {
   const cookieStore = await cookies();
-  const maxAgeInSeconds = sessionTimeoutMinutes * 60;
+  // Fallback to 30 minutes if undefined or if old 1440 day-long default is provided
+  const effectiveMinutes =
+    sessionTimeoutMinutes && sessionTimeoutMinutes !== 1440
+      ? sessionTimeoutMinutes
+      : DEFAULT_SESSION_TIMEOUT_MINUTES;
+  const maxAgeInSeconds = effectiveMinutes * 60;
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
