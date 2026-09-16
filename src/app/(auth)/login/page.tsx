@@ -34,12 +34,11 @@ export default async function LoginPage() {
     <main className="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-2">
       {/* Left Column: Server-Rendered Dark Branding Panel (Desktop Only) */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-[#141428] bg-gradient-to-br from-[#141428] via-[#1d1d39] to-[#0d0d1c] px-8 pt-6 pb-8 text-white sm:px-12 sm:pt-8 lg:flex lg:px-16 lg:pt-8 lg:pb-12">
-        {/* Background Photo & Ambient Lighting matching Hero Section */}
+        {/* Background Photo & Ambient Lighting */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none">
           <div className="hero__photo opacity-75" aria-hidden="true" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#141428] via-[#141428]/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d1c] via-transparent to-[#141428]/50" />
-          <div className="orb orb--1 opacity-25" aria-hidden="true" />
         </div>
 
         {/* Top Header: Freelancers Hub White Logo */}

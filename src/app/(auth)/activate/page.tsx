@@ -39,7 +39,6 @@ export default async function ActivatePage() {
           <div className="hero__photo opacity-75" aria-hidden="true" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#141428] via-[#141428]/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d1c] via-transparent to-[#141428]/50" />
-          <div className="orb orb--1 opacity-25" aria-hidden="true" />
         </div>
 
         {/* Top Header: Freelancers Hub White Logo */}

@@ -18,17 +18,7 @@ export function HeroSection() {
       {/* 1. Animated Corporate Trainer Background Photo (opacity 0.85) */}
       <div className="hero__photo pointer-events-none" aria-hidden="true" />
 
-      {/* 2. Top-Right Red Ambient Light Glow Orb */}
-      <div
-        className="pointer-events-none absolute -top-32 -right-32 h-[550px] w-[550px] rounded-full bg-[radial-gradient(circle,rgba(225,17,25,0.35),transparent_70%)] blur-[90px]"
-        aria-hidden="true"
-      />
-
-      {/* 3. Ambient Orbs */}
-      <div
-        className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(225,17,25,0.15),transparent_60%)] blur-[100px]"
-        aria-hidden="true"
-      />
+      {/* 2. Ambient Green Orb */}
       <div
         className="pointer-events-none absolute -right-40 -bottom-40 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(65,146,87,0.12),transparent_60%)] blur-[100px]"
         aria-hidden="true"
