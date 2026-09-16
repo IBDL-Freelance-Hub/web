@@ -14,11 +14,11 @@ export function HeroCTAButtons() {
 
   return (
     <div className="hero__anim-4 mb-16 flex flex-wrap items-center gap-4">
-      {/* Primary Action (Clean Pill Button) */}
+      {/* Primary Action (Pill Button with red outer shadow) */}
       <button
         type="button"
         onClick={openRegistration}
-        className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[#e11119] px-8 py-4 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:bg-[#b60d14] hover:shadow-md active:scale-95 sm:text-base"
+        className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[#e11119] px-8 py-4 text-sm font-bold text-white shadow-[0_12px_32px_rgba(225,17,25,0.55)] transition-all duration-300 hover:scale-[1.02] hover:bg-[#b60d14] hover:shadow-[0_16px_40px_rgba(225,17,25,0.7)] active:scale-95 sm:text-base"
       >
         <span>
           {isArabic ? "احصل على التقييم المجاني" : "Get Your Free Assessment"}

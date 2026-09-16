@@ -123,11 +123,11 @@ export function Navbar() {
             {locale === "ar" ? "تسجيل الدخول" : "Sign in"}
           </Link>
 
-          {/* Join the Hub CTA */}
+          {/* Join the Hub CTA with red outer glow */}
           <button
             type="button"
             onClick={openRegistration}
-            className="bg-brand-secondary cursor-pointer rounded-full px-6 py-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-red-600 hover:shadow active:scale-95"
+            className="bg-brand-secondary cursor-pointer rounded-full px-6 py-2 text-xs font-bold text-white shadow-[0_0_20px_rgba(225,17,25,0.6)] transition-all hover:bg-red-600 hover:shadow-[0_0_25px_rgba(225,17,25,0.85)] active:scale-95"
           >
             {locale === "ar" ? "انضم إلى المنصة" : "Join the Hub"}
           </button>
@@ -194,7 +194,7 @@ export function Navbar() {
                   setMobileMenuOpen(false);
                   openRegistration();
                 }}
-                className="bg-brand-secondary w-1/2 rounded-full px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-red-600"
+                className="bg-brand-secondary w-1/2 rounded-full px-4 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(225,17,25,0.6)] hover:bg-red-600"
               >
                 {locale === "ar" ? "انضم إلى المنصة" : "Join the Hub"}
               </button>

@@ -221,7 +221,7 @@ function LoginFormContent() {
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] py-4 text-sm font-bold text-white shadow-sm transition-all duration-300 hover:scale-[1.01] hover:bg-[#b60d14] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] py-4 text-sm font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.35)] transition-all duration-300 hover:scale-[1.01] hover:bg-[#b60d14] hover:shadow-[0_16px_38px_rgba(225,17,25,0.45)] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isLoading ? (
               <>
