@@ -21,6 +21,9 @@ export function WhyStatTile({
   const isLeftCol = index % 2 === 0;
   const isTopRow = index < 2;
 
+  // Stagger start delay slightly by tile index: 150ms, 250ms, 350ms, 450ms
+  const staggerDelay = 150 + index * 100;
+
   return (
     <div
       className={`flex flex-col justify-center p-8 text-start transition-colors duration-300 hover:bg-white/[0.04] sm:p-10 ${
@@ -28,7 +31,12 @@ export function WhyStatTile({
       } ${isTopRow ? "border-b border-white/10" : ""}`}
     >
       <span className="mb-1.5 font-mono text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-        <AnimatedStatNumber value={tile.number} isInView={isInView} />
+        <AnimatedStatNumber
+          value={tile.number}
+          isInView={isInView}
+          delay={staggerDelay}
+          duration={1600}
+        />
       </span>
       <span className="text-xs leading-snug font-medium text-white/60 sm:text-[13px]">
         {isArabic ? tile.labelAr : tile.labelEn}
