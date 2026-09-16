@@ -48,7 +48,7 @@ export function FloatingCTA() {
             ? "احصل على التقييم المجاني — إتاحة محدودة"
             : "Get Your Free Assessment — Limited Phase 1 access"
         }
-        className="group relative inline-flex items-center gap-3.5 rounded-full bg-[#419257] px-5 py-2.5 text-white shadow-[0_10px_30px_rgba(65,146,87,0.45)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#347746] hover:shadow-[0_14px_36px_rgba(65,146,87,0.6)] active:scale-[0.98]"
+        className="group relative inline-flex items-center gap-3.5 rounded-full bg-[#e11119] px-5 py-2.5 text-white shadow-[0_10px_30px_rgba(225,17,25,0.45)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#c90d14] hover:shadow-[0_14px_36px_rgba(225,17,25,0.6)] active:scale-[0.98]"
       >
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/30 bg-white/20 shadow-inner">
           <Sparkles

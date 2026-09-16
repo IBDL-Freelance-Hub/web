@@ -4,7 +4,7 @@ import React from "react";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { ServiceItem } from "@/data/servicesData";
 import { ServiceCardNumber } from "./ServiceCardNumber";
-import { Info } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ServiceCardProps {
@@ -20,7 +20,7 @@ export function ServiceCard({
   isInView = true,
   onSelect,
 }: ServiceCardProps) {
-  const { locale } = useLocale();
+  const { locale, isRTL } = useLocale();
   const delayMs = 200 + Math.min(index * 50, 300);
 
   return (
@@ -28,7 +28,7 @@ export function ServiceCard({
       onClick={() => onSelect?.(item)}
       style={{ transitionDelay: `${delayMs}ms` }}
       className={cn(
-        "svcard group relative flex min-h-[220px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] border border-white/[0.11] bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-7 transition-all duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:border-white/25 hover:bg-white/[0.09] hover:shadow-[0_12px_32px_rgba(0,0,0,0.3)]",
+        "svcard group relative flex min-h-[250px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] border border-white/[0.11] bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-7 transition-all duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:border-white/25 hover:bg-white/[0.09] hover:shadow-[0_12px_32px_rgba(0,0,0,0.3)]",
         "transition-all duration-[1000ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transform-none motion-reduce:opacity-100 motion-reduce:filter-none",
         isInView
           ? "translate-y-0 opacity-100 filter-none"
@@ -41,11 +41,6 @@ export function ServiceCard({
         aria-hidden="true"
       />
 
-      {/* Info Icon Badge */}
-      <div className="absolute end-5 top-5 grid h-7 w-7 place-items-center rounded-full border border-white/10 bg-white/5 text-white/50 transition-all duration-300 group-hover:border-white/30 group-hover:bg-[#419257]/20 group-hover:text-[#419257]">
-        <Info className="h-3.5 w-3.5" />
-      </div>
-
       <div>
         <ServiceCardNumber value={item.num} isInView={isInView} />
 
@@ -56,6 +51,16 @@ export function ServiceCard({
         <p className="svcard__d m-0 text-[14.8px] leading-[1.62] text-white/70">
           {locale === "ar" ? item.descAr : item.descEn}
         </p>
+      </div>
+
+      {/* View details link with hover animation */}
+      <div className="group-hover:text-green-lit mt-6 inline-flex items-center gap-[9px] text-[14px] font-bold text-white transition-all duration-300 group-hover:gap-[14px]">
+        <span>{locale === "ar" ? "عرض التفاصيل" : "View details"}</span>
+        {isRTL ? (
+          <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+        ) : (
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        )}
       </div>
     </div>
   );
