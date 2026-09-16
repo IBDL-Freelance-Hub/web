@@ -149,6 +149,60 @@
   animation: animFromRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Custom Keyframes & Motion Standardization */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes stepEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-shake {
+  will-change: transform;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.animate-soft-pulse {
+  will-change: transform, opacity;
+  animation: softPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-step-enter {
+  will-change: transform, opacity;
+  animation: stepEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero__photo {
     animation: none;
@@ -162,10 +216,13 @@
   .hero__anim-5,
   .anim-from-top,
   .anim-from-left,
-  .anim-from-right {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .anim-from-right,
+  .animate-shake,
+  .animate-soft-pulse,
+  .animate-step-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 

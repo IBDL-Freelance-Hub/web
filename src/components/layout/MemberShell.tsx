@@ -30,12 +30,12 @@ export function MemberShell({
         <div className="fixed inset-0 z-50 flex lg:hidden">
           {/* Backdrop overlay */}
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            className="animate-in fade-in fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300 motion-reduce:animate-none"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
           {/* Drawer Sidebar */}
-          <div className="relative z-10 flex h-full w-72 max-w-[85vw] flex-col shadow-2xl">
+          <div className="animate-in slide-in-from-start-full relative z-10 flex h-full w-72 max-w-[85vw] flex-col shadow-2xl duration-300 ease-out motion-reduce:animate-none">
             <MemberSidebar
               member={member}
               membership={membership}

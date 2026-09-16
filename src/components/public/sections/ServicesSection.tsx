@@ -10,7 +10,9 @@ import { ServiceModal } from "./services/ServiceModal";
 
 export function ServicesSection() {
   const [isInView, setIsInView] = useState(false);
-  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(
+    null
+  );
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

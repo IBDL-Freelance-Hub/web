@@ -221,7 +221,11 @@ export function ActiveSessionsCard({
           sessions.map((session) => (
             <div
               key={session.id}
-              className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
+              className={`flex flex-col gap-3 py-4 transition-all duration-300 ease-out sm:flex-row sm:items-center sm:justify-between ${
+                revokingId === session.id
+                  ? "pointer-events-none scale-[0.99] opacity-40 motion-reduce:scale-100"
+                  : "scale-100 opacity-100"
+              }`}
             >
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-100 bg-slate-50">

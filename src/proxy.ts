@@ -7,7 +7,7 @@ const PROTECTED_ROUTES = ["/overview", "/profile", "/dashboard", "/settings"];
 // to reset passwords across sessions/devices without being redirected away.
 const PUBLIC_AUTH_ROUTES = ["/login", "/activate"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const sessionToken = request.cookies.get("flh_session")?.value;
   const { pathname } = request.nextUrl;
 

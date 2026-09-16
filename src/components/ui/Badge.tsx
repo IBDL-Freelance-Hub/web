@@ -57,7 +57,12 @@ export function Badge({
     >
       {dot && (
         <span
-          className={cn("h-1.5 w-1.5 shrink-0 rounded-full", styles.dot)}
+          className={cn(
+            "h-1.5 w-1.5 shrink-0 rounded-full",
+            styles.dot,
+            (variant === "success" || variant === "warning") &&
+              "animate-soft-pulse motion-reduce:animate-none"
+          )}
           aria-hidden="true"
         />
       )}

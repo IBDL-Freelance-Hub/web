@@ -53,7 +53,12 @@ export function StatusPill({
       {...props}
     >
       <span
-        className={cn("h-1.5 w-1.5 shrink-0 rounded-full", selectedTone.dot)}
+        className={cn(
+          "h-1.5 w-1.5 shrink-0 rounded-full",
+          selectedTone.dot,
+          (tone === "ok" || tone === "wait") &&
+            "animate-soft-pulse motion-reduce:animate-none"
+        )}
         aria-hidden="true"
       />
       <span>{children}</span>

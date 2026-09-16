@@ -19,6 +19,7 @@ import {
   EyeOff,
   RefreshCw,
 } from "lucide-react";
+import { RequiredIndicator } from "@/components/ui/RequiredIndicator";
 
 interface ResetPasswordFormProps {
   token?: string;
@@ -240,7 +241,8 @@ export function ResetPasswordForm({
                   htmlFor="reset-password"
                   className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
                 >
-                  {AUTH_STRINGS.resetPassword.newPasswordLabel[locale]} *
+                  {AUTH_STRINGS.resetPassword.newPasswordLabel[locale]}
+                  <RequiredIndicator />
                 </label>
                 <div className="relative">
                   <input
@@ -283,7 +285,8 @@ export function ResetPasswordForm({
                   htmlFor="reset-confirm-password"
                   className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
                 >
-                  {AUTH_STRINGS.resetPassword.confirmPasswordLabel[locale]} *
+                  {AUTH_STRINGS.resetPassword.confirmPasswordLabel[locale]}
+                  <RequiredIndicator />
                 </label>
                 <div className="relative">
                   <input

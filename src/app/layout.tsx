@@ -11,6 +11,11 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "http://localhost:3000"
+  ),
   title: "IBDL L&D Freelancer Hub — By IBDL Learning Group",
   description:
     "Official workspace and portal for accredited trainers and operations.",

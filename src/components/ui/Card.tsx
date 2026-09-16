@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
+  interactive?: boolean;
 }
 
 export function Card({
   as: Component = "div",
+  interactive = false,
   className,
   children,
   ...props
@@ -14,7 +16,9 @@ export function Card({
   return (
     <Component
       className={cn(
-        "rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8",
+        "rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-200 ease-out sm:p-8",
+        interactive &&
+          "cursor-pointer hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:transform-none",
         className
       )}
       {...props}
