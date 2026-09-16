@@ -32,8 +32,8 @@ export default function GamesCataloguePage() {
       {/* 3. Full-width Closing CTA Band Section */}
       <CloseCtaSection />
 
-      {/* 4. Bottom Empty Section */}
-      <section className="bg-white" />
+      {/* 4. White space between CTA section and Footer */}
+      <div className="bg-white py-12 md:py-16" aria-hidden="true" />
     </main>
   );
 }
