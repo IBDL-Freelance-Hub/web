@@ -61,30 +61,43 @@ export class ApiClient {
 
     const requestHeaders = await this.buildHeaders(customHeaders);
 
-    const response = await (
-      globalThis as unknown as {
-        fetch: (
-          url: string,
-          init?: unknown
-        ) => Promise<{
-          ok: boolean;
-          status: number;
-          json: () => Promise<unknown>;
-        }>;
-      }
-    ).fetch(url, {
-      method,
-      headers: requestHeaders,
-      body,
-    });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method,
+        headers: requestHeaders,
+        body,
+      });
+    } catch (networkError: unknown) {
+      const err = networkError as Error & { code?: string };
+      const connectionError = new Error(
+        "Unable to connect to the server. Please check your network connection or try again later."
+      ) as Error & {
+        status: number;
+        code?: string;
+      };
+      connectionError.status = 503;
+      connectionError.code = err?.code || "NETWORK_ERROR";
+      throw connectionError;
+    }
 
-    const data = (await response.json()) as {
+    const rawText = await response.text();
+    let data: {
       message?: string;
       error?: string;
       title?: string;
       code?: string;
       fieldErrors?: Record<string, string[]>;
-    };
+    } | null = null;
+
+    if (rawText && rawText.trim().length > 0) {
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        // Non-JSON response (e.g. HTML error page or plain text from Vercel / reverse proxy)
+        data = null;
+      }
+    }
 
     if (!response.ok) {
       const rawError = data?.message || data?.error;
@@ -94,7 +107,9 @@ export class ApiClient {
           : typeof (rawError as unknown as { message?: string })?.message ===
               "string"
             ? (rawError as unknown as { message: string }).message
-            : `HTTP ${response.status} error`;
+            : response.status >= 500
+              ? "The server encountered an error and could not complete your request. Please try again later."
+              : `HTTP ${response.status} error`;
       const error = new Error(errorMessage) as Error & {
         status: number;
         title?: string;
@@ -108,7 +123,11 @@ export class ApiClient {
       throw error;
     }
 
-    return data as T;
+    if (data === null && rawText.trim().length > 0) {
+      throw new Error("Invalid response received from server.");
+    }
+
+    return (data ?? {}) as T;
   }
 
   get<T>(endpoint: string, options?: FetchOptions): Promise<T> {

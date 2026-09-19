@@ -95,8 +95,16 @@ export async function loginAction(
       title?: string;
       code?: string;
       fieldErrors?: Record<string, string[]>;
+      status?: number;
     };
-    const message = errorObj?.message || GENERIC_AUTH_FAILURE_MESSAGE;
+    let message = errorObj?.message || GENERIC_AUTH_FAILURE_MESSAGE;
+    if (
+      message.includes("is not valid JSON") ||
+      message.includes("Unexpected token")
+    ) {
+      message =
+        "The server is temporarily unavailable. Please try again later.";
+    }
     return {
       success: false,
       error: message,
