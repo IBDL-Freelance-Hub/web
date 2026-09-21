@@ -39,6 +39,7 @@ export function DashboardHeader({
 
   const firstName = getFirstName();
   const initials = getInitials(member.fullNameEn);
+  const [imageError, setImageError] = React.useState(false);
 
   return (
     <section
@@ -59,13 +60,14 @@ export function DashboardHeader({
         <div className="flex items-center gap-4 sm:gap-5">
           {/* Avatar */}
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#222442] text-xl font-bold shadow-inner">
-            {member.photoFileId ? (
+            {member.photoFileId && !imageError ? (
               <Image
                 src={`/api/v1/files/${member.photoFileId}`}
                 alt={member.fullNameEn}
                 width={64}
                 height={64}
                 unoptimized
+                onError={() => setImageError(true)}
                 className="h-full w-full object-cover"
               />
             ) : (

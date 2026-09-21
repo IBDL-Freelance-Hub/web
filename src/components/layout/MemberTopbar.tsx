@@ -94,6 +94,7 @@ export function MemberTopbar({ member, onOpenMobileMenu }: MemberTopbarProps) {
 
   const breadcrumb = getBreadcrumb();
   const initials = getInitials(member?.fullNameEn);
+  const [imageError, setImageError] = useState(false);
   const displayName =
     isAr && member?.fullNameAr
       ? member.fullNameAr
@@ -151,13 +152,14 @@ export function MemberTopbar({ member, onOpenMobileMenu }: MemberTopbarProps) {
             className="flex cursor-pointer items-center gap-1.5 rounded-xl p-0.5 transition-all hover:ring-2 hover:ring-slate-200 focus:ring-2 focus:ring-slate-400 focus:outline-none"
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#141428] text-xs font-bold text-white shadow-xs sm:h-9 sm:w-9">
-              {member?.photoFileId ? (
+              {member?.photoFileId && !imageError ? (
                 <Image
                   src={`/api/v1/files/${member.photoFileId}`}
                   alt={member?.fullNameEn || "Profile photo"}
                   width={36}
                   height={36}
                   unoptimized
+                  onError={() => setImageError(true)}
                   className="h-full w-full object-cover"
                 />
               ) : (
