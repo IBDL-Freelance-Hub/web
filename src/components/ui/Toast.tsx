@@ -127,3 +127,7 @@ export function useToast() {
   }
   return context;
 }
+
+export function useOptionalToast() {
+  return useContext(ToastContext);
+}

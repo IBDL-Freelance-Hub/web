@@ -157,6 +157,7 @@ export function MemberTopbar({ member, onOpenMobileMenu }: MemberTopbarProps) {
                   alt={member?.fullNameEn || "Profile photo"}
                   width={36}
                   height={36}
+                  unoptimized
                   className="h-full w-full object-cover"
                 />
               ) : (
