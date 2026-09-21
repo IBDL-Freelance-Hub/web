@@ -178,3 +178,42 @@ export async function updateMemberProfileAction(
     };
   }
 }
+
+/**
+ * Toggles member's directory publication status (Opt-In / Opt-Out).
+ * Issues PATCH /api/v1/members/profile with { directoryOptIn }.
+ */
+export async function toggleDirectoryPublicationAction(
+  directoryOptIn: boolean
+): Promise<ActionResponse<MemberProfileData>> {
+  try {
+    const res = await api.patch<{
+      success: boolean;
+      data: MemberProfileData;
+    }>("/members/profile", { directoryOptIn });
+
+    if (!res || !res.data) {
+      return {
+        success: false,
+        error: "Failed to update directory publication status.",
+      };
+    }
+
+    revalidatePath("/profile");
+    revalidatePath("/overview");
+
+    return {
+      success: true,
+      data: res.data,
+    };
+  } catch (error: unknown) {
+    const err = error as Error & { status?: number };
+    return {
+      success: false,
+      error:
+        err?.message ||
+        "The server is temporarily unavailable. Please try again later.",
+      status: err?.status,
+    };
+  }
+}

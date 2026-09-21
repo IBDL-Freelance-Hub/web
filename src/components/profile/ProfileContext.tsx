@@ -70,6 +70,7 @@ export interface ProfileContextValue {
   ) => void;
   cancelEdit: () => void;
   saveChanges: () => Promise<boolean>;
+  toggleDirectoryOptIn: () => Promise<boolean>;
 }
 
 export const ProfileContext = createContext<ProfileContextValue | undefined>(
@@ -342,6 +343,53 @@ export function ProfileProvider({
     });
   }, [formData, isAr, toast, onSave]);
 
+  const toggleDirectoryOptIn = useCallback(async (): Promise<boolean> => {
+    const nextVal = !Boolean(currentMember.directoryOptIn);
+    return new Promise((resolve) => {
+      startTransition(async () => {
+        const { toggleDirectoryPublicationAction } =
+          await import("@/actions/memberActions");
+        const res = await toggleDirectoryPublicationAction(nextVal);
+        if (res.success && res.data) {
+          setCurrentMember(res.data);
+          setFormData((prev) => ({
+            ...prev,
+            directoryOptIn: nextVal,
+          }));
+          toast?.showToast(
+            "success",
+            isAr
+              ? nextVal
+                ? "تم تفعيل نشر الملف الشخصي"
+                : "تم إلغاء نشر الملف الشخصي"
+              : nextVal
+                ? "Profile publication enabled"
+                : "Profile publication disabled",
+            isAr
+              ? nextVal
+                ? "تم حفظ رغبتك في النشر في دليل المدربين بنجاح."
+                : "تم إلغاء نشر ملفك من دليل المدربين بنجاح."
+              : nextVal
+                ? "Your profile publication status has been enabled."
+                : "Your profile is no longer published in the directory."
+          );
+          resolve(true);
+        } else {
+          const errorMessage = !res.success ? res.error : undefined;
+          toast?.showToast(
+            "error",
+            isAr ? "تعذر تغيير حالة النشر" : "Failed to update publication",
+            errorMessage ||
+              (isAr
+                ? "حدث خطأ أثناء تحديث حالة النشر. يرجى المحاولة مرة أخرى."
+                : "An error occurred while updating publication status.")
+          );
+          resolve(false);
+        }
+      });
+    });
+  }, [currentMember.directoryOptIn, isAr, toast]);
+
   const value: ProfileContextValue = {
     mode,
     formData,
@@ -363,6 +411,7 @@ export function ProfileProvider({
     removeTag,
     cancelEdit,
     saveChanges,
+    toggleDirectoryOptIn,
   };
 
   return (

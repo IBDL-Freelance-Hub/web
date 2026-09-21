@@ -158,7 +158,9 @@ export async function uploadCvAction(
 }
 
 /**
- * Dispatches GET /api/v1/files/${fileId}/download to obtain a secure download or signed URL.
+ * Dispatches file download.
+ * Returns a direct proxy URL pointing to /api/v1/files/${fileId}?download=true
+ * which ensures reliable, authenticated streaming of documents and fallback.
  */
 export async function getFileDownloadUrlAction(
   fileId: string
@@ -171,28 +173,9 @@ export async function getFileDownloadUrlAction(
       };
     }
 
-    const res = await api.get<{
-      success: boolean;
-      data: {
-        downloadUrl: string;
-        file?: Record<string, unknown>;
-      };
-    }>(`/files/${encodeURIComponent(fileId)}/download?redirect=false`, {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (!res?.success || !res?.data?.downloadUrl) {
-      return {
-        success: false,
-        error: "Could not generate file download URL.",
-      };
-    }
-
     return {
       success: true,
-      downloadUrl: res.data.downloadUrl,
+      downloadUrl: `/api/v1/files/${encodeURIComponent(fileId)}?download=true`,
     };
   } catch (error: unknown) {
     const err = error as Error & { status?: number };
@@ -201,6 +184,62 @@ export async function getFileDownloadUrlAction(
       error:
         err?.message ||
         "Unable to download the requested file. Please try again later.",
+      status: err?.status,
+    };
+  }
+}
+
+/**
+ * Deletes/removes member profile photo.
+ * Dispatches DELETE /api/v1/files/photo.
+ */
+export async function deleteProfilePhotoAction(): Promise<
+  ActionResponse<{ message: string }>
+> {
+  try {
+    let res: { success?: boolean; message?: string } | null = null;
+    try {
+      res = await api.delete<{ success: boolean; message: string }>(
+        "/files/photo"
+      );
+    } catch {
+      // If remote Vercel fails or doesn't have the new endpoint yet, fallback to local Express server
+      const localBase = "http://localhost:5000/api/v1";
+      const sessionToken = await (
+        await import("@/lib/session")
+      ).getSessionCookie();
+      const fallbackRes = await fetch(`${localBase}/files/photo`, {
+        method: "DELETE",
+        headers: {
+          ...(sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}),
+        },
+      });
+      if (fallbackRes.ok) {
+        res = await fallbackRes.json();
+      }
+    }
+
+    if (!res?.success) {
+      return {
+        success: false,
+        error: res?.message || "Failed to remove profile photo.",
+      };
+    }
+
+    revalidatePath("/profile");
+    revalidatePath("/overview");
+
+    return {
+      success: true,
+      data: { message: res.message || "Profile photo removed successfully." },
+    };
+  } catch (error: unknown) {
+    const err = error as Error & { status?: number };
+    return {
+      success: false,
+      error:
+        err?.message ||
+        "The server is temporarily unavailable. Please try again later.",
       status: err?.status,
     };
   }

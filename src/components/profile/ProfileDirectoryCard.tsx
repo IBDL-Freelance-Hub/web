@@ -136,6 +136,13 @@ export function ProfileDirectoryCard({
                     {isAr
                       ? "يتطلب النشر في دليل المدربين عضوية سارية واكتمال الملف الشخصي بنسبة ١٠٠٪."
                       : "Directory publication requires an active membership and 100% profile completion."}
+                    {directoryOptIn && (
+                      <span className="mt-0.5 block text-[11px] font-normal">
+                        {isAr
+                          ? "طلب النشر مفعّل ومحفوظ، وسيظهر ملفك في الدليل فور اكتمال المتطلبات."
+                          : " (Opt-in saved; profile will appear in directory once all criteria are met.)"}
+                      </span>
+                    )}
                   </p>
                 ) : (
                   <p className="text-[11px] leading-relaxed text-slate-600">
@@ -147,7 +154,7 @@ export function ProfileDirectoryCard({
               </div>
             </div>
 
-            {/* In Edit Mode: Toggle Switch; In View Mode: Opt-in Badge */}
+            {/* In Edit Mode: Toggle Switch; In View Mode: Toggle Button or Badge */}
             <div className="shrink-0 pt-0.5">
               {isEditing && profileCtx ? (
                 <label
@@ -162,13 +169,31 @@ export function ProfileDirectoryCard({
                     onChange={(e) =>
                       profileCtx.updateField("directoryOptIn", e.target.checked)
                     }
-                    disabled={!effectiveMeetsRequirements}
-                    className="h-4 w-4 cursor-pointer rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="h-4 w-4 cursor-pointer rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900"
                   />
                   <span className="text-[11px] text-slate-700">
-                    {isAr ? "طلب الاشتراك" : "Opt in"}
+                    {isAr ? "نشر في الدليل" : "Publish in directory"}
                   </span>
                 </label>
+              ) : profileCtx ? (
+                <button
+                  type="button"
+                  onClick={() => profileCtx.toggleDirectoryOptIn()}
+                  disabled={profileCtx.isPending}
+                  className={
+                    directoryOptIn
+                      ? "inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:ring-2 focus:ring-slate-400 focus:outline-hidden disabled:opacity-50"
+                      : "inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#e11119] px-2.5 py-1 text-[11px] font-semibold text-white shadow-xs transition hover:bg-[#c00e15] focus:ring-2 focus:ring-red-500 focus:outline-hidden disabled:opacity-50"
+                  }
+                >
+                  {directoryOptIn
+                    ? isAr
+                      ? "إلغاء النشر"
+                      : "Unpublish"
+                    : isAr
+                      ? "نشر الملف"
+                      : "Publish"}
+                </button>
               ) : directoryOptIn ? (
                 <span className="inline-flex shrink-0 items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
                   {isAr ? "تم تسجيل رغبتك (نعم)" : "Opt-in saved (Yes)"}
