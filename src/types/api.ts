@@ -1,3 +1,5 @@
+import type { MembershipStatus } from "./member";
+
 export type ActionResponse<T = unknown> =
   | { success: true; data: T; message?: string }
   | {
@@ -5,6 +7,7 @@ export type ActionResponse<T = unknown> =
       error: string;
       title?: string;
       code?: string;
+      status?: number;
       fieldErrors?: Record<string, string[]>;
     };
 
@@ -37,7 +40,7 @@ export interface MemberDto {
 
 export interface MembershipDto {
   tier: "ESSENTIAL" | "PROFESSIONAL" | "MASTER" | string;
-  status: "ACTIVE" | "EXPIRED" | "SUSPENDED" | string;
+  status: MembershipStatus | string;
   startDate: string;
   endDate: string;
 }

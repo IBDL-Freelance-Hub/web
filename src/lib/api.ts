@@ -25,7 +25,7 @@ export interface FetchOptions {
   params?: Record<string, string>;
   headers?: Record<string, string>;
   method?: string;
-  body?: string;
+  body?: BodyInit | null;
 }
 
 export class ApiClient {
@@ -60,6 +60,9 @@ export class ApiClient {
     }
 
     const requestHeaders = await this.buildHeaders(customHeaders);
+    if (body instanceof FormData) {
+      delete requestHeaders["Content-Type"];
+    }
 
     let response: Response;
     try {
@@ -146,10 +149,34 @@ export class ApiClient {
     });
   }
 
+  postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    options?: Omit<FetchOptions, "body" | "method">
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: "POST",
+      body: formData,
+    });
+  }
+
   put<T>(endpoint: string, body?: unknown, options?: FetchOptions): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  patch<T>(
+    endpoint: string,
+    body?: unknown,
+    options?: FetchOptions
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: "PATCH",
       body: body ? JSON.stringify(body) : undefined,
     });
   }
@@ -160,3 +187,4 @@ export class ApiClient {
 }
 
 export const api = new ApiClient();
+export const apiClient = api;
