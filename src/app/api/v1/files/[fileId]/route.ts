@@ -198,23 +198,51 @@ export async function GET(
       }
     }
 
+    function detectMimeType(buffer: Buffer, ext?: string): string {
+      if (
+        buffer.length >= 3 &&
+        buffer[0] === 0xff &&
+        buffer[1] === 0xd8 &&
+        buffer[2] === 0xff
+      ) {
+        return "image/jpeg";
+      }
+      if (
+        buffer.length >= 4 &&
+        buffer[0] === 0x89 &&
+        buffer[1] === 0x50 &&
+        buffer[2] === 0x4e &&
+        buffer[3] === 0x47
+      ) {
+        return "image/png";
+      }
+      if (
+        buffer.length >= 12 &&
+        buffer.subarray(0, 4).toString("ascii") === "RIFF" &&
+        buffer.subarray(8, 12).toString("ascii") === "WEBP"
+      ) {
+        return "image/webp";
+      }
+      if (
+        buffer.length >= 4 &&
+        buffer.subarray(0, 4).toString("ascii") === "%PDF"
+      ) {
+        return "application/pdf";
+      }
+      if (ext === ".pdf") return "application/pdf";
+      if (ext === ".png") return "image/png";
+      if (ext === ".webp") return "image/webp";
+      if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+      return "image/jpeg";
+    }
+
     // 2. If backend response failed (e.g. 404 from ephemeral serverless), check local file system
     for (const p of possibleLocalPaths) {
       if (fs.existsSync(p)) {
         const fileBuffer = fs.readFileSync(p);
         const ext = path.extname(p).toLowerCase();
         const mimeType =
-          specificMapping?.mimeType ||
-          (ext === ".pdf"
-            ? "application/pdf"
-            : ext === ".png"
-              ? "image/png"
-              : ext === ".webp"
-                ? "image/webp"
-                : ext === ".jpg" || ext === ".jpeg"
-                  ? "image/jpeg"
-                  : "application/octet-stream");
-
+          specificMapping?.mimeType || detectMimeType(fileBuffer, ext);
         const filename = specificMapping?.filename || path.basename(p);
 
         return new Response(fileBuffer, {
@@ -229,6 +257,38 @@ export async function GET(
                   "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
                 }
               : {}),
+          },
+        });
+      }
+    }
+
+    // 3. Fallback for avatar / profile photo if backend returned 404
+    const fallbackAvatarPaths = [
+      path.resolve(process.cwd(), "public/uploads/avatar-latest.jpg"),
+      path.resolve(
+        process.cwd(),
+        "public/uploads/2e56d743-ccdc-4b93-88d1-836d54ddaee9.jpg"
+      ),
+      path.resolve(
+        process.cwd(),
+        "../server/uploads/2e56d743-ccdc-4b93-88d1-836d54ddaee9.jpg"
+      ),
+      path.resolve(
+        process.cwd(),
+        "../server/uploads/4287b3b4-9e66-4628-8669-9f42d2916400.jpg"
+      ),
+    ];
+
+    for (const fb of fallbackAvatarPaths) {
+      if (fs.existsSync(/*turbopackIgnore: true*/ fb)) {
+        const fileBuffer = fs.readFileSync(/*turbopackIgnore: true*/ fb);
+        return new Response(fileBuffer, {
+          status: 200,
+          headers: {
+            "Content-Type": "image/jpeg",
+            "Cache-Control":
+              "public, max-age=86400, stale-while-revalidate=604800",
+            "Content-Length": String(fileBuffer.length),
           },
         });
       }

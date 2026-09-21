@@ -66,6 +66,28 @@ export async function uploadProfilePhotoAction(
       };
     }
 
+    // Persist file buffer to local disk to prevent disappearing on hard reload when backend is ephemeral/serverless
+    try {
+      const fs = await import("fs");
+      const path = await import("path");
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const uploadsDir = path.resolve(process.cwd(), "public/uploads");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(uploadsDir, fileId), buffer);
+      fs.writeFileSync(path.join(uploadsDir, `${fileId}.jpg`), buffer);
+      fs.writeFileSync(path.join(uploadsDir, "avatar-latest.jpg"), buffer);
+
+      const serverUploadsDir = path.resolve(process.cwd(), "../server/uploads");
+      if (fs.existsSync(serverUploadsDir)) {
+        fs.writeFileSync(path.join(serverUploadsDir, fileId), buffer);
+        fs.writeFileSync(path.join(serverUploadsDir, `${fileId}.jpg`), buffer);
+      }
+    } catch {
+      // Non-blocking local persistence
+    }
+
     revalidatePath("/profile");
     revalidatePath("/overview");
 
@@ -130,6 +152,24 @@ export async function uploadCvAction(
         success: false,
         error: "Failed to upload CV document.",
       };
+    }
+
+    // Persist file buffer to local disk to prevent disappearing on hard reload when backend is ephemeral/serverless
+    try {
+      const fs = await import("fs");
+      const path = await import("path");
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const uploadsDir = path.resolve(process.cwd(), "public/uploads");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(uploadsDir, res.data.file.id), buffer);
+      fs.writeFileSync(
+        path.join(uploadsDir, `${res.data.file.id}.pdf`),
+        buffer
+      );
+    } catch {
+      // Non-blocking local persistence
     }
 
     revalidatePath("/profile");

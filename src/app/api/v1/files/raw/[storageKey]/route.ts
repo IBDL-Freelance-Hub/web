@@ -21,8 +21,8 @@ export async function GET(
     ];
 
     for (const p of localPaths) {
-      if (fs.existsSync(p)) {
-        const fileBuffer = fs.readFileSync(p);
+      if (fs.existsSync(/*turbopackIgnore: true*/ p)) {
+        const fileBuffer = fs.readFileSync(/*turbopackIgnore: true*/ p);
         const ext = path.extname(p).toLowerCase();
         const mimeType =
           ext === ".pdf"
