@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -8,6 +9,8 @@ import {
   Calendar,
   Clock,
   XCircle,
+  ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import type { MembershipStatus, DashboardMembershipDto } from "@/types/member";
 import type { MembershipDto } from "@/types/api";
@@ -254,7 +257,18 @@ export function MembershipTierCard({
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end border-t border-slate-100 pt-4 text-xs text-slate-500">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-xs text-slate-500">
+        <Link
+          href="/membership"
+          className="inline-flex items-center gap-1 font-bold text-[#e11119] transition hover:underline"
+        >
+          <span>{isAr ? "عرض الباقات والترقية" : "View Plans & Upgrade"}</span>
+          {isAr ? (
+            <ArrowLeft className="h-3.5 w-3.5" />
+          ) : (
+            <ArrowRight className="h-3.5 w-3.5" />
+          )}
+        </Link>
         <span className="flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5 text-slate-400" />
           {isAr ? "التجديد السنوي تلقائي" : "Annual billing cycle"}

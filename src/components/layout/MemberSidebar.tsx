@@ -168,12 +168,7 @@ export function MemberSidebar({
           labelEn: "Membership",
           labelAr: "العضوية",
           icon: Crown,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
+          isLive: true,
         },
         {
           href: "/certificates",

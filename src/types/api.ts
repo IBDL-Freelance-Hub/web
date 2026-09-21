@@ -1,7 +1,7 @@
 import type { MembershipStatus } from "./member";
 
 export type ActionResponse<T = unknown> =
-  | { success: true; data: T; message?: string }
+  | { success: true; data: T; message?: string; status?: number }
   | {
       success: false;
       error: string;

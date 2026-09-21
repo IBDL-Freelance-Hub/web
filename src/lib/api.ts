@@ -118,11 +118,13 @@ export class ApiClient {
         title?: string;
         code?: string;
         fieldErrors?: Record<string, string[]>;
+        data?: unknown;
       };
       error.status = response.status;
       error.title = data?.title;
       error.code = data?.code;
       error.fieldErrors = data?.fieldErrors;
+      error.data = (data as unknown as { data?: unknown })?.data ?? data;
       throw error;
     }
 
