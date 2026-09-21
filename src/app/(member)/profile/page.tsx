@@ -1,6 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/auth";
+import { getMemberProfileData } from "@/actions/memberActions";
 import { calculateProfileCompletion } from "@/lib/profile-completion";
 import { ProfileView } from "@/components/profile/ProfileView";
 import type { Metadata } from "next";
@@ -12,13 +13,21 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfilePage() {
-  const data = await getCurrentMember();
+  const [data, profileRes] = await Promise.all([
+    getCurrentMember(),
+    getMemberProfileData(),
+  ]);
 
   if (!data || !data.member) {
     redirect("/login?callbackUrl=/profile");
   }
 
   const { user, member, membership } = data;
+
+  const cvFile =
+    profileRes?.success && profileRes.data?.files
+      ? profileRes.data.files.find((f) => f.category === "CV") || null
+      : null;
 
   // Unified 11-canonical-field Profile Completion Engine (PRO-13 & PRO-13d)
   const completionResult = calculateProfileCompletion({
@@ -32,8 +41,7 @@ export default async function ProfilePage() {
     industriesServed: member.industriesServed,
     languages: member.languages,
     bio: member.bioEn || member.bioAr,
-    // CV document on record
-    cvUrl: "cv-document-on-record",
+    cvUrl: cvFile ? cvFile.originalName : null,
   });
 
   return (
@@ -53,6 +61,7 @@ export default async function ProfilePage() {
         member={member}
         membership={membership}
         completionRate={completionResult.rate}
+        initialCvFile={cvFile}
       />
     </div>
   );
