@@ -51,7 +51,7 @@ export function DashboardHeader({
 
       {/* Ambient subtle glow background */}
       <div
-        className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl"
+        className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full bg-red-600/15 blur-3xl"
         aria-hidden="true"
       />
 
@@ -75,7 +75,7 @@ export function DashboardHeader({
 
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-[11px] font-semibold tracking-wider text-amber-400 uppercase sm:text-xs">
+              <span className="text-[11px] font-semibold tracking-wider text-[#e11119] uppercase sm:text-xs">
                 {isAr ? "مساحة عمل المدرب" : "Trainer Workspace"}
               </span>
               <span className="h-1 w-1 rounded-full bg-white/40" />
@@ -99,7 +99,7 @@ export function DashboardHeader({
         <div className="flex items-center gap-3">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-semibold text-[#141428] shadow-xs transition hover:bg-amber-400 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-[#141428] focus:outline-none"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#e11119] px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-red-600/25 transition hover:bg-[#b60d14] focus:ring-2 focus:ring-[#e11119] focus:ring-offset-2 focus:ring-offset-[#141428] focus:outline-none"
           >
             <span>{isAr ? "الملف الشخصي" : "View profile"}</span>
             <ArrowUpRight className="h-4 w-4" />
