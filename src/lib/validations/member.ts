@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { normalizeExperienceBand } from "./registration";
+import { EXPERIENCE_BANDS } from "@/constants/experience";
 
-export const experienceBands = ["<2", "2-5", "6-10", "11-15", ">15"] as const;
+export const experienceBands = EXPERIENCE_BANDS;
 
 export const normalizePhoneE164 = (phone: string): string => {
   return phone.replace(/[\s\-\(\)]/g, "");
