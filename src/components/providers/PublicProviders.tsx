@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { RegistrationProvider } from "@/components/public/registration/RegistrationProvider";
 import { RegistrationModal } from "@/components/public/registration/RegistrationModal";

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Inbox, Wrench, Award, Receipt } from "lucide-react";
 

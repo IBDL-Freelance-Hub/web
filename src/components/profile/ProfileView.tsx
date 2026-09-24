@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { getInitials } from "@/lib/utils";
 import { ProfileProvider } from "./ProfileContext";

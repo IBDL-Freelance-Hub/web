@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Activity, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import type { DashboardRecentActivityItem, ActivityTone } from "@/types/member";
