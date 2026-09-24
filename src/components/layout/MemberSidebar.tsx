@@ -5,50 +5,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/components/common/DirectionProvider";
-import {
-  LayoutDashboard,
-  Inbox,
-  Bell,
-  Store,
-  FileCheck2,
-  Award,
-  ShieldCheck,
-  User,
-  Crown,
-  FileBadge,
-  Receipt,
-  Shield,
-  Users,
-  MessageSquare,
-  X,
-} from "lucide-react";
+import { X } from "lucide-react";
 import { SecureLogoutButton } from "@/components/dashboard/SecureLogoutButton";
 import type { MemberDto, MembershipDto } from "@/types/api";
+import {
+  NAVIGATION_GROUPS,
+  type NavItemConfig,
+  type NavGroupConfig,
+} from "@/constants/navigation";
+
+export type { NavItemConfig, NavGroupConfig };
 
 interface MemberSidebarProps {
   member: MemberDto;
   membership: MembershipDto | null;
   onCloseMobile?: () => void;
   isMobile?: boolean;
-}
-
-interface NavItemConfig {
-  href: string;
-  labelEn: string;
-  labelAr: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isLive: boolean;
-  badge?: {
-    textEn: string;
-    textAr: string;
-    variant?: "comingSoon" | "count";
-  };
-}
-
-interface NavGroupConfig {
-  titleEn: string;
-  titleAr: string;
-  items: NavItemConfig[];
 }
 
 export function MemberSidebar({
@@ -59,181 +31,6 @@ export function MemberSidebar({
   const pathname = usePathname();
   const { locale } = useLocale();
   const isAr = locale === "ar";
-
-  const navigationGroups: NavGroupConfig[] = [
-    {
-      titleEn: "WORKSPACE",
-      titleAr: "مساحة العمل",
-      items: [
-        {
-          href: "/overview",
-          labelEn: "Dashboard",
-          labelAr: "لوحة التحكم",
-          icon: LayoutDashboard,
-          isLive: true,
-        },
-        {
-          href: "/requests",
-          labelEn: "Requests",
-          labelAr: "الطلبات",
-          icon: Inbox,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/notifications",
-          labelEn: "Notifications",
-          labelAr: "الإشعارات",
-          icon: Bell,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-      ],
-    },
-    {
-      titleEn: "MARKETPLACE & RECOGNITION",
-      titleAr: "السوق والاعتماد",
-      items: [
-        {
-          href: "/marketplace",
-          labelEn: "Marketplace",
-          labelAr: "سوق العمل",
-          icon: Store,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/assessments",
-          labelEn: "Assessments",
-          labelAr: "التقييمات",
-          icon: FileCheck2,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/certification",
-          labelEn: "Certification",
-          labelAr: "الشهادات المهنية",
-          icon: Award,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/accreditation",
-          labelEn: "Accreditation",
-          labelAr: "الاعتماد",
-          icon: ShieldCheck,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-      ],
-    },
-    {
-      titleEn: "ACCOUNT",
-      titleAr: "الحساب",
-      items: [
-        {
-          href: "/profile",
-          labelEn: "My Profile",
-          labelAr: "الملف الشخصي",
-          icon: User,
-          isLive: true,
-        },
-        {
-          href: "/membership",
-          labelEn: "Membership",
-          labelAr: "العضوية",
-          icon: Crown,
-          isLive: true,
-        },
-        {
-          href: "/certificates",
-          labelEn: "Certificates",
-          labelAr: "الشهادات",
-          icon: FileBadge,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/transactions",
-          labelEn: "Transactions",
-          labelAr: "المعاملات المالية",
-          icon: Receipt,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/settings/security",
-          labelEn: "Security & Sessions",
-          labelAr: "الأمان والجلسات",
-          icon: Shield,
-          isLive: true,
-        },
-      ],
-    },
-    {
-      titleEn: "COMMUNITY",
-      titleAr: "المجتمع",
-      items: [
-        {
-          href: "/directory",
-          labelEn: "Trainer Directory",
-          labelAr: "دليل المدربين",
-          icon: Users,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-        {
-          href: "/community",
-          labelEn: "Community",
-          labelAr: "مجتمع المدربين",
-          icon: MessageSquare,
-          isLive: false,
-          badge: {
-            textEn: "Coming soon",
-            textAr: "قريباً",
-            variant: "comingSoon",
-          },
-        },
-      ],
-    },
-  ];
 
   // Helper to format tier string
   const formatTier = (tier?: string) => {
@@ -284,7 +81,7 @@ export function MemberSidebar({
 
         {/* Scrollable Navigation Groups */}
         <nav className="max-h-[calc(100vh-12rem)] space-y-6 overflow-y-auto px-4 py-5">
-          {navigationGroups.map((group) => (
+          {NAVIGATION_GROUPS.map((group) => (
             <div key={group.titleEn}>
               <h2 className="px-3 text-[11px] font-bold tracking-wider text-slate-400/70 uppercase select-none">
                 {isAr ? group.titleAr : group.titleEn}

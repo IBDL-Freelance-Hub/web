@@ -3,19 +3,14 @@
 import React, { useRef, useState, useTransition } from "react";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { useOptionalToast } from "@/components/ui/Toast";
-import {
-  FileDown,
-  FileText,
-  UploadCloud,
-  Download,
-  RefreshCw,
-  Loader2,
-} from "lucide-react";
+import { FileDown } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { MemberDto } from "@/types/api";
 import type { MemberProfileFileDto } from "@/types/member";
 import { useOptionalProfileContext } from "./ProfileContext";
+import { DocumentFileCard } from "./documents/DocumentFileCard";
+import { DocumentUploadDropzone } from "./documents/DocumentUploadDropzone";
 
 export interface ProfileDocumentsCardProps {
   member?: MemberDto;
@@ -189,20 +184,6 @@ export function ProfileDocumentsCard({
     }
   };
 
-  const formatTimestamp = (dateStr?: string) => {
-    if (!dateStr) return "";
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString(isAr ? "ar-EG" : "en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
   return (
     <Card
       as="section"
@@ -237,135 +218,28 @@ export function ProfileDocumentsCard({
 
         {/* Existing CV View */}
         {cvFile && !showReplaceZone ? (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                  <FileText className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="truncate text-xs font-bold text-slate-900">
-                    {cvFile.originalName ||
-                      (member.fullNameEn
-                        ? `${member.fullNameEn.replace(/\s+/g, "-")}-CV.pdf`
-                        : "Curriculum-Vitae.pdf")}
-                  </h4>
-                  <p className="text-[11px] text-slate-500">
-                    {cvFile.createdAt
-                      ? isAr
-                        ? `تم الرفع في: ${formatTimestamp(cvFile.createdAt)}`
-                        : `Uploaded on: ${formatTimestamp(cvFile.createdAt)}`
-                      : isAr
-                        ? "تم إيداع السيرة الذاتية في المنصة"
-                        : "CV document on record"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
-                {/* Download Button */}
-                <button
-                  type="button"
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:ring-2 focus:ring-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-                  title={isAr ? "تنزيل السيرة الذاتية" : "Download CV"}
-                  aria-label={isAr ? "تنزيل السيرة الذاتية" : "Download CV"}
-                >
-                  {isDownloading ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
-                  ) : (
-                    <Download className="h-3.5 w-3.5" />
-                  )}
-                  <span>{isAr ? "تنزيل" : "Download"}</span>
-                </button>
-
-                {/* Replace CV Button */}
-                <button
-                  type="button"
-                  onClick={() => setShowReplaceZone(true)}
-                  disabled={isUploading}
-                  className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 focus:ring-2 focus:ring-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-                  title={isAr ? "استبدال السيرة الذاتية" : "Replace CV"}
-                  aria-label={isAr ? "استبدال السيرة الذاتية" : "Replace CV"}
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span>{isAr ? "استبدال" : "Replace"}</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          <DocumentFileCard
+            cvFile={cvFile}
+            fullNameEn={member.fullNameEn}
+            isAr={isAr}
+            isDownloading={isDownloading}
+            isUploading={isUploading}
+            onDownload={handleDownload}
+            onReplace={() => setShowReplaceZone(true)}
+          />
         ) : (
           /* Upload Zone (Empty state or replacing state) */
-          <div className="mt-4 space-y-3">
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => !isUploading && fileInputRef.current?.click()}
-              className={`relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center transition ${
-                isDragging
-                  ? "border-emerald-500 bg-emerald-50/60"
-                  : "border-slate-300 bg-slate-50/50 hover:border-slate-400 hover:bg-slate-50"
-              } ${isUploading ? "pointer-events-none opacity-60" : ""}`}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
-              aria-label={
-                isAr
-                  ? "منطقة رفع ملف السيرة الذاتية"
-                  : "CV upload dropzone area"
-              }
-            >
-              {isUploading ? (
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-8 w-8 animate-spin text-emerald-600 motion-reduce:animate-none" />
-                  <p className="text-xs font-medium text-slate-700">
-                    {isAr
-                      ? "جاري رفع ومعالجة السيرة الذاتية..."
-                      : "Uploading and validating CV document..."}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                    <UploadCloud className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs font-semibold text-slate-900">
-                    {isAr
-                      ? "اضغط لاختيار الملف أو اسحبه وأفلته هنا"
-                      : "Click to browse or drag and drop your CV here"}
-                  </p>
-                  <p className="mt-1 text-[11px] text-slate-500">
-                    {isAr
-                      ? "صيغ PDF أو DOCX حتى 10 ميجابايت"
-                      : "PDF or DOCX documents up to 10MB"}
-                  </p>
-                </>
-              )}
-            </div>
-
-            {/* Cancel replacement option if user had a CV already */}
-            {cvFile && showReplaceZone && (
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowReplaceZone(false)}
-                  disabled={isUploading}
-                  className="cursor-pointer text-xs text-slate-600 underline hover:text-slate-800"
-                >
-                  {isAr
-                    ? "إلغاء الاستبدال والاحتفاظ بالسيرة الحالية"
-                    : "Cancel and keep existing CV"}
-                </button>
-              </div>
-            )}
-          </div>
+          <DocumentUploadDropzone
+            isUploading={isUploading}
+            isDragging={isDragging}
+            showCancelReplace={Boolean(cvFile && showReplaceZone)}
+            isAr={isAr}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onBrowseClick={() => fileInputRef.current?.click()}
+            onCancelReplace={() => setShowReplaceZone(false)}
+          />
         )}
       </div>
 

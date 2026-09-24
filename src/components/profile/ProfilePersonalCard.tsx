@@ -6,6 +6,7 @@ import { User as UserIcon, Lock } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import type { MemberDto } from "@/types/api";
+import type { ProfileFormData } from "@/types/profile";
 import { useOptionalProfileContext } from "./ProfileContext";
 
 export interface ProfilePersonalCardProps {
@@ -43,12 +44,11 @@ export function ProfilePersonalCard({
     propIsEditing !== undefined ? propIsEditing : profileCtx?.mode === "edit";
 
   const fieldErrors = propFieldErrors || profileCtx?.fieldErrors || {};
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof ProfileFormData, value: string) => {
     if (propOnChange) {
       propOnChange(field, value);
     } else if (profileCtx) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      profileCtx.updateField(field as any, value);
+      profileCtx.updateField(field, value);
     }
   };
 
