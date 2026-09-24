@@ -5,29 +5,8 @@ import { useLocale } from "@/components/common/DirectionProvider";
 import { useRegistration } from "@/components/public/registration/RegistrationProvider";
 import { X, Download, FileText } from "lucide-react";
 
-export interface ProductData {
-  id: string;
-  slug: string;
-  title: string;
-  category: { en: string; ar: string };
-  tagline: { en: string; ar: string };
-  description: { en: string; ar: string };
-  about: { en: string; ar: string };
-  logoImg: string;
-  stats: {
-    stat1: { num: string; label: { en: string; ar: string } };
-    stat2: { num: string; label: { en: string; ar: string } };
-    stat3: { num: string; label: { en: string; ar: string } };
-  };
-  targetAudience: { en: string[]; ar: string[] };
-  useCases: { en: string[]; ar: string[] };
-  keyLearningAreas: { en: string[]; ar: string[] };
-  chips: { en: string[]; ar: string[] };
-  flyers: {
-    en: string;
-    ar: string;
-  };
-}
+import type { ProductData } from "@/types/catalog";
+export type { ProductData };
 
 interface ProductModalProps {
   product: ProductData | null;

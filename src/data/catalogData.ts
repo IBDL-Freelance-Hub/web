@@ -1,4 +1,4 @@
-import { ProductData } from "@/components/public/ProductModal";
+import type { ProductData } from "@/types/catalog";
 
 export const ASSESSMENT_TOOLS_DATA: ProductData[] = [
   {

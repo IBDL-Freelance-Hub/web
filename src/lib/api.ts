@@ -85,17 +85,20 @@ export class ApiClient {
     }
 
     const rawText = await response.text();
-    let data: {
-      message?: string;
+    interface ApiResponseBody {
+      message?: string | { message?: string };
       error?: string;
       title?: string;
       code?: string;
       fieldErrors?: Record<string, string[]>;
-    } | null = null;
+      data?: unknown;
+    }
+
+    let data: ApiResponseBody | null = null;
 
     if (rawText && rawText.trim().length > 0) {
       try {
-        data = JSON.parse(rawText);
+        data = JSON.parse(rawText) as ApiResponseBody;
       } catch {
         // Non-JSON response (e.g. HTML error page or plain text from Vercel / reverse proxy)
         data = null;
@@ -103,16 +106,24 @@ export class ApiClient {
     }
 
     if (!response.ok) {
-      const rawError = data?.message || data?.error;
-      const errorMessage =
-        typeof rawError === "string"
-          ? rawError
-          : typeof (rawError as unknown as { message?: string })?.message ===
-              "string"
-            ? (rawError as unknown as { message: string }).message
-            : response.status >= 500
-              ? "The server encountered an error and could not complete your request. Please try again later."
-              : `HTTP ${response.status} error`;
+      let errorMessage =
+        response.status >= 500
+          ? "The server encountered an error and could not complete your request. Please try again later."
+          : `HTTP ${response.status} error`;
+
+      if (typeof data?.message === "string") {
+        errorMessage = data.message;
+      } else if (
+        data?.message &&
+        typeof data.message === "object" &&
+        "message" in data.message &&
+        typeof data.message.message === "string"
+      ) {
+        errorMessage = data.message.message;
+      } else if (typeof data?.error === "string") {
+        errorMessage = data.error;
+      }
+
       const error = new Error(errorMessage) as Error & {
         status: number;
         title?: string;
@@ -124,7 +135,7 @@ export class ApiClient {
       error.title = data?.title;
       error.code = data?.code;
       error.fieldErrors = data?.fieldErrors;
-      error.data = (data as unknown as { data?: unknown })?.data ?? data;
+      error.data = data?.data ?? data;
       throw error;
     }
 
