@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,6 +18,11 @@ import {
 import { CustomSelect } from "./CustomSelect";
 import { cn } from "@/lib/utils";
 import { RequiredIndicator } from "@/components/ui/RequiredIndicator";
+import {
+  getLocalizedErrorMessage,
+  type Locale,
+} from "@/lib/validations/registrationErrors";
+import { scrollToAndFocusFirstError } from "@/lib/dom";
 
 interface RegistrationStep2PracticeProps {
   setShowTopErrorBanner: (show: boolean) => void;
@@ -27,9 +32,11 @@ export function RegistrationStep2Practice({
   setShowTopErrorBanner,
 }: RegistrationStep2PracticeProps) {
   const { locale } = useLocale();
-  const isAr = locale === "ar";
+  const currentLocale = (locale as Locale) || "en";
+  const isAr = currentLocale === "ar";
   const {
     formData,
+    fieldErrors,
     setStep,
     updateFormData,
     toggleExpertise,
@@ -43,28 +50,52 @@ export function RegistrationStep2Practice({
 
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
+  const yearsExperienceError =
+    fieldErrors?.yearsOfExperience?.[0] ||
+    (step2Attempted && !formData.yearsExperience
+      ? getLocalizedErrorMessage("yearsOfExperience", "required", currentLocale)
+      : null);
+
+  const cvFileError =
+    fieldErrors?.cvFile?.[0] ||
+    (step2Attempted && !formData.cvFileName
+      ? getLocalizedErrorMessage("cvFile", "required", currentLocale)
+      : null);
+
   const handleNextStep2 = (e: React.FormEvent) => {
     e.preventDefault();
     setStep2Attempted(true);
     setShowTopErrorBanner(false);
 
-    if (validateStep2(locale as "en" | "ar")) {
+    if (validateStep2(currentLocale)) {
       setStep(3);
     } else {
       setShowTopErrorBanner(true);
-      setTimeout(() => {
-        const firstErrorEl = document.querySelector(".border-\\[\\#e11119\\]");
-        if (firstErrorEl) {
-          firstErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }, 50);
+      const failedFieldIds: string[] = [];
+      if (!formData.yearsExperience) {
+        failedFieldIds.push("reg-years-experience");
+      }
+      if (!formData.cvFileName) {
+        failedFieldIds.push("reg-cv-upload");
+      }
+      scrollToAndFocusFirstError(failedFieldIds);
     }
   };
+
+  useEffect(() => {
+    if (fieldErrors) {
+      if (fieldErrors.yearsOfExperience) {
+        scrollToAndFocusFirstError(["reg-years-experience"]);
+      } else if (fieldErrors.cvFile) {
+        scrollToAndFocusFirstError(["reg-cv-upload"]);
+      }
+    }
+  }, [fieldErrors]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      updateFormData({ cvFileName: file.name });
+      updateFormData({ cvFileName: file.name, cvFile: file });
     }
   };
 
@@ -83,7 +114,8 @@ export function RegistrationStep2Practice({
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      updateFormData({ cvFileName: e.dataTransfer.files[0].name });
+      const file = e.dataTransfer.files[0];
+      updateFormData({ cvFileName: file.name, cvFile: file });
     }
   };
 
@@ -139,31 +171,42 @@ export function RegistrationStep2Practice({
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {/* Years of Experience Custom Dropdown */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+            <label
+              htmlFor="reg-years-experience"
+              className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+            >
               {isAr ? "سنوات الخبرة" : "Years of Experience"}
               <RequiredIndicator />
             </label>
             <CustomSelect
+              id="reg-years-experience"
               value={formData.yearsExperience}
               onChange={(val) => updateFormData({ yearsExperience: val })}
               options={EXPERIENCE_BANDS}
               placeholder={
                 isAr ? "اختر مستوى الخبرة" : "Select experience level"
               }
-              hasError={step2Attempted && !formData.yearsExperience}
+              hasError={Boolean(yearsExperienceError)}
+              ariaDescribedBy={
+                yearsExperienceError ? "reg-years-experience-error" : undefined
+              }
             />
-            {step2Attempted && !formData.yearsExperience && (
-              <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-                {isAr
-                  ? "اختر سنوات الخبرة"
-                  : "Please select your experience level"}
+            {yearsExperienceError && (
+              <p
+                id="reg-years-experience-error"
+                className="mt-1.5 text-xs font-medium text-[#e11119]"
+              >
+                {yearsExperienceError}
               </p>
             )}
           </div>
 
           {/* CV Upload (.cv) */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+            <label
+              htmlFor="reg-cv-upload"
+              className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+            >
               {isAr ? "رفع السيرة الذاتية" : "CV Upload"}
               <RequiredIndicator />
             </label>
@@ -176,7 +219,10 @@ export function RegistrationStep2Practice({
             />
 
             {formData.cvFileName ? (
-              <div className="cv has flex items-center justify-between rounded-2xl border border-[#419257]/40 bg-[#419257]/10 p-4 text-xs font-semibold text-[#16162c]">
+              <div
+                id="reg-cv-upload"
+                className="cv has flex items-center justify-between rounded-2xl border border-[#419257]/40 bg-[#419257]/10 p-4 text-xs font-semibold text-[#16162c]"
+              >
                 <div className="flex items-center gap-2.5 overflow-hidden">
                   <FileCheck className="h-5 w-5 shrink-0 text-[#419257]" />
                   <div className="truncate">
@@ -190,7 +236,12 @@ export function RegistrationStep2Practice({
                 </div>
                 <button
                   type="button"
-                  onClick={() => updateFormData({ cvFileName: "" })}
+                  onClick={() => {
+                    updateFormData({ cvFileName: "", cvFile: null });
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = "";
+                    }
+                  }}
                   className="p-1 text-[#6a6a86] transition-colors hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -198,18 +249,29 @@ export function RegistrationStep2Practice({
               </div>
             ) : (
               <div
+                id="reg-cv-upload"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }
+                }}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
+                data-invalid={Boolean(cvFileError)}
+                aria-describedby={cvFileError ? "reg-cv-error" : undefined}
                 className={cn(
-                  "cv flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed bg-[#f6f6fa] p-6 text-center transition-all",
+                  "cv flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed bg-[#f6f6fa] p-6 text-center transition-all outline-none",
                   dragActive
                     ? "border-[#419257] bg-[#419257]/10"
-                    : step2Attempted && !formData.cvFileName
-                      ? "border-[#e11119] bg-red-50/50"
-                      : "border-[#e2e2ec] hover:border-[#419257] hover:bg-[#419257]/5"
+                    : cvFileError
+                      ? "border-[#e11119] bg-red-50/50 ring-2 ring-red-500/20"
+                      : "border-[#e2e2ec] hover:border-[#419257] hover:bg-[#419257]/5 focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
                 )}
               >
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-[#419257] shadow-sm">
@@ -237,11 +299,12 @@ export function RegistrationStep2Practice({
                 </span>
               </div>
             )}
-            {step2Attempted && !formData.cvFileName && (
-              <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-                {isAr
-                  ? "يرجى إرفاق السيرة الذاتية للمتابعة."
-                  : "Please attach your CV to continue."}
+            {cvFileError && (
+              <p
+                id="reg-cv-error"
+                className="mt-1.5 text-xs font-medium text-[#e11119]"
+              >
+                {cvFileError}
               </p>
             )}
           </div>

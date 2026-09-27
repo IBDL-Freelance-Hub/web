@@ -70,6 +70,7 @@ export interface RegistrationFormData {
   expertise: string[];
   yearsExperience: string;
   cvFileName?: string;
+  cvFile?: File | null;
   industries: string[];
   biography?: string;
   message?: string;

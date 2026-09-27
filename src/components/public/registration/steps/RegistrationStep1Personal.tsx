@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useRegistration } from "../RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
@@ -8,6 +8,11 @@ import { COUNTRIES } from "@/data/registrationFormData";
 import { CustomSelect } from "./CustomSelect";
 import { cn } from "@/lib/utils";
 import { RequiredIndicator } from "@/components/ui/RequiredIndicator";
+import {
+  getLocalizedErrorMessage,
+  type Locale,
+} from "@/lib/validations/registrationErrors";
+import { scrollToAndFocusFirstError } from "@/lib/dom";
 
 interface RegistrationStep1PersonalProps {
   setShowTopErrorBanner: (show: boolean) => void;
@@ -17,7 +22,8 @@ export function RegistrationStep1Personal({
   setShowTopErrorBanner,
 }: RegistrationStep1PersonalProps) {
   const { locale } = useLocale();
-  const isAr = locale === "ar";
+  const currentLocale = (locale as Locale) || "en";
+  const isAr = currentLocale === "ar";
   const {
     formData,
     emailError,
@@ -35,28 +41,106 @@ export function RegistrationStep1Personal({
 
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
+  // Error state evaluations
+  const fullNameError =
+    fieldErrors?.fullName?.[0] ||
+    (step1Attempted &&
+      (!formData.fullName.trim()
+        ? getLocalizedErrorMessage("fullName", "required", currentLocale)
+        : formData.fullName.trim().length < 3
+          ? getLocalizedErrorMessage("fullName", "tooShort", currentLocale)
+          : null));
+
+  const emailTrim = formData.email.trim().toLowerCase();
+  const emailErrorMessage =
+    fieldErrors?.email?.[0] ||
+    emailError ||
+    (step1Attempted &&
+      (!emailTrim
+        ? getLocalizedErrorMessage("email", "required", currentLocale)
+        : !/\S+@\S+\.\S+/.test(emailTrim)
+          ? getLocalizedErrorMessage("email", "invalid", currentLocale)
+          : null));
+
+  const phoneTrim = formData.phone.trim();
+  const cleanPhone = phoneTrim.replace(/[\s\-\(\)\+]/g, "");
+  const mobileErrorMessage =
+    fieldErrors?.mobile?.[0] ||
+    phoneError ||
+    (step1Attempted &&
+      (!phoneTrim
+        ? getLocalizedErrorMessage("mobile", "required", currentLocale)
+        : !phoneTrim.startsWith("+")
+          ? getLocalizedErrorMessage(
+              "mobile",
+              "missingCountryCode",
+              currentLocale
+            )
+          : cleanPhone.length < 7
+            ? getLocalizedErrorMessage("mobile", "invalid", currentLocale)
+            : null));
+
+  const countryErrorMessage =
+    fieldErrors?.country?.[0] ||
+    (step1Attempted && !formData.country.trim()
+      ? getLocalizedErrorMessage("country", "required", currentLocale)
+      : null);
+
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
     setStep1Attempted(true);
     setShowTopErrorBanner(false);
 
-    if (validateStep1(locale as "en" | "ar")) {
+    if (validateStep1(currentLocale)) {
       startTransition(async () => {
-        const isClear = await checkDuplicate(locale as "en" | "ar");
+        const isClear = await checkDuplicate(currentLocale);
         if (isClear) {
           setStep(2);
         }
       });
     } else {
       setShowTopErrorBanner(true);
-      setTimeout(() => {
-        const firstErrorEl = document.querySelector(".border-\\[\\#e11119\\]");
-        if (firstErrorEl) {
-          firstErrorEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }, 50);
+      const failedFieldIds: string[] = [];
+      if (!formData.fullName.trim() || formData.fullName.trim().length < 3) {
+        failedFieldIds.push("reg-fullname");
+      }
+      if (!emailTrim || !/\S+@\S+\.\S+/.test(emailTrim)) {
+        failedFieldIds.push("reg-email");
+      }
+      if (!phoneTrim || !phoneTrim.startsWith("+") || cleanPhone.length < 7) {
+        failedFieldIds.push("reg-mobile");
+      }
+      if (!formData.country.trim()) {
+        failedFieldIds.push("reg-country-select");
+      }
+
+      scrollToAndFocusFirstError(failedFieldIds);
     }
   };
+
+  // Auto-scroll when fieldErrors are set externally (e.g. from server or duplicate check)
+  useEffect(() => {
+    if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+      const order = [
+        { key: "fullName", id: "reg-fullname" },
+        { key: "email", id: "reg-email" },
+        { key: "mobile", id: "reg-mobile" },
+        { key: "country", id: "reg-country-select" },
+      ];
+      const firstFailing = order.find((item) => fieldErrors[item.key]);
+      if (firstFailing) {
+        scrollToAndFocusFirstError([firstFailing.id]);
+      }
+    }
+  }, [fieldErrors]);
+
+  useEffect(() => {
+    if (phoneError) {
+      scrollToAndFocusFirstError(["reg-mobile"]);
+    } else if (emailError) {
+      scrollToAndFocusFirstError(["reg-email"]);
+    }
+  }, [phoneError, emailError]);
 
   return (
     <form onSubmit={handleNextStep1} noValidate className="animate-step-enter">
@@ -67,120 +151,120 @@ export function RegistrationStep1Personal({
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         {/* Full Name */}
         <div>
-          <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+          <label
+            htmlFor="reg-fullname"
+            className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+          >
             {isAr ? "الاسم الكامل" : "Full Name"}
             <RequiredIndicator />
           </label>
           <input
+            id="reg-fullname"
+            name="fullName"
             type="text"
             maxLength={100}
             value={formData.fullName}
             onChange={(e) => updateFormData({ fullName: e.target.value })}
             placeholder={isAr ? "اسمك الكامل" : "Your full name"}
+            aria-invalid={Boolean(fullNameError)}
+            aria-describedby={fullNameError ? "reg-fullname-error" : undefined}
             className={cn(
               "w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-[#16162c] transition-all outline-none placeholder:text-[#6a6a86]/50",
-              (step1Attempted && !formData.fullName.trim()) ||
-                Boolean(fieldErrors?.fullName)
+              fullNameError
                 ? "border-[#e11119] ring-2 ring-red-500/20"
                 : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
             )}
           />
-          {fieldErrors?.fullName?.[0] ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {fieldErrors.fullName[0]}
+          {fullNameError && (
+            <p
+              id="reg-fullname-error"
+              className="mt-1.5 text-xs font-medium text-[#e11119]"
+            >
+              {fullNameError}
             </p>
-          ) : step1Attempted && !formData.fullName.trim() ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {isAr ? "هذا الحقل مطلوب" : "Full name is required"}
-            </p>
-          ) : null}
+          )}
         </div>
 
         {/* Email Address */}
         <div>
-          <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+          <label
+            htmlFor="reg-email"
+            className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+          >
             {isAr ? "البريد الإلكتروني" : "Email Address"}
             <RequiredIndicator />
           </label>
           <input
+            id="reg-email"
+            name="email"
             type="email"
             maxLength={254}
             value={formData.email}
             onChange={(e) => updateFormData({ email: e.target.value })}
             placeholder="you@example.com"
+            aria-invalid={Boolean(emailErrorMessage)}
+            aria-describedby={emailErrorMessage ? "reg-email-error" : undefined}
             className={cn(
               "w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-[#16162c] transition-all outline-none placeholder:text-[#6a6a86]/50",
-              (step1Attempted &&
-                (!formData.email.trim() ||
-                  !/\S+@\S+\.\S+/.test(formData.email.trim()))) ||
-                emailError ||
-                fieldErrors?.email
+              emailErrorMessage
                 ? "border-[#e11119] ring-2 ring-red-500/20"
                 : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
             )}
           />
-          {fieldErrors?.email?.[0] ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {fieldErrors.email[0]}
+          {emailErrorMessage && (
+            <p
+              id="reg-email-error"
+              className="mt-1.5 text-xs font-medium text-[#e11119]"
+            >
+              {emailErrorMessage}
             </p>
-          ) : emailError ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {emailError}
-            </p>
-          ) : step1Attempted &&
-            (!formData.email.trim() ||
-              !/\S+@\S+\.\S+/.test(formData.email.trim())) ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {isAr
-                ? "بريد إلكتروني صحيح مطلوب"
-                : "Valid email address is required"}
-            </p>
-          ) : null}
+          )}
         </div>
 
         {/* Mobile Number */}
         <div>
-          <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+          <label
+            htmlFor="reg-mobile"
+            className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+          >
             {isAr ? "رقم الجوال" : "Mobile Number"}
             <RequiredIndicator />
           </label>
           <input
+            id="reg-mobile"
+            name="mobile"
             type="tel"
             maxLength={25}
             value={formData.phone}
             onChange={(e) => updateFormData({ phone: e.target.value })}
             placeholder="+20 100 000 0000"
+            aria-invalid={Boolean(mobileErrorMessage)}
+            aria-describedby={
+              mobileErrorMessage ? "reg-mobile-error" : undefined
+            }
             className={cn(
               "w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-[#16162c] transition-all outline-none placeholder:text-[#6a6a86]/50",
-              (step1Attempted &&
-                (!formData.phone.trim() ||
-                  formData.phone.replace(/[\s\-\(\)\+]/g, "").length < 7)) ||
-                phoneError ||
-                fieldErrors?.mobile
+              mobileErrorMessage
                 ? "border-[#e11119] ring-2 ring-red-500/20"
                 : "border-[#e2e2ec] focus:border-[#419257] focus:ring-4 focus:ring-[#419257]/15"
             )}
           />
-          {fieldErrors?.mobile?.[0] ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {fieldErrors.mobile[0]}
+          {mobileErrorMessage && (
+            <p
+              id="reg-mobile-error"
+              className="mt-1.5 text-xs font-medium text-[#e11119]"
+            >
+              {mobileErrorMessage}
             </p>
-          ) : phoneError ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {phoneError}
-            </p>
-          ) : step1Attempted &&
-            (!formData.phone.trim() ||
-              formData.phone.replace(/[\s\-\(\)\+]/g, "").length < 7) ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {isAr ? "رقم جوال صحيح مطلوب" : "Valid phone number is required"}
-            </p>
-          ) : null}
+          )}
         </div>
 
         {/* Country Selection */}
         <div>
-          <label className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+          <label
+            htmlFor="reg-country-select"
+            className="mb-2 block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+          >
             {isAr ? "الدولة" : "Country"}
             <RequiredIndicator />
           </label>
@@ -188,28 +272,33 @@ export function RegistrationStep1Personal({
             id="reg-country-select"
             value={formData.country}
             onChange={(val) => updateFormData({ country: val })}
-            options={COUNTRIES}
+            options={COUNTRIES.map((c) => ({
+              value: c.code,
+              label: isAr ? c.nameAr : c.nameEn,
+            }))}
             placeholder={isAr ? "اختر الدولة" : "Select Country"}
-            hasError={
-              (step1Attempted && !formData.country) ||
-              Boolean(fieldErrors?.country)
+            hasError={Boolean(countryErrorMessage)}
+            ariaDescribedBy={
+              countryErrorMessage ? "reg-country-error" : undefined
             }
           />
-          {fieldErrors?.country?.[0] ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {fieldErrors.country[0]}
+          {countryErrorMessage && (
+            <p
+              id="reg-country-error"
+              className="mt-1.5 text-xs font-medium text-[#e11119]"
+            >
+              {countryErrorMessage}
             </p>
-          ) : step1Attempted && !formData.country ? (
-            <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-              {isAr ? "اختر الدولة" : "Country is required"}
-            </p>
-          ) : null}
+          )}
         </div>
 
         {/* LinkedIn URL (Span Full Width) */}
         <div className="sm:col-span-2">
           <div className="mb-2 flex items-center justify-between">
-            <label className="block text-xs font-bold tracking-wider text-[#16162c] uppercase">
+            <label
+              htmlFor="reg-linkedin"
+              className="block text-xs font-bold tracking-wider text-[#16162c] uppercase"
+            >
               {isAr ? "رابط لينكد إن" : "LinkedIn URL"}
             </label>
             <span className="rounded-full bg-[#f0f0f5] px-2 py-0.5 text-[10px] font-semibold text-[#6a6a86]">
@@ -217,6 +306,8 @@ export function RegistrationStep1Personal({
             </span>
           </div>
           <input
+            id="reg-linkedin"
+            name="linkedInUrl"
             type="text"
             maxLength={200}
             value={formData.linkedInUrl}

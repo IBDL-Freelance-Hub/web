@@ -78,6 +78,13 @@ export const getRegisterMemberSchema = (locale: Locale = "en") =>
       .refine((val) => val.length > 0, {
         message: getLocalizedErrorMessage("mobile", "required", locale),
       })
+      .refine((val) => val.startsWith("+"), {
+        message: getLocalizedErrorMessage(
+          "mobile",
+          "missingCountryCode",
+          locale
+        ),
+      })
       .refine((val) => normalizeMobile(val).length >= 7, {
         message: getLocalizedErrorMessage("mobile", "invalid", locale),
       }),

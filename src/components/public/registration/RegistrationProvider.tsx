@@ -39,6 +39,7 @@ const initialFormData: RegistrationFormData = {
   expertise: [],
   yearsExperience: "",
   cvFileName: "",
+  cvFile: null,
   industries: [],
   biography: "",
   message: "",
@@ -97,9 +98,14 @@ export function RegistrationProvider({
   // Save snapshot to sessionStorage whenever formData changes
   useEffect(() => {
     try {
+      const serializableFormData = { ...formData, cvFile: undefined };
       sessionStorage.setItem(
         SESSION_STORAGE_KEY,
-        JSON.stringify({ formData, step, updatedAt: new Date().toISOString() })
+        JSON.stringify({
+          formData: serializableFormData,
+          step,
+          updatedAt: new Date().toISOString(),
+        })
       );
     } catch {
       // Ignore storage write errors
@@ -157,12 +163,20 @@ export function RegistrationProvider({
 
   const updateFormData = useCallback(
     (fields: Partial<RegistrationFormData>) => {
-      setFormData((prev) => {
-        const next = { ...prev, ...fields };
-        if (fields.email !== undefined) setEmailError(null);
-        if (fields.phone !== undefined) setPhoneError(null);
-        setFieldErrors(null);
-        return next;
+      setFormData((prev) => ({ ...prev, ...fields }));
+      if (fields.email !== undefined) setEmailError(null);
+      if (fields.phone !== undefined) setPhoneError(null);
+      setFieldErrors((prev) => {
+        if (!prev) return null;
+        const next = { ...prev };
+        for (const k of Object.keys(fields)) {
+          delete next[k];
+          if (k === "phone") delete next.mobile;
+          if (k === "yearsExperience") delete next.yearsOfExperience;
+          if (k === "cvFileName" || k === "cvFile") delete next.cvFile;
+          if (k === "consentDeclaration") delete next.termsAccepted;
+        }
+        return Object.keys(next).length > 0 ? next : null;
       });
     },
     []
@@ -201,7 +215,8 @@ export function RegistrationProvider({
       setDuplicateClashLead(null);
 
       const emailTrim = formData.email.trim().toLowerCase();
-      const cleanPhone = formData.phone.replace(/[\s\-\(\)\+]/g, "");
+      const phoneTrim = formData.phone.trim();
+      const cleanPhone = phoneTrim.replace(/[\s\-\(\)\+]/g, "");
 
       let isValid = true;
       const errors: Record<string, string[]> = {};
@@ -209,7 +224,11 @@ export function RegistrationProvider({
       if (!formData.fullName.trim() || formData.fullName.trim().length < 3) {
         isValid = false;
         errors.fullName = [
-          getLocalizedErrorMessage("fullName", "required", locale),
+          getLocalizedErrorMessage(
+            "fullName",
+            !formData.fullName.trim() ? "required" : "tooShort",
+            locale
+          ),
         ];
       }
 
@@ -224,15 +243,19 @@ export function RegistrationProvider({
         ];
       }
 
-      if (!formData.phone.trim() || cleanPhone.length < 7) {
+      if (!phoneTrim) {
         isValid = false;
         errors.mobile = [
-          getLocalizedErrorMessage(
-            "mobile",
-            !formData.phone.trim() ? "required" : "invalid",
-            locale
-          ),
+          getLocalizedErrorMessage("mobile", "required", locale),
         ];
+      } else if (!phoneTrim.startsWith("+")) {
+        isValid = false;
+        errors.mobile = [
+          getLocalizedErrorMessage("mobile", "missingCountryCode", locale),
+        ];
+      } else if (cleanPhone.length < 7) {
+        isValid = false;
+        errors.mobile = [getLocalizedErrorMessage("mobile", "invalid", locale)];
       }
 
       if (!formData.country.trim()) {
@@ -262,7 +285,13 @@ export function RegistrationProvider({
           getLocalizedErrorMessage("yearsOfExperience", "required", locale),
         ];
       }
-      // Areas of expertise and industries served are optional in Step 2 per UI and backend schema
+
+      if (!formData.cvFileName) {
+        isValid = false;
+        errors.cvFile = [
+          getLocalizedErrorMessage("cvFile", "required", locale),
+        ];
+      }
 
       if (!isValid) {
         setFieldErrors(errors);
@@ -370,7 +399,29 @@ export function RegistrationProvider({
       };
 
       try {
-        const res = await registerMemberAction(payload);
+        let fileBase64: string | undefined;
+        let fileName: string | undefined;
+        let fileType: string | undefined;
+
+        if (formData.cvFile) {
+          const arrayBuffer = await formData.cvFile.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuffer);
+          let binary = "";
+          const len = bytes.byteLength;
+          for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          fileBase64 = btoa(binary);
+          fileName = formData.cvFile.name;
+          fileType = formData.cvFile.type || "application/pdf";
+        }
+
+        const res = await registerMemberAction({
+          payload,
+          fileBase64,
+          fileName,
+          fileType,
+        });
 
         if (!res.success) {
           const isDuplicate =
@@ -401,6 +452,7 @@ export function RegistrationProvider({
             const hasStep2Error = Object.keys(res.fieldErrors).some((k) =>
               [
                 "yearsOfExperience",
+                "cvFile",
                 "areasOfExpertise",
                 "industriesServed",
               ].includes(k)
@@ -458,8 +510,8 @@ export function RegistrationProvider({
               ? "تم تعيين صلاحيات التقييم التشخيصي لك"
               : "Diagnostic assessment access assigned to you",
             locale === "ar"
-              ? "مرحباً بك في منصة المستقلين! تم تفعيل عضويتك الأساسية."
-              : "Welcome to Freelancers Hub! Your Essential Membership is active.",
+              ? "مرحباً بك في منصة المستقلين! يرجى مراجعة بريدك الإلكتروني لتفعيل حسابك."
+              : "Welcome to Freelancers Hub! Please check your email to activate your account.",
             "public"
           );
 

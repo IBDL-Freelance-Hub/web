@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { ArrowLeft, ArrowRight, ShieldCheck, Loader2 } from "lucide-react";
 import { useRegistration } from "../RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { cn } from "@/lib/utils";
 import { RequiredIndicator } from "@/components/ui/RequiredIndicator";
+import { getCountryLabel } from "@/data/registrationFormData";
+import {
+  getLocalizedErrorMessage,
+  type Locale,
+} from "@/lib/validations/registrationErrors";
+import { scrollToAndFocusFirstError } from "@/lib/dom";
 
 interface RegistrationStep3ConfirmProps {
   showTopErrorBanner: boolean;
@@ -17,7 +23,8 @@ export function RegistrationStep3Confirm({
   setShowTopErrorBanner,
 }: RegistrationStep3ConfirmProps) {
   const { locale } = useLocale();
-  const isAr = locale === "ar";
+  const currentLocale = (locale as Locale) || "en";
+  const isAr = currentLocale === "ar";
   const {
     formData,
     isSubmitting,
@@ -26,9 +33,32 @@ export function RegistrationStep3Confirm({
     submitRegistration,
   } = useRegistration();
 
+  const [step3Attempted, setStep3Attempted] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
+
+  const consentError =
+    (showTopErrorBanner || step3Attempted) && !formData.consentDeclaration
+      ? getLocalizedErrorMessage("termsAccepted", "required", currentLocale)
+      : null;
+
+  const handleCompleteRegistration = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setStep3Attempted(true);
+    if (!formData.consentDeclaration) {
+      setShowTopErrorBanner(true);
+      scrollToAndFocusFirstError(["reg-consent-terms"]);
+      return;
+    }
+    setShowTopErrorBanner(false);
+    startTransition(async () => {
+      const ok = await submitRegistration(currentLocale);
+      if (!ok) {
+        setShowTopErrorBanner(true);
+      }
+    });
+  };
 
   return (
     <div className="animate-step-enter">
@@ -89,7 +119,9 @@ export function RegistrationStep3Confirm({
             {isAr ? "الدولة" : "Country"}
           </dt>
           <dd className="font-semibold break-words text-[#16162c]">
-            {formData.country || "—"}
+            {formData.country
+              ? getCountryLabel(formData.country, isAr ? "ar" : "en")
+              : "—"}
           </dd>
         </div>
 
@@ -180,18 +212,24 @@ export function RegistrationStep3Confirm({
 
         {/* 2. Data & Terms Consent (Required) */}
         <label
+          htmlFor="reg-consent-terms"
+          id="reg-consent-terms-container"
           className={cn(
             "chk flex cursor-pointer items-start gap-3.5 rounded-xl border p-4 transition-all",
             formData.consentDeclaration
               ? "border-[#419257] bg-[#419257]/5"
-              : showTopErrorBanner && !formData.consentDeclaration
+              : consentError
                 ? "border-[#e11119] bg-red-50/50 ring-2 ring-red-500/20"
                 : "border-[#e2e2ec] bg-[#f6f6fa] hover:border-[#6a6a86]"
           )}
         >
           <input
+            id="reg-consent-terms"
+            name="consentDeclaration"
             type="checkbox"
             checked={formData.consentDeclaration}
+            aria-invalid={Boolean(consentError)}
+            aria-describedby={consentError ? "reg-consent-error" : undefined}
             onChange={(e) =>
               updateFormData({ consentDeclaration: e.target.checked })
             }
@@ -209,11 +247,12 @@ export function RegistrationStep3Confirm({
                 ? "معلوماتك آمنة ولن تستخدم إلا من قبل IBDL للتواصل حول المنصة والفرص المتعلقة بها. ولن تتم مشاركتها مع أطراف خارجية."
                 : "Your information is kept secure and will only be used by IBDL for Freelancer Hub communication and related opportunities. It will not be shared with any external parties."}
             </span>
-            {showTopErrorBanner && !formData.consentDeclaration && (
-              <p className="mt-1.5 text-xs font-medium text-[#e11119]">
-                {isAr
-                  ? "يجب الموافقة على الشروط والأحكام للمتابعة."
-                  : "You must accept the terms and conditions."}
+            {consentError && (
+              <p
+                id="reg-consent-error"
+                className="mt-1.5 text-xs font-medium text-[#e11119]"
+              >
+                {consentError}
               </p>
             )}
           </div>
@@ -234,20 +273,7 @@ export function RegistrationStep3Confirm({
         <button
           type="button"
           disabled={isSubmitting || isPending}
-          onClick={(e) => {
-            e.preventDefault();
-            if (!formData.consentDeclaration) {
-              setShowTopErrorBanner(true);
-              return;
-            }
-            setShowTopErrorBanner(false);
-            startTransition(async () => {
-              const ok = await submitRegistration(locale as "en" | "ar");
-              if (!ok) {
-                setShowTopErrorBanner(true);
-              }
-            });
-          }}
+          onClick={handleCompleteRegistration}
           className="flex cursor-pointer items-center gap-2 rounded-full bg-[#e11119] px-7 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(225,17,25,0.30)] transition-all hover:scale-[1.01] hover:bg-[#b60d14] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting || isPending ? (

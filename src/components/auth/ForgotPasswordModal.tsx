@@ -12,6 +12,7 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  Clock,
 } from "lucide-react";
 
 export interface ForgotPasswordModalProps {
@@ -130,6 +131,14 @@ function ForgotPasswordModalDialog({
                   {successMessage}
                 </p>
               </div>
+            </div>
+
+            {/* Delivery Latency & Spam Notice */}
+            <div className="flex items-start gap-2.5 rounded-lg border border-amber-200/80 bg-amber-50/80 p-3 text-start text-xs text-amber-900">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <p className="leading-relaxed">
+                {AUTH_STRINGS.forgotPassword.deliveryNotice[locale]}
+              </p>
             </div>
 
             <button

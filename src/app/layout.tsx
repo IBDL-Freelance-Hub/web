@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
-import { DirectionProvider } from "@/components/common/DirectionProvider";
+import { cookies } from "next/headers";
+import {
+  DirectionProvider,
+  type Direction,
+  type Locale,
+} from "@/components/common/DirectionProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 
@@ -36,20 +41,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("flh_locale")?.value;
+  const initialLocale: Locale = localeCookie === "ar" ? "ar" : "en";
+  const initialDir: Direction = initialLocale === "ar" ? "rtl" : "ltr";
+
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={initialLocale}
+      dir={initialDir}
       className={`${cairo.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col bg-[#f8fafc] font-sans text-slate-900">
-        <DirectionProvider>
+      <body className="flex min-h-full flex-col bg-[#f8fafc] text-slate-900">
+        <DirectionProvider initialLocale={initialLocale}>
           <ToastProvider>{children}</ToastProvider>
         </DirectionProvider>
       </body>

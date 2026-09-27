@@ -106,12 +106,10 @@ function LoginFormContent() {
       <div className="mx-auto my-auto w-full max-w-md py-6">
         <div className="mb-8">
           <h1 className="mb-2 text-2xl font-bold tracking-tight text-[#16162c] sm:text-3xl">
-            {locale === "ar" ? "تسجيل الدخول للمنصة" : "Sign in to the Hub"}
+            {AUTH_STRINGS.signIn.title[locale]}
           </h1>
           <p className="text-xs leading-relaxed text-[#6a6a86] sm:text-sm">
-            {locale === "ar"
-              ? "تم إنشاء حسابك في المنصة أثناء عملية تسجيلك الأساسية. لن تحتاج للتسجيل أكثر من مرة."
-              : "Your Freelancer Hub account was created from your original registration. You never need to register twice."}
+            {AUTH_STRINGS.signIn.subtitle[locale]}
           </p>
         </div>
 
@@ -139,14 +137,10 @@ function LoginFormContent() {
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
               <div className="space-y-1">
                 <h4 className="text-sm font-bold tracking-tight text-emerald-950">
-                  {locale === "ar"
-                    ? "تم تفعيل الحساب بنجاح!"
-                    : "Account Activated!"}
+                  {AUTH_STRINGS.signIn.accountActivatedTitle[locale]}
                 </h4>
                 <p className="leading-relaxed text-emerald-800">
-                  {locale === "ar"
-                    ? "تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول."
-                    : "Account activated successfully! You can now log in."}
+                  {AUTH_STRINGS.signIn.accountActivatedDescription[locale]}
                 </p>
               </div>
             </div>
@@ -181,7 +175,7 @@ function LoginFormContent() {
         <form onSubmit={handleLoginSubmit} className="space-y-5" noValidate>
           <Input
             id="email"
-            label={`${AUTH_STRINGS.forgotPassword.emailLabel[locale]} *`}
+            label={`${AUTH_STRINGS.signIn.emailLabel[locale]} *`}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -193,18 +187,14 @@ function LoginFormContent() {
           <div>
             <PasswordInput
               id="password"
-              label={locale === "ar" ? "كلمة المرور *" : "Password *"}
+              label={`${AUTH_STRINGS.signIn.passwordLabel[locale]} *`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               error={passwordError}
               disabled={isLoading}
-              toggleLabelShow={
-                locale === "ar" ? "إظهار كلمة المرور" : "Show password"
-              }
-              toggleLabelHide={
-                locale === "ar" ? "إخفاء كلمة المرور" : "Hide password"
-              }
+              toggleLabelShow={AUTH_STRINGS.signIn.showPassword[locale]}
+              toggleLabelHide={AUTH_STRINGS.signIn.hidePassword[locale]}
             />
 
             <div className="mt-2 text-end">
@@ -213,7 +203,7 @@ function LoginFormContent() {
                 onClick={() => setIsForgotModalOpen(true)}
                 className="cursor-pointer text-xs font-semibold text-[#e11119] transition-colors hover:underline"
               >
-                {locale === "ar" ? "نسيت كلمة المرور؟" : "Forgot password?"}
+                {AUTH_STRINGS.signIn.forgotPassword[locale]}
               </button>
             </div>
           </div>
@@ -226,13 +216,11 @@ function LoginFormContent() {
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>
-                  {locale === "ar" ? "جاري تسجيل الدخول..." : "Signing in..."}
-                </span>
+                <span>{AUTH_STRINGS.signIn.submittingButton[locale]}</span>
               </>
             ) : (
               <>
-                <span>{locale === "ar" ? "تسجيل الدخول" : "Sign in"}</span>
+                <span>{AUTH_STRINGS.signIn.submitButton[locale]}</span>
                 <ArrowIcon className="h-4 w-4" />
               </>
             )}
@@ -240,14 +228,12 @@ function LoginFormContent() {
         </form>
 
         <p className="mt-6 block text-center text-xs text-[#6a6a86]">
-          {locale === "ar"
-            ? "مسجل ولم تفعل حسابك بعد؟ "
-            : "Registered but never activated your account? "}
+          {AUTH_STRINGS.signIn.notActivatedPrompt[locale]}
           <Link
             href="/activate"
             className="font-bold text-[#e11119] hover:underline"
           >
-            {locale === "ar" ? "فعل حسابك من هنا" : "Activate it here"}
+            {AUTH_STRINGS.signIn.activateLink[locale]}
           </Link>
         </p>
       </div>

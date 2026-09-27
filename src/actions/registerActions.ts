@@ -89,13 +89,57 @@ export async function checkDuplicateAction(
   }
 }
 
+export interface RegisterMemberActionInput {
+  payload: RegisterMemberInput;
+  fileBase64?: string;
+  fileName?: string;
+  fileType?: string;
+}
+
 /**
  * Register Member Action (SCR-16 / SCR-19)
  * Submits freelancer application payload to Express backend.
  */
 export async function registerMemberAction(
-  payload: RegisterMemberInput
+  input: RegisterMemberInput | FormData | RegisterMemberActionInput
 ): Promise<ActionResponse<RegisterMemberResponseData>> {
+  let payload: RegisterMemberInput;
+  let fileBlob: Blob | null = null;
+  let fileName: string = "cv.pdf";
+
+  if (
+    input instanceof FormData ||
+    (Boolean(input) &&
+      typeof input === "object" &&
+      typeof (input as unknown as { get?: unknown }).get === "function")
+  ) {
+    const fd = input as FormData;
+    const payloadStr = fd.get("payload") as string;
+    payload = JSON.parse(payloadStr);
+    const file = (fd.get("file") as File) || null;
+    if (file) {
+      fileBlob = file;
+      fileName = file.name || "cv.pdf";
+    }
+  } else if (
+    Boolean(input) &&
+    typeof input === "object" &&
+    "payload" in input &&
+    typeof (input as RegisterMemberActionInput).payload === "object"
+  ) {
+    const actionInput = input as RegisterMemberActionInput;
+    payload = actionInput.payload;
+    if (actionInput.fileBase64) {
+      const buffer = Buffer.from(actionInput.fileBase64, "base64");
+      fileBlob = new Blob([buffer], {
+        type: actionInput.fileType || "application/pdf",
+      });
+      fileName = actionInput.fileName || "cv.pdf";
+    }
+  } else {
+    payload = input as RegisterMemberInput;
+  }
+
   const activeLocale: Locale = payload.locale === "ar" ? "ar" : "en";
 
   try {
@@ -127,11 +171,31 @@ export async function registerMemberAction(
     console.log(
       "[registerMemberAction] Submitting to backend /members/register..."
     );
-    const res = await api.post<{
+
+    let res: {
       success: boolean;
       data: RegisterMemberResponseData;
       message?: string;
-    }>("/members/register", validation.data);
+    };
+
+    if (fileBlob) {
+      const expressFormData = new FormData();
+      expressFormData.append("payload", JSON.stringify(validation.data));
+      expressFormData.append("file", fileBlob, fileName);
+
+      res = await api.postFormData<{
+        success: boolean;
+        data: RegisterMemberResponseData;
+        message?: string;
+      }>("/members/register", expressFormData);
+    } else {
+      res = await api.post<{
+        success: boolean;
+        data: RegisterMemberResponseData;
+        message?: string;
+      }>("/members/register", validation.data);
+    }
+
     console.log("[registerMemberAction SUCCESS]:", res.data?.member?.email);
 
     return {
@@ -144,17 +208,22 @@ export async function registerMemberAction(
           : "Registration successful"),
     };
   } catch (err: unknown) {
-    console.error("[registerMemberAction Backend FAILED]:", err);
+    console.error(
+      "[registerMemberAction Backend FAILED]:",
+      JSON.stringify((err as { data?: unknown })?.data, null, 2)
+    );
     const errorObj = err as Error & {
       status?: number;
       fieldErrors?: Record<string, string[]>;
       errors?: Array<{ field: string; message: string }>;
+      data?: { details?: Array<{ field: string; message: string }> };
     };
 
     const fieldErrors: Record<string, string[]> = errorObj.fieldErrors || {};
 
-    if (errorObj.errors && Array.isArray(errorObj.errors)) {
-      errorObj.errors.forEach((e) => {
+    const details = errorObj.errors || errorObj.data?.details;
+    if (details && Array.isArray(details)) {
+      details.forEach((e) => {
         if (e.field) {
           if (!fieldErrors[e.field]) fieldErrors[e.field] = [];
           const localizedMsg = getLocalizedErrorMessage(

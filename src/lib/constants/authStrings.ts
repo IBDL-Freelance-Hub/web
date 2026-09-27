@@ -105,6 +105,10 @@ export const AUTH_STRINGS = {
       en: "Back to sign in",
       ar: "العودة لتسجيل الدخول",
     },
+    deliveryNotice: {
+      en: "Delivery can occasionally take a few minutes. If it doesn't arrive, check spam or request a new link.",
+      ar: "قد يستغرق وصول البريد بضع دقائق أحياناً. إذا لم يصلك، يرجى التحقق من مجلد الرسائل غير المرغوب فيها (Spam) أو طلب رابط جديد.",
+    },
   },
 
   // VAL-142 Dedicated Recovery State (Invalid / Expired Token)
@@ -142,6 +146,163 @@ export const AUTH_STRINGS = {
       ar: "‹ العودة للموقع العام",
     },
     copyright: "© 2026 IBDL Learning Group",
+  },
+
+  // Sign-In Gate Strings
+  signIn: {
+    title: {
+      en: "Sign in to the Hub",
+      ar: "تسجيل الدخول للمنصة",
+    },
+    subtitle: {
+      en: "Your Freelancer Hub account was created from your original registration. You never need to register twice.",
+      ar: "تم إنشاء حسابك في المنصة أثناء عملية تسجيلك الأساسية. لن تحتاج للتسجيل أكثر من مرة.",
+    },
+    emailLabel: {
+      en: "Email address",
+      ar: "البريد الإلكتروني",
+    },
+    passwordLabel: {
+      en: "Password",
+      ar: "كلمة المرور",
+    },
+    forgotPassword: {
+      en: "Forgot password?",
+      ar: "نسيت كلمة المرور؟",
+    },
+    submitButton: {
+      en: "Sign in",
+      ar: "تسجيل الدخول",
+    },
+    submittingButton: {
+      en: "Signing in...",
+      ar: "جاري تسجيل الدخول...",
+    },
+    showPassword: {
+      en: "Show password",
+      ar: "إظهار كلمة المرور",
+    },
+    hidePassword: {
+      en: "Hide password",
+      ar: "إخفاء كلمة المرور",
+    },
+    notActivatedPrompt: {
+      en: "Registered but never activated your account? ",
+      ar: "مسجل ولم تفعل حسابك بعد؟ ",
+    },
+    activateLink: {
+      en: "Activate it here",
+      ar: "فعل حسابك من هنا",
+    },
+    accountActivatedTitle: {
+      en: "Account Activated!",
+      ar: "تم تفعيل الحساب بنجاح!",
+    },
+    accountActivatedDescription: {
+      en: "Account activated successfully! You can now log in.",
+      ar: "تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.",
+    },
+  },
+
+  // Gate Branding Panel Strings (Canonical Single Source of Truth for Branding Panel)
+  branding: {
+    heading: {
+      en: "Your professional workspace.",
+      ar: "مساحة عملك المهنية المتكاملة.",
+    },
+    lead: {
+      en: "Everything IBDL Learning Group has built — simulations, assessments, accreditation and certification — organised around your independent practice.",
+      ar: "كل ما طورته مجموعة IBDL للتعلم — من ألعاب محاكاة، وتقييمات، واعتمادات وشهادات مهنية — مُنظم بالكامل لدعم ممارستك التدريبية المستقلة.",
+    },
+    bullets: [
+      {
+        en: "Access the IBDL toolkit under your membership",
+        ar: "الوصول لمحفظة أدوات IBDL بموجب عضويتك",
+      },
+      {
+        en: "Submit programmes for IBDL accreditation",
+        ar: "تقديم البرامج والحقائب للاعتماد من IBDL",
+      },
+      {
+        en: "Follow every request through to completion",
+        ar: "متابعة تنفيذ كافة طلباتك واستشاراتك خطوة بخطوة",
+      },
+    ],
+    logoAlt: {
+      en: "IBDL Freelancers Hub Logo",
+      ar: "شعار منصة المستقلين IBDL",
+    },
+    login: {
+      heading: {
+        en: "Your professional workspace.",
+        ar: "مساحة عملك المهنية المتكاملة.",
+      },
+      lead: {
+        en: "Everything IBDL Learning Group has built — simulations, assessments, accreditation and certification — organised around your independent practice.",
+        ar: "كل ما طورته مجموعة IBDL للتعلم — من ألعاب محاكاة، وتقييمات، واعتمادات وشهادات مهنية — مُنظم بالكامل لدعم ممارستك التدريبية المستقلة.",
+      },
+      bullets: [
+        {
+          en: "Access the IBDL toolkit under your membership",
+          ar: "الوصول لمحفظة أدوات IBDL بموجب عضويتك",
+        },
+        {
+          en: "Submit programmes for IBDL accreditation",
+          ar: "تقديم البرامج والحقائب للاعتماد من IBDL",
+        },
+        {
+          en: "Follow every request through to completion",
+          ar: "متابعة تنفيذ كافة طلباتك واستشاراتك خطوة بخطوة",
+        },
+      ],
+      logoAlt: {
+        en: "IBDL Freelancers Hub Logo",
+        ar: "شعار منصة المستقلين IBDL",
+      },
+    },
+    activate: {
+      heading: {
+        en: "Activate your Hub account.",
+        ar: "تفعيل حسابك في المنصة.",
+      },
+      lead: {
+        en: "One final step to secure your account with a password and unlock your member dashboard and diagnostic tools.",
+        ar: "خطوة واحدة أخيرة لتأمين حسابك وتعيين كلمة المرور الخاصة بك للوصول إلى لوحة التحكم وكافة مزايا العضوية.",
+      },
+      bullets: [
+        {
+          en: "Set up your secure password once to complete registration",
+          ar: "عيّن كلمة مرور آمنة لمرة واحدة لإتمام تسجيلك في المنصة",
+        },
+        {
+          en: "Unlock 3 free diagnostic assessments automatically",
+          ar: "احصل على وصول فوري ومجاني لـ ٣ تقييمات تشخيصية دولية",
+        },
+        {
+          en: "Start building and managing your trainer visibility",
+          ar: "ابدأ في بناء هويتك التدريبية وإدارة ملفك المهني المعتمد",
+        },
+      ],
+      logoAlt: {
+        en: "IBDL Freelancers Hub Logo",
+        ar: "شعار منصة المستقلين IBDL",
+      },
+    },
+    resetPassword: {
+      heading: {
+        en: "Reset your password.",
+        ar: "إعادة ضبط كلمة المرور.",
+      },
+      lead: {
+        en: "Choose a secure new password to regain access to your Freelancers Hub account, simulation toolkit, and professional certifications.",
+        ar: "اختر كلمة مرور جديدة وآمنة لاستعادة الوصول إلى حسابك في منصة المستقلين وحقيبة المحاكاة والاعتمادات المهنية.",
+      },
+      bullets: [],
+      logoAlt: {
+        en: "IBDL Freelancers Hub Logo",
+        ar: "شعار منصة المستقلين IBDL",
+      },
+    },
   },
 
   // Form Validation Strings

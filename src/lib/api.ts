@@ -60,7 +60,14 @@ export class ApiClient {
     }
 
     const requestHeaders = await this.buildHeaders(customHeaders);
-    if (body instanceof FormData) {
+    const isFormData =
+      body instanceof FormData ||
+      (Boolean(body) &&
+        typeof body === "object" &&
+        (typeof (body as { append?: unknown }).append === "function" ||
+          (body as { constructor?: { name?: string } }).constructor?.name ===
+            "FormData"));
+    if (isFormData) {
       delete requestHeaders["Content-Type"];
     }
 

@@ -36,7 +36,7 @@ export function ServiceModal({ service, onClose }: ServiceModalProps) {
       onClick={onClose}
     >
       <div
-        className="sheet pm animate-in fade-in zoom-in-95 relative my-auto flex max-h-[92vh] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl bg-white text-start shadow-[0_28px_70px_rgba(20,20,40,0.25)] duration-300 sm:rounded-[32px]"
+        className="sheet pm animate-in fade-in zoom-in-95 relative my-auto flex max-h-[92vh] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl border border-white/15 bg-white text-start shadow-[0_28px_70px_rgba(0,0,0,0.4)] duration-300 sm:rounded-[32px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -50,7 +50,7 @@ export function ServiceModal({ service, onClose }: ServiceModalProps) {
         </button>
 
         {/* Modal Header */}
-        <div className="pm__head relative flex shrink-0 flex-col items-start gap-4 border-b border-[#e2e2ec] bg-gradient-to-br from-[#16162c] to-[#0f0f23] p-5 pe-12 text-white sm:flex-row sm:items-center sm:gap-5 sm:p-[32px_40px] sm:pe-16">
+        <div className="pm__head relative flex shrink-0 flex-col items-start gap-4 border-b border-white/10 bg-[#1d1d39] p-5 pe-12 text-white sm:flex-row sm:items-center sm:gap-5 sm:p-[32px_40px] sm:pe-16">
           {/* Service Number Badge */}
           <div className="border-green-brand/30 bg-green-brand/10 text-green-lit flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-xl border text-lg font-extrabold shadow-inner sm:h-[68px] sm:w-[68px] sm:rounded-2xl sm:text-xl">
             {service.num}

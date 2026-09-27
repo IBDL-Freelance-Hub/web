@@ -4,13 +4,19 @@ import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
 interface CustomSelectProps {
   id?: string;
   value: string;
   onChange: (val: string) => void;
-  options: string[];
+  options: (string | SelectOption)[];
   placeholder: string;
   hasError?: boolean;
+  ariaDescribedBy?: string;
 }
 
 export function CustomSelect({
@@ -20,6 +26,7 @@ export function CustomSelect({
   options,
   placeholder,
   hasError,
+  ariaDescribedBy,
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -37,10 +44,26 @@ export function CustomSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const normalizedOptions: SelectOption[] = options.map((opt) =>
+    typeof opt === "string" ? { value: opt, label: opt } : opt
+  );
+
+  const selectedOption = normalizedOptions.find(
+    (opt) => opt.value === value || opt.label === value
+  );
+  const displayLabel = selectedOption
+    ? selectedOption.label
+    : value || placeholder;
+
   return (
     <div ref={dropdownRef} id={id} className="relative w-full">
       <button
         type="button"
+        role="combobox"
+        aria-expanded={isOpen}
+        id={id ? `${id}-button` : undefined}
+        aria-invalid={hasError}
+        aria-describedby={ariaDescribedBy}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex w-full cursor-pointer items-center justify-between rounded-xl border bg-white px-4 py-3.5 text-sm text-[#16162c] transition-all outline-none",
@@ -51,8 +74,8 @@ export function CustomSelect({
               : "border-[#e2e2ec] hover:border-[#6a6a86]"
         )}
       >
-        <span className={cn(!value && "text-[#6a6a86]/70")}>
-          {value || placeholder}
+        <span className={cn(!selectedOption && !value && "text-[#6a6a86]/70")}>
+          {displayLabel}
         </span>
         <ChevronDown
           className={cn(
@@ -74,25 +97,28 @@ export function CustomSelect({
           >
             {placeholder}
           </button>
-          {options.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => {
-                onChange(opt);
-                setIsOpen(false);
-              }}
-              className={cn(
-                "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-start text-sm transition-colors",
-                value === opt
-                  ? "bg-[#419257]/10 font-bold text-[#419257]"
-                  : "text-[#16162c] hover:bg-[#f6f6fa]"
-              )}
-            >
-              <span>{opt}</span>
-              {value === opt && <Check className="h-4 w-4 text-[#419257]" />}
-            </button>
-          ))}
+          {normalizedOptions.map((opt) => {
+            const isSelected = value === opt.value || value === opt.label;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-start text-sm transition-colors",
+                  isSelected
+                    ? "bg-[#419257]/10 font-bold text-[#419257]"
+                    : "text-[#16162c] hover:bg-[#f6f6fa]"
+                )}
+              >
+                <span>{opt.label}</span>
+                {isSelected && <Check className="h-4 w-4 text-[#419257]" />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

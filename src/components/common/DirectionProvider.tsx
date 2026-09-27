@@ -25,14 +25,16 @@ const DirectionContext = createContext<DirectionContextValue | undefined>(
 
 const ARABIC_INDIC_DIGITS = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
 
-export function DirectionProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(() => {
-    if (typeof document !== "undefined") {
-      const match = document.cookie.match(/flh_locale=(en|ar)/);
-      if (match) return match[1] as Locale;
-    }
-    return "en";
-  });
+interface DirectionProviderProps {
+  children: React.ReactNode;
+  initialLocale?: Locale;
+}
+
+export function DirectionProvider({
+  children,
+  initialLocale = "en",
+}: DirectionProviderProps) {
+  const [locale, setLocale] = useState<Locale>(initialLocale);
 
   const dir: Direction = locale === "ar" ? "rtl" : "ltr";
   const isRTL = dir === "rtl";

@@ -38,9 +38,13 @@ export const REGISTRATION_ERROR_DICTIONARY: Record<
       en: "Mobile number is required.",
       ar: "رقم الهاتف مطلوب.",
     },
+    missingCountryCode: {
+      en: "Enter your number with the country code (e.g. +20 for Egypt).",
+      ar: "أدخل رقمك مع رمز الدولة (مثلاً +20 لمصر).",
+    },
     invalid: {
-      en: "Please enter a valid phone number (min 7 digits).",
-      ar: "يرجى إدخال رقم هاتف صالح (٧ أرقام على الأقل).",
+      en: "Enter your number with the country code (e.g. +20 for Egypt).",
+      ar: "أدخل رقمك مع رمز الدولة (مثلاً +20 لمصر).",
     },
   },
   country: {
@@ -53,6 +57,16 @@ export const REGISTRATION_ERROR_DICTIONARY: Record<
     required: {
       en: "Please select your experience level.",
       ar: "يرجى اختيار مستوى الخبرة.",
+    },
+  },
+  cvFile: {
+    required: {
+      en: "Please attach your CV to continue.",
+      ar: "يرجى إرفاق السيرة الذاتية للمتابعة.",
+    },
+    invalid: {
+      en: "Invalid CV file format. Only PDF, DOC, and DOCX files verified by signature are accepted.",
+      ar: "صيغة السيرة الذاتية غير صالحة. نقبل فقط ملفات PDF و DOC و DOCX المؤكدة بالتوقيع الرقمي.",
     },
   },
   areasOfExpertise: {
