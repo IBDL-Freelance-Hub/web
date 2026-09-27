@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import { useRegistration } from "./RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
 import {
@@ -95,8 +96,8 @@ export function RegistrationSuccess() {
   const handleCopyAll = async () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const text = isAr
-      ? `بيانات الدخول لمنصة المستقلين IBDL Freelancers Hub:\nاسم المستخدم: ${usernameSpecimen}\nكلمة المرور: ${passwordSpecimen}\nرابط المنصة: ${origin}/login`
-      : `IBDL Freelancers Hub Credentials:\nUsername: ${usernameSpecimen}\nPassword: ${passwordSpecimen}\nLogin URL: ${origin}/login`;
+      ? `بيانات الدخول لبوابات تقييمات IBDL التشخيصية:\nاسم المستخدم: ${usernameSpecimen}\nكلمة المرور: ${passwordSpecimen}\nالبوابات: PQP (pqp.ibdl.net) | CPAT (cpat.ibdl.net) | Management Drives (md.ibdl.net)`
+      : `IBDL Diagnostic Assessment Credentials:\nUsername: ${usernameSpecimen}\nPassword: ${passwordSpecimen}\nPortals: PQP (pqp.ibdl.net) | CPAT (cpat.ibdl.net) | Management Drives (md.ibdl.net)`;
     const ok = await copyText(text);
     if (ok) {
       setCopiedAll(true);
@@ -152,13 +153,14 @@ export function RegistrationSuccess() {
   return (
     <div className="animate-in fade-in py-2 text-start duration-300">
       {/* 1. Header & Success Ring */}
-      <SuccessHeader firstName={firstName} isAr={isAr} />
+      <SuccessHeader firstName={firstName} isAr={isAr} email={formData.email} />
 
       {/* 2. Activated Membership Block */}
       <SuccessMembershipSummary
         currentDateFormatted={currentDateFormatted}
         nextYearDateFormatted={nextYearDateFormatted}
         isAr={isAr}
+        email={formData.email}
       />
 
       {/* 3. Specimen Credentials Box */}
@@ -181,31 +183,52 @@ export function RegistrationSuccess() {
 
       {/* 5. Modal Action Buttons */}
       <div className="space-y-3">
-        <Link
-          href="/login?activate=1"
+        <button
+          type="button"
           onClick={handleProceedToWorkspace}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] py-4 text-center text-sm font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-[#b60d14]"
         >
+          <Mail className="h-4 w-4 shrink-0" />
           <span>
             {isAr
-              ? "استكشاف مساحة عمل المنصة ←"
-              : "Explore the Hub workspace →"}
+              ? "افتح بريدك الإلكتروني لتفعيل الحساب (صالح ١٠ دقائق) ←"
+              : "Check Email to Activate Account (Valid 10 min) →"}
           </span>
-        </Link>
+        </button>
+
+        <div className="flex items-center justify-center gap-1.5 py-0.5 text-xs text-[#6a6a86]">
+          <span>
+            {isAr
+              ? "لم يصلك البريد أو انتهت صلاحيته؟"
+              : "Didn't receive email or link expired?"}
+          </span>
+          <Link
+            href="/activate"
+            onClick={closeRegistration}
+            className="font-bold text-amber-700 hover:underline"
+          >
+            {isAr ? "إعادة إرسال رابط التفعيل" : "Resend activation link"}
+          </Link>
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5 py-1 text-xs text-[#6a6a86]">
+          <span>{isAr ? "هل قمت بالتفعيل بالفعل؟" : "Already activated?"}</span>
+          <Link
+            href="/login"
+            onClick={closeRegistration}
+            className="font-bold text-[#e11119] hover:underline"
+          >
+            {isAr ? "تسجيل الدخول" : "Sign In"}
+          </Link>
+        </div>
 
         <button
           type="button"
           onClick={handleBackToWebsite}
-          className="w-full cursor-pointer py-2.5 text-center text-xs font-bold text-[#6a6a86] transition-colors hover:text-[#16162c]"
+          className="w-full cursor-pointer py-2 text-center text-xs font-bold text-[#6a6a86] transition-colors hover:text-[#16162c]"
         >
           {isAr ? "العودة للموقع" : "Back to the website"}
         </button>
-
-        <p className="text-center text-[11px] text-[#6a6a86]">
-          {isAr
-            ? "وضع العرض التوضيحي للجلسة · لم يتم إرسال أي بريد إلكتروني فعلي."
-            : "Session demo mode · No actual email was dispatched."}
-        </p>
       </div>
 
       {/* 6. Safety Confirmation Guard Modal */}

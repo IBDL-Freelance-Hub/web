@@ -37,8 +37,8 @@ export function SuccessSafetyModal({
           <div>
             <h3 className="text-base font-bold text-slate-900">
               {isAr
-                ? "تنبيه: هل حفظت بيانات الدخول؟"
-                : "Wait! Did you save your credentials?"}
+                ? "تنبيه: هل حفظت بيانات دخول التقييمات؟"
+                : "Wait! Did you save your assessment credentials?"}
             </h3>
             <p className="text-[11px] font-medium text-slate-500">
               {isAr
@@ -50,8 +50,8 @@ export function SuccessSafetyModal({
 
         <p className="mb-4 text-xs leading-relaxed text-slate-600">
           {isAr
-            ? "لن تتمكن من رؤية كلمة المرور هذه مرة أخرى بعد إغلاق هذه النافذة. يرجى التأكد من نسخها أولاً حتى تتمكن من بدء التقييمات لاحقاً."
-            : "You will not be able to view this password again after closing this window. Please copy or save it first so you can complete your assessments."}
+            ? "لن تتمكن من رؤية بيانات دخول التقييمات هذه مرة أخرى بعد إغلاق هذه النافذة. يرجى التأكد من نسخها أولاً حتى تتمكن من إجراء التقييمات الثلاثة لاحقاً."
+            : "You will not be able to view these assessment credentials again after closing this window. Please copy or save them first so you can complete your 3 diagnostic assessments."}
         </p>
 
         {/* Quick credentials card */}

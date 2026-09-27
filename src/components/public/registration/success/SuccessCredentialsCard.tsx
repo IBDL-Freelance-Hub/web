@@ -33,13 +33,13 @@ export function SuccessCredentialsCard({
       <div className="mb-4">
         <h3 className="text-sm font-bold tracking-tight text-[#16162c]">
           {isAr
-            ? "بيانات الدخول للتقييمات التجريبية"
-            : "Specimen Credentials for Assessments"}
+            ? "بيانات الدخول لبوابات التقييمات التشخيصية"
+            : "Diagnostic Assessment Specimen Credentials"}
         </h3>
         <p className="mt-1 text-xs text-[#6a6a86]">
           {isAr
-            ? "احفظ اسم المستخدم وكلمة المرور للدخول إلى منصات تقييم IBDL المفتوحة لحسابك."
-            : "Save your specimen credentials to access the 3 complimentary assessment portals."}
+            ? "احفظ اسم المستخدم وكلمة المرور للدخول إلى بوابات تقييم IBDL الثلاثة أدناه. (ملاحظة: هذه البيانات مخصصة للتقييمات فقط وتختلف عن بيانات تسجيل الدخول لحسابك في المنصة)."
+            : "Save your specimen credentials to access the 3 complimentary assessment portals below. (Note: These credentials are strictly for the assessment tools, separate from your Freelancers Hub account login)."}
         </p>
       </div>
 
