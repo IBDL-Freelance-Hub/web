@@ -238,8 +238,8 @@ export async function GET(
 
     // 2. If backend response failed (e.g. 404 from ephemeral serverless), check local file system
     for (const p of possibleLocalPaths) {
-      if (fs.existsSync(p)) {
-        const fileBuffer = fs.readFileSync(p);
+      if (fs.existsSync(/*turbopackIgnore: true*/ p)) {
+        const fileBuffer = fs.readFileSync(/*turbopackIgnore: true*/ p);
         const ext = path.extname(p).toLowerCase();
         const mimeType =
           specificMapping?.mimeType || detectMimeType(fileBuffer, ext);
