@@ -301,8 +301,8 @@ export function ProfileIdentityCard({
                     <KeyRound className="h-3 w-3" />
                     <span>
                       {isAr
-                        ? "بيانات التقييم (PQP™) جاهزة"
-                        : "PQP™ Credentials Ready"}
+                        ? "بيانات التقييمات الـ 3 جاهزة"
+                        : "3 Assessment Credentials Ready"}
                     </span>
                   </a>
                 )}

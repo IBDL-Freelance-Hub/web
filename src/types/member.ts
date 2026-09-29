@@ -69,6 +69,16 @@ export interface MemberProfileFileDto {
   createdAt: string;
 }
 
+export interface AssessmentPortalItem {
+  key: string;
+  code?: string;
+  nameEn: string;
+  nameAr: string;
+  tagEn?: string;
+  tagAr?: string;
+  url: string;
+}
+
 export interface MemberProfileData {
   id: string;
   userId: string;
@@ -100,11 +110,12 @@ export interface MemberProfileData {
   } | null;
   assessmentCredentials?: {
     name: string;
-    portalUrl: string;
-    username: string;
+    portalUrl?: string;
+    username?: string;
     password?: string;
     status: "ACTIVE" | "LOCKED" | string;
     note?: string;
+    portals?: AssessmentPortalItem[];
   } | null;
   files: MemberProfileFileDto[];
   createdAt: string;

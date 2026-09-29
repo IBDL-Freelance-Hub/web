@@ -7,7 +7,10 @@ import { ProfileProfessionalCard } from "./ProfileProfessionalCard";
 import { ProfileBioCard } from "./ProfileBioCard";
 import { ProfileDocumentsCard } from "./ProfileDocumentsCard";
 import { ProfileDirectoryCard } from "./ProfileDirectoryCard";
-import { AssessmentCredentialsCard } from "./AssessmentCredentialsCard";
+import {
+  AssessmentCredentialsCard,
+  type AssessmentCredentialData,
+} from "./AssessmentCredentialsCard";
 import type { MemberDto, MembershipDto } from "@/types/api";
 import type { MemberProfileFileDto } from "@/types/member";
 
@@ -18,14 +21,7 @@ export interface ProfileViewProps {
     status: string;
   };
   member: MemberDto & {
-    assessmentCredentials?: {
-      name?: string;
-      portalUrl?: string;
-      username?: string;
-      password?: string;
-      status?: string;
-      note?: string;
-    } | null;
+    assessmentCredentials?: AssessmentCredentialData | null;
   };
   membership: MembershipDto | null;
   completionRate: number;
@@ -65,24 +61,18 @@ export function ProfileView({
           initials={initials}
         />
 
-        {/* 2. PROMINENT Assessment Credentials Section (QA Issue #6) */}
-        <AssessmentCredentialsCard
-          credentials={member.assessmentCredentials}
-          userStatus={user.status}
-        />
-
         {/* 2-Column Details Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* 3. Personal Details Card (SCR-63 / PRO-04) */}
+          {/* 2. Personal Details Card (SCR-63 / PRO-04) */}
           <ProfilePersonalCard user={user} member={member} />
 
-          {/* 4. Professional Practice Card (SCR-63) */}
+          {/* 3. Professional Practice Card (SCR-63) */}
           <ProfileProfessionalCard member={member} />
 
-          {/* 5. Biography Card (SCR-63) */}
+          {/* 4. Biography Card (SCR-63) */}
           <ProfileBioCard member={member} />
 
-          {/* 6. Documents Card (SCR-63 / PRO-52) */}
+          {/* 5. Documents Card (SCR-63 / PRO-52) */}
           <ProfileDocumentsCard member={member} initialCvFile={initialCvFile} />
 
           {/* 7. Trainer Directory Opt-In Panel (PRO-34 & PRO-35) */}
@@ -96,6 +86,11 @@ export function ProfileView({
             />
           </div>
         </div>
+         {/* 7. PROMINENT Assessment Credentials Section (QA Issue #6) */}
+        <AssessmentCredentialsCard
+          credentials={member.assessmentCredentials}
+          userStatus={user.status}
+        />
       </div>
     </ProfileProvider>
   );

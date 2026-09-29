@@ -83,7 +83,7 @@ export function PriorityActionsCard({
           </span>
         </Link>
 
-        {/* Action 3: PQP Diagnostic Assessment Credentials (LIVE route to profile) */}
+        {/* Action 3: 3 Diagnostic Assessment Credentials (LIVE route to profile) */}
         <Link
           href="/profile#assessment-credentials"
           className="flex items-center justify-between rounded-xl border border-indigo-200/90 bg-indigo-50/50 p-4 transition hover:border-indigo-300 hover:bg-indigo-100/70"
@@ -95,13 +95,13 @@ export function PriorityActionsCard({
             <div>
               <h4 className="text-xs font-bold text-slate-900">
                 {isAr
-                  ? "بيانات التقييم المهني (PQP™)"
-                  : "Assessment Credentials (PQP™)"}
+                  ? "بيانات التقييمات الثلاثة (PQP™, CPAT™, MD)"
+                  : "3 Assessment Credentials (PQP™, CPAT™, MD)"}
               </h4>
               <p className="mt-0.5 text-[11px] text-indigo-950/80">
                 {isAr
-                  ? "عرض بيانات الدخول ورابط البوابة لبدء الاختبار."
-                  : "View your login credentials and launch your exam portal."}
+                  ? "عرض بيانات الدخول الموحدة وروابط بوابات التقييمات الثلاث."
+                  : "View unified credentials & launch any of the 3 assessment portals."}
               </p>
             </div>
           </div>
