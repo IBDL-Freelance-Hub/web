@@ -86,26 +86,26 @@ export function PriorityActionsCard({
         {/* Action 3: 3 Diagnostic Assessment Credentials (LIVE route to profile) */}
         <Link
           href="/profile#assessment-credentials"
-          className="flex items-center justify-between rounded-xl border border-indigo-200/90 bg-indigo-50/50 p-4 transition hover:border-indigo-300 hover:bg-indigo-100/70"
+          className="flex items-center justify-between rounded-xl border border-[#e2e2ec] bg-[#f8fafc] p-4 transition hover:border-[#1d1d39]/40 hover:bg-white"
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#1d1d39] text-white">
               <KeyRound className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900">
+              <h4 className="text-xs font-bold text-[#16162c]">
                 {isAr
                   ? "بيانات التقييمات الثلاثة (PQP™, CPAT™, MD)"
                   : "3 Assessment Credentials (PQP™, CPAT™, MD)"}
               </h4>
-              <p className="mt-0.5 text-[11px] text-indigo-950/80">
+              <p className="mt-0.5 text-[11px] text-[#6a6a86]">
                 {isAr
                   ? "عرض بيانات الدخول الموحدة وروابط بوابات التقييمات الثلاث."
                   : "View unified credentials & launch any of the 3 assessment portals."}
               </p>
             </div>
           </div>
-          <span className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-xs font-bold text-indigo-700 shadow-2xs">
+          <span className="rounded-lg border border-[#e2e2ec] bg-white px-2.5 py-1 text-xs font-bold text-[#1d1d39] shadow-2xs">
             {isAr ? "عرض" : "View"}
           </span>
         </Link>

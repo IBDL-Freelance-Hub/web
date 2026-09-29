@@ -296,7 +296,7 @@ export function ProfileIdentityCard({
                 ) && (
                   <a
                     href="#assessment-credentials"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50/90 px-3 py-1 text-xs font-bold text-indigo-700 shadow-2xs transition hover:border-indigo-300 hover:bg-indigo-100"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#419257]/30 bg-[#419257]/10 px-3 py-1 text-xs font-bold text-[#419257] shadow-2xs transition hover:bg-[#419257]/15"
                   >
                     <KeyRound className="h-3 w-3" />
                     <span>
