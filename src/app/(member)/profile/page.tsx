@@ -58,7 +58,14 @@ export default async function ProfilePage() {
 
       <ProfileView
         user={user}
-        member={member}
+        member={{
+          ...member,
+          assessmentCredentials:
+            profileRes?.success && profileRes.data?.assessmentCredentials
+              ? profileRes.data.assessmentCredentials
+              : (member as unknown as { assessmentCredentials?: unknown })
+                  .assessmentCredentials || null,
+        }}
         membership={membership}
         completionRate={completionResult.rate}
         initialCvFile={cvFile}

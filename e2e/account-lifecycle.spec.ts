@@ -198,16 +198,20 @@ test.describe("Account Lifecycle End-to-End Suite (20 Steps)", () => {
       .or(page.locator("text=١٠ دقائق"));
     await expect(expiryWarning).toBeVisible();
 
-    // Ensure diagnostic credentials card clearly distinguishes assessment tools from Hub login
-    const credCard = page
-      .locator("text=Diagnostic Assessment Specimen Credentials")
-      .or(page.locator("text=بيانات الدخول لبوابات التقييمات"));
-    await expect(credCard).toBeVisible();
+    // CRITICAL QA REQUIREMENT (Issue 4): Assessment credentials MUST NOT be displayed immediately after registration
     await expect(
-      page
-        .locator("text=separate from your Freelancers Hub account login")
-        .or(page.locator("text=تختلف عن بيانات تسجيل الدخول لحسابك"))
-    ).toBeVisible();
+      page.locator("text=Diagnostic Assessment Specimen Credentials")
+    ).not.toBeVisible();
+    await expect(
+      page.locator("text=بيانات الدخول لبوابات التقييمات")
+    ).not.toBeVisible();
+    await expect(page.locator("text=PQP-2026-DEMO")).not.toBeVisible();
+
+    // Assert the required 5-step activation lifecycle guide is visible
+    const activationGuide = page
+      .locator("text=Required Steps to Activate & Unlock Assessment Access")
+      .or(page.locator("text=خطوات تفعيل الحساب والوصول للتقييم المهني"));
+    await expect(activationGuide).toBeVisible();
 
     // -------------------------------------------------------------------------
     // STEP 12: Intercept & Verify Activation Link (Strict No-Localhost Domain)
