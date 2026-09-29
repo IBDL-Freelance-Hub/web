@@ -16,7 +16,8 @@ export function AnimatedStatNumber({
   delay = 200,
   duration = 1800,
 }: AnimatedStatNumberProps) {
-  const { formatNumber } = useLocale();
+  const { locale } = useLocale();
+  const isAr = locale === "ar";
   const spanRef = useRef<HTMLSpanElement>(null);
   const [isIntersecting, setIsIntersecting] = useState(() => {
     if (typeof window !== "undefined" && !("IntersectionObserver" in window)) {
@@ -107,11 +108,9 @@ export function AnimatedStatNumber({
     return <span>{value}</span>;
   }
 
-  // Preserve comma ONLY if original value contained it (e.g. "3,500+" has comma, "2006" does NOT)
-  const formattedRaw = hasComma
-    ? count.toLocaleString("en-US")
-    : count.toString();
-  const formattedCount = formatNumber(formattedRaw);
+  const formattedCount = new Intl.NumberFormat(isAr ? "ar-EG" : "en-US", {
+    useGrouping: hasComma,
+  }).format(Math.floor(count));
 
   return (
     <span ref={spanRef} className="inline-block tabular-nums">

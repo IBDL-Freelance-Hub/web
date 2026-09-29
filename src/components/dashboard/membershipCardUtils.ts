@@ -52,7 +52,8 @@ export function getMembershipStatusDetails(
   status: MembershipStatus,
   isAr?: boolean,
   daysUntilRenewal?: number,
-  expiryDateFormatted?: string
+  expiryDateFormatted?: string,
+  isEssential?: boolean
 ) {
   switch (status) {
     case "ACTIVE":
@@ -63,9 +64,13 @@ export function getMembershipStatusDetails(
         bannerClasses:
           "border-emerald-200/80 bg-emerald-50/70 text-emerald-900",
         iconType: "active" as const,
-        bannerText: isAr
-          ? `عضويتك المعتمدة نشطة ومستمرة حتى ${expiryDateFormatted || "—"}.`
-          : `Your accredited membership is active and valid until ${expiryDateFormatted || "—"}.`,
+        bannerText: isEssential
+          ? isAr
+            ? "عضويتك الأساسية نشطة ومستمرة دائماً بدون تاريخ انتهاء."
+            : "Your Essential membership is active and free forever with no expiration date."
+          : isAr
+            ? `عضويتك المعتمدة نشطة ومستمرة حتى ${expiryDateFormatted || "—"}.`
+            : `Your accredited membership is active and valid until ${expiryDateFormatted || "—"}.`,
       };
     case "GRACE_PERIOD":
       return {

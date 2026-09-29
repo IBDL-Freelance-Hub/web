@@ -73,13 +73,13 @@ export function CurrentMembershipBanner({
       ? (membership as MembershipDto).endDate
       : null);
 
-  const endDateFormatted =
-    tierCode === "ESSENTIAL"
-      ? isAr
-        ? "دائم"
-        : "Permanent"
-      : formatDateString(rawEndDate) ||
-        (isAr ? "12 مارس 2027" : "12 March 2027");
+  const isEssential = tierCode === "ESSENTIAL";
+
+  const endDateFormatted = isEssential
+    ? isAr
+      ? "دائم / Free Forever"
+      : "Free Forever"
+    : formatDateString(rawEndDate) || (isAr ? "12 مارس 2027" : "12 March 2027");
 
   // Payment Status details
   const isPaid = tierCode !== "ESSENTIAL" && status === "ACTIVE";
@@ -159,10 +159,16 @@ export function CurrentMembershipBanner({
             </p>
           </div>
 
-          {/* 3. End date */}
+          {/* 3. End date / Duration */}
           <div className="pt-1.5 sm:px-3 sm:pt-0">
             <p className="text-[11px] font-medium text-slate-400">
-              {isAr ? "تاريخ الانتهاء" : "End date"}
+              {isEssential
+                ? isAr
+                  ? "المدة والصلاحية"
+                  : "Duration"
+                : isAr
+                  ? "تاريخ الانتهاء"
+                  : "End date"}
             </p>
             <p className="mt-0.5 text-xs font-bold text-slate-900 sm:text-sm">
               {endDateFormatted}
@@ -200,9 +206,13 @@ export function CurrentMembershipBanner({
       <div className="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
         <Info className="h-3 w-3 shrink-0 text-slate-400" />
         <span>
-          {isAr
-            ? "مدة العضوية الافتراضية سنة واحدة ويتم تحديدها بواسطة IBDL."
-            : "Membership period defaults to one year and is configurable by IBDL."}
+          {isEssential
+            ? isAr
+              ? "عضوية Essential مجانية ودائمة مدى الحياة بدون رسوم تجديد."
+              : "Essential membership is free forever with no renewal fees."
+            : isAr
+              ? "مدة العضوية الافتراضية سنة واحدة ويتم تحديدها بواسطة IBDL."
+              : "Membership period defaults to one year and is configurable by IBDL."}
         </span>
       </div>
     </section>

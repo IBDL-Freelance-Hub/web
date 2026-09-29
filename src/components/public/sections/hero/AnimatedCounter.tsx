@@ -13,7 +13,8 @@ export function AnimatedCounter({
   duration = 1000,
 }: AnimatedCounterProps) {
   const [count, setCount] = useState(0);
-  const { formatNumber } = useLocale();
+  const { locale } = useLocale();
+  const isAr = locale === "ar";
 
   useEffect(() => {
     let startTime: number | null = null;
@@ -42,5 +43,12 @@ export function AnimatedCounter({
     };
   }, [target, duration]);
 
-  return <span className="tabular-nums">{formatNumber(count)}</span>;
+  const formattedValue = new Intl.NumberFormat(isAr ? "ar-EG" : "en-US").format(
+    Math.floor(count)
+  );
+
+  return <span className="tabular-nums">{formattedValue}</span>;
 }
+
+export const StatsCounter = AnimatedCounter;
+export const AnimatedNumber = AnimatedCounter;

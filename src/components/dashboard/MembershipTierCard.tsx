@@ -30,10 +30,16 @@ export function MembershipTierCard({
   isAr,
 }: MembershipTierCardProps) {
   const status = (membership?.status as MembershipStatus) || "ACTIVE";
+  const isEssential =
+    !membership?.tier || membership.tier.toUpperCase() === "ESSENTIAL";
   const expiryDate =
     (membership && "renewsOn" in membership ? membership.renewsOn : null) ||
     (membership && "endDate" in membership ? membership.endDate : null);
-  const formattedExpiry = formatDate(expiryDate || undefined, isAr);
+  const formattedExpiry = isEssential
+    ? isAr
+      ? "دائم"
+      : "Free Forever"
+    : formatDate(expiryDate || undefined, isAr);
   const daysUntilRenewal =
     membership && "daysUntilRenewal" in membership
       ? membership.daysUntilRenewal
@@ -43,7 +49,8 @@ export function MembershipTierCard({
     status,
     isAr,
     daysUntilRenewal,
-    formattedExpiry
+    formattedExpiry,
+    isEssential
   );
 
   const displayedTierName = getDisplayedTierName(
@@ -99,7 +106,13 @@ export function MembershipTierCard({
 
           <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
             <p className="text-[11px] font-medium text-slate-500">
-              {isAr ? "تاريخ الانتهاء والتجديد" : "Expiry / Renewal"}
+              {isEssential
+                ? isAr
+                  ? "الصلاحية"
+                  : "Duration"
+                : isAr
+                  ? "تاريخ الانتهاء والتجديد"
+                  : "Expiry / Renewal"}
             </p>
             <p className="mt-1 text-sm font-bold text-slate-900">
               {formattedExpiry}
@@ -140,7 +153,13 @@ export function MembershipTierCard({
         </Link>
         <span className="flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5 text-slate-400" />
-          {isAr ? "التجديد السنوي تلقائي" : "Annual billing cycle"}
+          {isEssential
+            ? isAr
+              ? "عضوية مجانية دائمة"
+              : "Free lifetime access"
+            : isAr
+              ? "التجديد السنوي تلقائي"
+              : "Annual billing cycle"}
         </span>
       </div>
     </section>
