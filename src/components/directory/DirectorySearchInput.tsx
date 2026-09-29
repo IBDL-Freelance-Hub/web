@@ -39,7 +39,6 @@ export function DirectorySearchInput({
       } else {
         params.delete("q");
       }
-      // Reset to page 1 on new search
       params.delete("page");
 
       startTransition(() => {
@@ -72,12 +71,12 @@ export function DirectorySearchInput({
 
   return (
     <div
-      className="relative w-full max-w-xl"
+      className="relative min-w-[220px] flex-1"
       role="search"
       aria-label={isAr ? "البحث في دليل المدربين" : "Search trainer directory"}
     >
       <span
-        className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-500"
+        className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
         aria-hidden="true"
       >
         <Search className="h-4 w-4" />
@@ -94,12 +93,12 @@ export function DirectorySearchInput({
         onChange={handleChange}
         placeholder={
           isAr
-            ? "ابحث بالاسم أو التخصص أو البلد..."
-            : "Search by name, expertise, or country..."
+            ? "ابحث بالاسم أو المدينة أو مجال الخبرة..."
+            : "Search by name, city or expertise"
         }
         aria-label={isAr ? "بحث المدربين" : "Search trainers"}
         dir={isAr ? "rtl" : "ltr"}
-        className="w-full rounded-xl border border-white/10 bg-[#16162c]/80 py-3 ps-10 pe-10 text-sm text-slate-200 placeholder-slate-500 backdrop-blur-sm transition-all duration-200 focus:border-white/25 focus:bg-[#16162c] focus:ring-2 focus:ring-white/15 focus:outline-none disabled:opacity-50"
+        className="w-full rounded-xl border border-slate-200/90 bg-white py-2 ps-9 pe-9 text-xs text-slate-900 shadow-2xs transition-all duration-200 placeholder:text-slate-400 focus:border-[#1d1d39] focus:ring-2 focus:ring-[#1d1d39]/10 focus:outline-none disabled:opacity-50"
         disabled={isPending}
       />
 
@@ -108,7 +107,7 @@ export function DirectorySearchInput({
           className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2"
           aria-hidden="true"
         >
-          <span className="block h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-slate-200" />
+          <span className="block h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-300 border-t-[#1d1d39]" />
         </span>
       )}
 
@@ -116,10 +115,10 @@ export function DirectorySearchInput({
         <button
           type="button"
           onClick={handleClear}
-          className="absolute end-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-500 transition-colors hover:text-slate-200 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/30"
+          className="absolute end-2.5 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-slate-400"
           aria-label={isAr ? "مسح البحث" : "Clear search"}
         >
-          <X className="h-4 w-4" aria-hidden="true" />
+          <X className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
       )}
     </div>

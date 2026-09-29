@@ -6,20 +6,22 @@ import { ChevronDown, X } from "lucide-react";
 import {
   DIRECTORY_EXPERTISE_OPTIONS,
   DIRECTORY_INDUSTRY_OPTIONS,
-  DIRECTORY_LANGUAGE_OPTIONS,
 } from "@/constants/directory";
+import { COUNTRIES } from "@/data/registrationFormData";
 
 export interface DirectoryFiltersProps {
+  activeCountry?: string;
   activeExpertise?: string;
   activeIndustry?: string;
-  activeLanguage?: string;
+  totalCount?: number;
   locale?: "en" | "ar";
 }
 
 export function DirectoryFilters({
+  activeCountry = "",
   activeExpertise = "",
   activeIndustry = "",
-  activeLanguage = "",
+  totalCount,
   locale = "en",
 }: DirectoryFiltersProps) {
   const router = useRouter();
@@ -46,9 +48,9 @@ export function DirectoryFilters({
 
   const clearAllFilters = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("country");
     params.delete("expertise");
     params.delete("industry");
-    params.delete("language");
     params.delete("page");
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`, { scroll: false });
@@ -56,113 +58,93 @@ export function DirectoryFilters({
   }, [router, pathname, searchParams]);
 
   const hasActiveFilters = !!(
+    activeCountry ||
     activeExpertise ||
-    activeIndustry ||
-    activeLanguage
+    activeIndustry
   );
 
   return (
     <div
-      className="flex flex-wrap items-center gap-2.5"
+      className="flex flex-wrap items-center justify-between gap-3"
       aria-label={isAr ? "فلاتر الدليل" : "Directory filters"}
     >
-      {/* Expertise Filter */}
-      <div className="relative">
-        <label htmlFor="filter-expertise" className="sr-only">
-          {isAr ? "تصفية حسب مجال الخبرة" : "Filter by expertise"}
-        </label>
-        <select
-          id="filter-expertise"
-          value={activeExpertise}
-          onChange={(e) => updateParam("expertise", e.target.value)}
-          disabled={isPending}
-          className="appearance-none rounded-xl border border-white/10 bg-[#16162c]/80 py-2 ps-3.5 pe-8 text-sm text-slate-300 backdrop-blur-sm transition-colors duration-150 focus:border-white/25 focus:ring-2 focus:ring-white/15 focus:outline-none disabled:opacity-50"
-          aria-label={isAr ? "مجال الخبرة" : "Area of expertise"}
-        >
-          <option value="">{isAr ? "كل التخصصات" : "All Expertise"}</option>
-          {DIRECTORY_EXPERTISE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {isAr ? opt.labelAr : opt.labelEn}
+      <div className="flex flex-wrap items-center gap-2.5">
+        {/* Country Filter ("All countries") */}
+        <div className="relative">
+          <label htmlFor="filter-country" className="sr-only">
+            {isAr ? "تصفية حسب الدولة" : "Filter by country"}
+          </label>
+          <select
+            id="filter-country"
+            value={activeCountry}
+            onChange={(e) => updateParam("country", e.target.value)}
+            disabled={isPending}
+            className="appearance-none rounded-xl border border-slate-200/90 bg-white py-2 ps-3.5 pe-8 text-xs font-medium text-slate-700 shadow-2xs transition-colors duration-150 hover:border-slate-300 focus:border-[#1d1d39] focus:ring-2 focus:ring-[#1d1d39]/10 focus:outline-none disabled:opacity-50"
+            aria-label={isAr ? "الدولة" : "Country"}
+          >
+            <option value="">{isAr ? "جميع الدول" : "All countries"}</option>
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.nameEn}>
+                {isAr ? c.nameAr : c.nameEn}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute end-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Expertise Filter ("All areas of expertise") */}
+        <div className="relative">
+          <label htmlFor="filter-expertise" className="sr-only">
+            {isAr ? "تصفية حسب مجال الخبرة" : "Filter by expertise"}
+          </label>
+          <select
+            id="filter-expertise"
+            value={activeExpertise}
+            onChange={(e) => updateParam("expertise", e.target.value)}
+            disabled={isPending}
+            className="appearance-none rounded-xl border border-slate-200/90 bg-white py-2 ps-3.5 pe-8 text-xs font-medium text-slate-700 shadow-2xs transition-colors duration-150 hover:border-slate-300 focus:border-[#1d1d39] focus:ring-2 focus:ring-[#1d1d39]/10 focus:outline-none disabled:opacity-50"
+            aria-label={isAr ? "مجال الخبرة" : "Area of expertise"}
+          >
+            <option value="">
+              {isAr ? "جميع مجالات الخبرة" : "All areas of expertise"}
             </option>
-          ))}
-        </select>
-        <ChevronDown
-          className="pointer-events-none absolute end-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
-          aria-hidden="true"
-        />
+            {DIRECTORY_EXPERTISE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {isAr ? opt.labelAr : opt.labelEn}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute end-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Clear Filters */}
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={clearAllFilters}
+            disabled={isPending}
+            className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-slate-400 disabled:opacity-50"
+            aria-label={isAr ? "إعادة تعيين الفلاتر" : "Reset filters"}
+          >
+            <X className="h-3 w-3" aria-hidden="true" />
+            <span>{isAr ? "إعادة تعيين" : "Reset"}</span>
+          </button>
+        )}
       </div>
 
-      {/* Industry Filter */}
-      <div className="relative">
-        <label htmlFor="filter-industry" className="sr-only">
-          {isAr ? "تصفية حسب القطاع" : "Filter by industry"}
-        </label>
-        <select
-          id="filter-industry"
-          value={activeIndustry}
-          onChange={(e) => updateParam("industry", e.target.value)}
-          disabled={isPending}
-          className="appearance-none rounded-xl border border-white/10 bg-[#16162c]/80 py-2 ps-3.5 pe-8 text-sm text-slate-300 backdrop-blur-sm transition-colors duration-150 focus:border-white/25 focus:ring-2 focus:ring-white/15 focus:outline-none disabled:opacity-50"
-          aria-label={isAr ? "القطاع" : "Industry"}
-        >
-          <option value="">{isAr ? "كل القطاعات" : "All Industries"}</option>
-          {DIRECTORY_INDUSTRY_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {isAr ? opt.labelAr : opt.labelEn}
-            </option>
-          ))}
-        </select>
-        <ChevronDown
-          className="pointer-events-none absolute end-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* Language Filter */}
-      <div className="relative">
-        <label htmlFor="filter-language" className="sr-only">
-          {isAr ? "تصفية حسب اللغة" : "Filter by language"}
-        </label>
-        <select
-          id="filter-language"
-          value={activeLanguage}
-          onChange={(e) => updateParam("language", e.target.value)}
-          disabled={isPending}
-          className="appearance-none rounded-xl border border-white/10 bg-[#16162c]/80 py-2 ps-3.5 pe-8 text-sm text-slate-300 backdrop-blur-sm transition-colors duration-150 focus:border-white/25 focus:ring-2 focus:ring-white/15 focus:outline-none disabled:opacity-50"
-          aria-label={isAr ? "لغة التدريب" : "Training language"}
-        >
-          <option value="">{isAr ? "كل اللغات" : "All Languages"}</option>
-          {DIRECTORY_LANGUAGE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {isAr ? opt.labelAr : opt.labelEn}
-            </option>
-          ))}
-        </select>
-        <ChevronDown
-          className="pointer-events-none absolute end-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* Clear all filters */}
-      {hasActiveFilters && (
-        <button
-          type="button"
-          onClick={clearAllFilters}
-          disabled={isPending}
-          className="flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500/40 disabled:opacity-50"
-          aria-label={isAr ? "مسح جميع الفلاتر" : "Clear all filters"}
-        >
-          <X className="h-3.5 w-3.5" aria-hidden="true" />
-          {isAr ? "مسح الفلاتر" : "Clear filters"}
-        </button>
-      )}
-
-      {isPending && (
-        <span
-          className="h-4 w-4 animate-spin rounded-full border-2 border-slate-500 border-t-slate-200"
-          aria-hidden="true"
-        />
+      {/* Member Count on the Right (e.g. "9 members listed") */}
+      {typeof totalCount === "number" && (
+        <div className="shrink-0 text-xs font-medium text-orange-500">
+          {isAr
+            ? `${totalCount.toLocaleString()} مدرب مدرج`
+            : `${totalCount.toLocaleString()} member${totalCount !== 1 ? "s" : ""} listed`}
+        </div>
       )}
     </div>
   );

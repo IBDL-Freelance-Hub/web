@@ -26,29 +26,29 @@ export function PublicProfileLanguages({
 
   return (
     <section
-      className="rounded-2xl border border-white/10 bg-[#16162c]/80 p-6 backdrop-blur-sm sm:p-7"
+      className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs"
       aria-labelledby="languages-heading"
     >
-      <div className="mb-4 flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-          <Globe className="h-4 w-4 text-slate-300" aria-hidden="true" />
+      <div className="mb-3 flex items-center gap-2">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1d1d39]/10 text-[#1d1d39]">
+          <Globe className="h-4 w-4" aria-hidden="true" />
         </div>
         <h2
           id="languages-heading"
-          className="text-sm font-extrabold tracking-[0.12em] text-slate-400 uppercase"
+          className="text-xs font-bold tracking-wider text-slate-500 uppercase"
         >
           {isAr ? "لغات التدريب" : "Training Languages"}
         </h2>
       </div>
 
       <div
-        className="flex flex-wrap gap-2.5"
+        className="flex flex-wrap gap-2"
         aria-label={isAr ? "اللغات" : "Languages"}
       >
         {profile.languages.map((language) => (
           <span
             key={language}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-slate-200"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
           >
             <span aria-hidden="true">{LANGUAGE_FLAGS[language] || "🌐"}</span>
             {language}

@@ -34,6 +34,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "PRIORITY",
     linkedinUrl: "https://www.linkedin.com/in/dr-tariq-almansoori",
     directoryOptIn: true,
+    ibdlCertified: true,
   },
   {
     id: "e1a12002-4444-4222-8222-000000000002",
@@ -68,6 +69,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "PRIORITY",
     linkedinUrl: "https://www.linkedin.com/in/sarah-elsayed-hr",
     directoryOptIn: true,
+    ibdlCertified: true,
   },
   {
     id: "e1a12003-4444-4333-8333-000000000003",
@@ -101,6 +103,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "FEATURED",
     linkedinUrl: "https://www.linkedin.com/in/khalid-alotaibi-sales",
     directoryOptIn: true,
+    ibdlCertified: false,
   },
   {
     id: "e1a12004-4444-4444-8444-000000000004",
@@ -134,6 +137,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "FEATURED",
     linkedinUrl: "https://www.linkedin.com/in/mona-abdelaziz-lean",
     directoryOptIn: true,
+    ibdlCertified: false,
   },
   {
     id: "e1a12005-4444-4555-8555-000000000005",
@@ -167,6 +171,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "FEATURED",
     linkedinUrl: "https://www.linkedin.com/in/ahmed-fathi-finance",
     directoryOptIn: true,
+    ibdlCertified: false,
   },
   {
     id: "e1a12006-4444-4666-8666-000000000006",
@@ -200,6 +205,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "STANDARD",
     linkedinUrl: "https://www.linkedin.com/in/layla-alhassan-cx",
     directoryOptIn: true,
+    ibdlCertified: false,
   },
   {
     id: "e1a12007-4444-4777-8777-000000000007",
@@ -233,6 +239,7 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "STANDARD",
     linkedinUrl: "https://www.linkedin.com/in/youssef-benali-agile",
     directoryOptIn: true,
+    ibdlCertified: false,
   },
   {
     id: "e1a12008-4444-4888-8888-000000000008",
@@ -266,5 +273,6 @@ export const SEED_TRAINERS: PublicTrainerProfile[] = [
     badgeType: "PRIORITY",
     linkedinUrl: "https://www.linkedin.com/in/reem-alqahtani-lead",
     directoryOptIn: true,
+    ibdlCertified: true,
   },
 ];

@@ -27,6 +27,7 @@ export interface PublicTrainerListItem {
   badgeType: DirectoryBadgeType;
   yearsOfExperience?: string | null;
   directoryOptIn?: boolean;
+  ibdlCertified?: boolean;
 }
 
 /**

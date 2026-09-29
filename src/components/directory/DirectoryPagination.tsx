@@ -64,14 +64,14 @@ export function DirectoryPagination({
 
   return (
     <nav
-      className="mt-12 flex items-center justify-center gap-1.5"
+      className="mt-8 flex items-center justify-center gap-1.5"
       aria-label={isAr ? "التنقل بين الصفحات" : "Pagination"}
     >
       {/* Previous */}
       {hasPrev ? (
         <Link
           href={buildPageUrl(prevPage, searchParams)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-[#1d1d39]"
           aria-label={isAr ? "الصفحة السابقة" : "Previous page"}
           scroll={false}
         >
@@ -83,7 +83,7 @@ export function DirectoryPagination({
         </Link>
       ) : (
         <span
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 text-slate-600"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 text-slate-300"
           aria-disabled="true"
         >
           {isAr ? (
@@ -100,7 +100,7 @@ export function DirectoryPagination({
           return (
             <span
               key={`ellipsis-${idx}`}
-              className="flex h-9 w-9 items-center justify-center text-sm text-slate-500"
+              className="flex h-8 w-8 items-center justify-center text-xs text-slate-400"
               aria-hidden="true"
             >
               …
@@ -112,7 +112,7 @@ export function DirectoryPagination({
         return isActive ? (
           <span
             key={page}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e11119] text-sm font-bold text-white shadow-[0_0_12px_rgba(225,17,25,0.4)]"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#1d1d39] text-xs font-bold text-white shadow-2xs"
             aria-current="page"
             aria-label={
               isAr ? `الصفحة ${page}، الحالية` : `Page ${page}, current`
@@ -124,7 +124,7 @@ export function DirectoryPagination({
           <Link
             key={page}
             href={buildPageUrl(page, searchParams)}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm text-slate-400 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-[#1d1d39]"
             aria-label={isAr ? `الصفحة ${page}` : `Page ${page}`}
             scroll={false}
           >
@@ -137,7 +137,7 @@ export function DirectoryPagination({
       {hasNext ? (
         <Link
           href={buildPageUrl(nextPage, searchParams)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-[#1d1d39]"
           aria-label={isAr ? "الصفحة التالية" : "Next page"}
           scroll={false}
         >
@@ -149,7 +149,7 @@ export function DirectoryPagination({
         </Link>
       ) : (
         <span
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 text-slate-600"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 text-slate-300"
           aria-disabled="true"
         >
           {isAr ? (

@@ -79,7 +79,11 @@ function LoginFormContent() {
           setGeneralError(res.error);
         }
       } else {
-        router.push("/overview");
+        const target =
+          searchParams.get("redirectTo") ||
+          searchParams.get("callbackUrl") ||
+          "/overview";
+        router.push(target);
       }
     } catch {
       setIsLoading(false);

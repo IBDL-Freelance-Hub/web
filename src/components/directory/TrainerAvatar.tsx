@@ -64,10 +64,10 @@ export function TrainerAvatar({
     );
   }
 
-  // Graceful initials badge with gradient
+  // Graceful initials badge with rounded-square shape
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 via-slate-900 to-[#141226] font-semibold text-slate-100 select-none ${dimensionClass} ${ringStyle} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-2xl bg-[#1d1d39] font-semibold text-white select-none ${dimensionClass} ${className}`}
       aria-hidden="true"
     >
       <span>{initials}</span>

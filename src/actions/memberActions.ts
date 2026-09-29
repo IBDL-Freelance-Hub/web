@@ -91,31 +91,31 @@ export async function updateMemberProfileAction(
   _prevState: unknown,
   payload: UpdateProfilePayload
 ): Promise<ActionResponse<MemberProfileData>> {
-  // PRO-04 / VAL-50: Explicitly strip email from payload
-  const rawInput = { ...(payload as Record<string, unknown>) };
-  delete rawInput.email;
-
-  // Schema validation
-  const validation = updateMemberProfileSchema.safeParse(rawInput);
-  if (!validation.success) {
-    const fieldErrors: Record<string, string[]> = {};
-    for (const issue of validation.error.issues) {
-      const field = issue.path[0] ? String(issue.path[0]) : "form";
-      if (!fieldErrors[field]) {
-        fieldErrors[field] = [];
-      }
-      fieldErrors[field].push(issue.message);
-    }
-    return {
-      success: false,
-      error: "Please correct the highlighted errors.",
-      fieldErrors,
-    };
-  }
-
-  const sanitizedData = validation.data;
-
   try {
+    // PRO-04 / VAL-50: Explicitly strip email from payload
+    const rawInput = { ...(payload as Record<string, unknown>) };
+    delete rawInput.email;
+
+    // Schema validation
+    const validation = updateMemberProfileSchema.safeParse(rawInput);
+    if (!validation.success) {
+      const fieldErrors: Record<string, string[]> = {};
+      for (const issue of validation.error.issues) {
+        const field = issue.path[0] ? String(issue.path[0]) : "form";
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = [];
+        }
+        fieldErrors[field].push(issue.message);
+      }
+      return {
+        success: false,
+        error: "Please correct the highlighted errors.",
+        fieldErrors,
+      };
+    }
+
+    const sanitizedData = validation.data;
+
     const res = await api.patch<{
       success: boolean;
       data: {
