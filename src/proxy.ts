@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PROTECTED_ROUTES = ["/overview", "/profile", "/dashboard", "/settings"];
+const PROTECTED_ROUTES = [
+  "/overview",
+  "/profile",
+  "/dashboard",
+  "/settings",
+  "/directory",
+];
 // Routes where authenticated users are redirected away to /overview.
 // NOTE: /reset-password is intentionally EXCLUDED to allow signed-in users
 // to reset passwords across sessions/devices without being redirected away.
@@ -20,10 +26,9 @@ export function proxy(request: NextRequest) {
 
   if (!sessionToken && isProtectedRoute) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set(
-      "callbackUrl",
-      request.nextUrl.pathname + request.nextUrl.search
-    );
+    const targetUrl = request.nextUrl.pathname + request.nextUrl.search;
+    loginUrl.searchParams.set("callbackUrl", targetUrl);
+    loginUrl.searchParams.set("redirectTo", targetUrl);
     return NextResponse.redirect(loginUrl);
   }
 

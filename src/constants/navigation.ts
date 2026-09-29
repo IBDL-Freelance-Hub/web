@@ -187,12 +187,7 @@ export const NAVIGATION_GROUPS: readonly NavGroupConfig[] = [
         labelEn: "Trainer Directory",
         labelAr: "دليل المدربين",
         icon: Users,
-        isLive: false,
-        badge: {
-          textEn: "Coming soon",
-          textAr: "قريباً",
-          variant: "comingSoon",
-        },
+        isLive: true,
       },
       {
         href: "/community",

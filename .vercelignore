@@ -4,3 +4,9 @@ node_modules
 build
 coverage
 *.log
+**/__tests__/**
+**/*.test.*
+**/*.spec.*
+e2e
+playwright-report
+test-results
