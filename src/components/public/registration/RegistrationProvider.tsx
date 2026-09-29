@@ -21,7 +21,10 @@ import {
   type RegistrationContextValue,
 } from "@/types/registration";
 import { getLocalizedErrorMessage } from "@/lib/validations/registrationErrors";
-import { normalizeLinkedInUrl } from "@/lib/validations/registration";
+import {
+  normalizeLinkedInUrl,
+  isValidMobileForCountry,
+} from "@/lib/validations/registration";
 
 export type {
   RegistrationFormData,
@@ -216,7 +219,6 @@ export function RegistrationProvider({
 
       const emailTrim = formData.email.trim().toLowerCase();
       const phoneTrim = formData.phone.trim();
-      const cleanPhone = phoneTrim.replace(/[\s\-\(\)\+]/g, "");
 
       let isValid = true;
       const errors: Record<string, string[]> = {};
@@ -253,7 +255,7 @@ export function RegistrationProvider({
         errors.mobile = [
           getLocalizedErrorMessage("mobile", "missingCountryCode", locale),
         ];
-      } else if (cleanPhone.length < 7) {
+      } else if (!isValidMobileForCountry(phoneTrim, formData.country)) {
         isValid = false;
         errors.mobile = [getLocalizedErrorMessage("mobile", "invalid", locale)];
       }
@@ -477,18 +479,6 @@ export function RegistrationProvider({
         }
 
         if (res.data) {
-          const pqp = res.data.pqpAccess;
-          const creds: SpecimenCredentials = {
-            username: pqp.username,
-            password: pqp.password,
-            portalUrl: pqp.assessmentLink.startsWith("http")
-              ? pqp.assessmentLink
-              : `https://${pqp.assessmentLink}`,
-            pqpKey: `PQP-FLH-2026-${res.data.member.id.substring(0, 4)}`,
-            cpatKey: `CPAT-FLH-2026-${res.data.member.id.substring(0, 4)}`,
-            managementDrivesKey: `MD-FLH-2026-${res.data.member.id.substring(0, 4)}`,
-          };
-
           try {
             sessionStorage.setItem(
               SESSION_STORAGE_KEY,
@@ -496,7 +486,6 @@ export function RegistrationProvider({
                 formData,
                 step: "success",
                 member: res.data.member,
-                credentials: creds,
                 updatedAt: new Date().toISOString(),
               })
             );
@@ -507,15 +496,15 @@ export function RegistrationProvider({
           showToast(
             "success",
             locale === "ar"
-              ? "تم تعيين صلاحيات التقييم التشخيصي لك"
-              : "Diagnostic assessment access assigned to you",
+              ? "تم إنشاء الحساب بنجاح"
+              : "Account created successfully",
             locale === "ar"
-              ? "مرحباً بك في منصة المستقلين! يرجى مراجعة بريدك الإلكتروني لتفعيل حسابك."
-              : "Welcome to Freelancers Hub! Please check your email to activate your account.",
+              ? "يرجى مراجعة بريدك الإلكتروني لتفعيل الحساب وتعيين كلمة المرور للوصول إلى بيانات التقييم."
+              : "Please check your email to activate your account and set your password to access your assessment credentials.",
             "public"
           );
 
-          setSpecimenCredentials(creds);
+          setSpecimenCredentials(null);
           setIsSubmitting(false);
           setStep("success");
           return true;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, Clock, ShieldAlert } from "lucide-react";
+import { Mail, Clock } from "lucide-react";
 
 export interface SuccessHeaderProps {
   firstName: string;

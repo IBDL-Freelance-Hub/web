@@ -98,6 +98,14 @@ export interface MemberProfileData {
     startDate: string;
     endDate: string;
   } | null;
+  assessmentCredentials?: {
+    name: string;
+    portalUrl: string;
+    username: string;
+    password?: string;
+    status: "ACTIVE" | "LOCKED" | string;
+    note?: string;
+  } | null;
   files: MemberProfileFileDto[];
   createdAt: string;
   updatedAt: string;

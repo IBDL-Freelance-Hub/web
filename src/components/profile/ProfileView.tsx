@@ -7,6 +7,7 @@ import { ProfileProfessionalCard } from "./ProfileProfessionalCard";
 import { ProfileBioCard } from "./ProfileBioCard";
 import { ProfileDocumentsCard } from "./ProfileDocumentsCard";
 import { ProfileDirectoryCard } from "./ProfileDirectoryCard";
+import { AssessmentCredentialsCard } from "./AssessmentCredentialsCard";
 import type { MemberDto, MembershipDto } from "@/types/api";
 import type { MemberProfileFileDto } from "@/types/member";
 
@@ -16,7 +17,16 @@ export interface ProfileViewProps {
     email: string;
     status: string;
   };
-  member: MemberDto;
+  member: MemberDto & {
+    assessmentCredentials?: {
+      name?: string;
+      portalUrl?: string;
+      username?: string;
+      password?: string;
+      status?: string;
+      note?: string;
+    } | null;
+  };
   membership: MembershipDto | null;
   completionRate: number;
   initialCvFile?: MemberProfileFileDto | null;
@@ -69,7 +79,15 @@ export function ProfileView({
           {/* 5. Documents Card (SCR-63 / PRO-52) */}
           <ProfileDocumentsCard member={member} initialCvFile={initialCvFile} />
 
-          {/* 6. Trainer Directory Opt-In Panel (PRO-34 & PRO-35) */}
+          {/* 6. Assessment Credentials Card (Issue #6) */}
+          <div className="lg:col-span-2">
+            <AssessmentCredentialsCard
+              credentials={member.assessmentCredentials}
+              userStatus={user.status}
+            />
+          </div>
+
+          {/* 7. Trainer Directory Opt-In Panel (PRO-34 & PRO-35) */}
           <div className="lg:col-span-2">
             <ProfileDirectoryCard
               member={member}

@@ -3,14 +3,13 @@ import { Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export interface SuccessMembershipSummaryProps {
   currentDateFormatted: string;
-  nextYearDateFormatted: string;
+  nextYearDateFormatted?: string;
   isAr: boolean;
   email?: string;
 }
 
 export function SuccessMembershipSummary({
   currentDateFormatted,
-  nextYearDateFormatted,
   isAr,
   email,
 }: SuccessMembershipSummaryProps) {
@@ -114,13 +113,13 @@ export function SuccessMembershipSummary({
           </span>
         </div>
 
-        {/* Item 7: Renews On */}
+        {/* Item 7: Duration (Issue #5: Essential tier is Free Forever, no expiration/renewal date) */}
         <div className="flex flex-col gap-1 bg-white p-4 px-5 text-xs sm:text-sm">
           <span className="font-medium text-[#6a6a86]">
-            {isAr ? "تاريخ التجديد" : "Renews on"}
+            {isAr ? "المدة والصلاحية" : "Duration"}
           </span>
-          <span className="font-bold text-[#16162c]">
-            {nextYearDateFormatted}
+          <span className="font-bold text-[#419257]">
+            {isAr ? "دائم / Free Forever" : "Free Forever"}
           </span>
         </div>
       </div>

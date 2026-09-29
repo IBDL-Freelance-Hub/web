@@ -1,9 +1,7 @@
-"use client";
-
-import React, { useMemo, useState, useSyncExternalStore } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
-import { useRegistration } from "./RegistrationProvider";
+import { Mail, Lock, KeyRound } from "lucide-react";
+import { useRegistration } from "@/components/public/registration/RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
 import {
   SuccessHeader,
@@ -13,123 +11,15 @@ import {
   SuccessSafetyModal,
 } from "./success";
 
-const emptySubscribe = () => () => {};
-function useIsClient() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-}
-
 export function RegistrationSuccess() {
-  const isClient = useIsClient();
   const { locale } = useLocale();
   const isAr = locale === "ar";
 
-  const {
-    formData,
-    specimenCredentials,
-    closeRegistration,
-    credentialsAcknowledged,
-    setCredentialsAcknowledged,
-    showCredentialsConfirm,
-    setShowCredentialsConfirm,
-  } = useRegistration();
-
-  const [copiedUsername, setCopiedUsername] = useState(false);
-  const [copiedPassword, setCopiedPassword] = useState(false);
-  const [copiedAll, setCopiedAll] = useState(false);
+  const { formData, closeRegistration } = useRegistration();
 
   const firstName = useMemo(() => {
     return formData.fullName.trim().split(" ")[0] || "Freelancer";
   }, [formData.fullName]);
-
-  const usernameSpecimen = useMemo(() => {
-    return specimenCredentials?.username || `flh.${firstName.toLowerCase()}`;
-  }, [specimenCredentials, firstName]);
-
-  const passwordSpecimen = specimenCredentials?.password || "PQP-2026-DEMO";
-
-  const copyText = async (text: string): Promise<boolean> => {
-    try {
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        return true;
-      }
-    } catch {
-      // fallback
-    }
-    try {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      const res = document.execCommand("copy");
-      document.body.removeChild(textarea);
-      return res;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleCopyUsername = async () => {
-    const ok = await copyText(usernameSpecimen);
-    if (ok) {
-      setCopiedUsername(true);
-      setCredentialsAcknowledged(true);
-      setTimeout(() => setCopiedUsername(false), 2500);
-    }
-  };
-
-  const handleCopyPassword = async () => {
-    const ok = await copyText(passwordSpecimen);
-    if (ok) {
-      setCopiedPassword(true);
-      setCredentialsAcknowledged(true);
-      setTimeout(() => setCopiedPassword(false), 2500);
-    }
-  };
-
-  const handleCopyAll = async () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const text = isAr
-      ? `بيانات الدخول لبوابات تقييمات IBDL التشخيصية:\nاسم المستخدم: ${usernameSpecimen}\nكلمة المرور: ${passwordSpecimen}\nالبوابات: PQP (pqp.ibdl.net) | CPAT (cpat.ibdl.net) | Management Drives (md.ibdl.net)`
-      : `IBDL Diagnostic Assessment Credentials:\nUsername: ${usernameSpecimen}\nPassword: ${passwordSpecimen}\nPortals: PQP (pqp.ibdl.net) | CPAT (cpat.ibdl.net) | Management Drives (md.ibdl.net)`;
-    const ok = await copyText(text);
-    if (ok) {
-      setCopiedAll(true);
-      setCredentialsAcknowledged(true);
-      setTimeout(() => setCopiedAll(false), 3000);
-    }
-  };
-
-  const handleProceedToWorkspace = (e: React.MouseEvent) => {
-    if (!credentialsAcknowledged) {
-      e.preventDefault();
-      setShowCredentialsConfirm(true);
-    } else {
-      closeRegistration();
-    }
-  };
-
-  const handleBackToWebsite = () => {
-    if (!credentialsAcknowledged) {
-      setShowCredentialsConfirm(true);
-    } else {
-      closeRegistration();
-    }
-  };
-
-  const handleCopyAndClose = async () => {
-    await handleCopyAll();
-    setCredentialsAcknowledged(true);
-    setTimeout(() => {
-      closeRegistration();
-    }, 450);
-  };
 
   const { currentDateFormatted, nextYearDateFormatted } = useMemo(() => {
     const now = new Date();
@@ -163,29 +53,40 @@ export function RegistrationSuccess() {
         email={formData.email}
       />
 
-      {/* 3. Specimen Credentials Box */}
-      <SuccessCredentialsCard
-        usernameSpecimen={usernameSpecimen}
-        passwordSpecimen={passwordSpecimen}
-        copiedUsername={copiedUsername}
-        copiedPassword={copiedPassword}
-        copiedAll={copiedAll}
-        credentialsAcknowledged={credentialsAcknowledged}
-        onCopyUsername={handleCopyUsername}
-        onCopyPassword={handleCopyPassword}
-        onCopyAll={handleCopyAll}
-        onAcknowledgeChange={setCredentialsAcknowledged}
-        isAr={isAr}
-      />
+      {/* 3. Mandated Bilingual Activation & Assessment Instructions (Issue #4) */}
+      <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50/80 p-5 text-start shadow-xs">
+        <div className="flex items-start gap-3.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
+            <Lock className="h-5 w-5" />
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-sm font-bold text-sky-950">
+              {isAr
+                ? "تفعيل الحساب وبيانات التقييم (PQP™)"
+                : "Account Activation & Assessment Access"}
+            </h4>
+            <p className="text-xs leading-relaxed font-medium text-sky-900">
+              {isAr
+                ? "تم إنشاء حسابك بنجاح. يرجى مراجعة بريدك الإلكتروني لتفعيل الحساب وتعيين كلمة المرور للوصول إلى لوحة التحكم وبيانات التقييم."
+                : "Your account has been created. Please check your email to activate your account and set your password to access your assessment credentials."}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-sky-800">
+              <KeyRound className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                {isAr
+                  ? "يتم إتاحة بيانات الدخول للتقييم فور تفعيل الحساب داخل ملفك الشخصي."
+                  : "Assessment credentials will be unlocked in your member profile upon account activation."}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* 4. Assessment Portals */}
-      <SuccessPortalLinks isAr={isAr} />
-
-      {/* 5. Modal Action Buttons */}
+      {/* 4. Modal Action Buttons */}
       <div className="space-y-3">
         <button
           type="button"
-          onClick={handleProceedToWorkspace}
+          onClick={closeRegistration}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#e11119] py-4 text-center text-sm font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-[#b60d14]"
         >
           <Mail className="h-4 w-4 shrink-0" />
@@ -224,33 +125,17 @@ export function RegistrationSuccess() {
 
         <button
           type="button"
-          onClick={handleBackToWebsite}
+          onClick={closeRegistration}
           className="w-full cursor-pointer py-2 text-center text-xs font-bold text-[#6a6a86] transition-colors hover:text-[#16162c]"
         >
           {isAr ? "العودة للموقع" : "Back to the website"}
         </button>
       </div>
-
-      {/* 6. Safety Confirmation Guard Modal */}
-      {isClient && (
-        <SuccessSafetyModal
-          isOpen={showCredentialsConfirm}
-          usernameSpecimen={usernameSpecimen}
-          passwordSpecimen={passwordSpecimen}
-          onCopyAndClose={handleCopyAndClose}
-          onConfirmClose={() => {
-            setCredentialsAcknowledged(true);
-            closeRegistration();
-          }}
-          onCancel={() => setShowCredentialsConfirm(false)}
-          isAr={isAr}
-        />
-      )}
     </div>
   );
 }
 
-// Compound component attachments
+// Compound component attachments preserved for backward compatibility
 RegistrationSuccess.Header = SuccessHeader;
 RegistrationSuccess.MembershipSummary = SuccessMembershipSummary;
 RegistrationSuccess.CredentialsCard = SuccessCredentialsCard;
