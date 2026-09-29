@@ -11,6 +11,8 @@ import { PublicProfileContactCTA } from "@/components/directory/profile/PublicPr
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+import { buildTrainerMetadata } from "@/lib/metadata/trainerProfileMetadata";
+
 interface TrainerProfilePageProps {
   params: Promise<{ id: string }>;
 }
@@ -21,43 +23,11 @@ export async function generateMetadata({
   const { id } = await params;
 
   if (!validateUuid(id)) {
-    return {
-      title: "Trainer Not Found — IBDL Freelancers Hub",
-    };
+    return buildTrainerMetadata(null);
   }
 
   const profile = await getPublicTrainer(id);
-
-  if (!profile) {
-    return {
-      title: "Trainer Not Found — IBDL Freelancers Hub",
-    };
-  }
-
-  const displayName =
-    profile.fullNameEn ||
-    `${profile.firstName}${profile.lastName ? ` ${profile.lastName}` : ""}`;
-
-  const displayTitle = profile.titleEn || "";
-  const description = profile.bioEn
-    ? profile.bioEn.slice(0, 155) + (profile.bioEn.length > 155 ? "…" : "")
-    : `${displayName} is a verified IBDL-certified trainer based in ${profile.country}.`;
-
-  return {
-    title: `${displayName} — IBDL Trainer Directory`,
-    description,
-    openGraph: {
-      title: `${displayName}${displayTitle ? ` — ${displayTitle}` : ""}`,
-      description,
-      type: "profile",
-      siteName: "IBDL Freelancers Hub",
-      ...(profile.photoUrl && { images: [{ url: profile.photoUrl }] }),
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
+  return buildTrainerMetadata(profile);
 }
 
 export default async function TrainerProfilePage({

@@ -3,7 +3,7 @@ import React from "react";
 export function TrainerCardSkeleton() {
   return (
     <div
-      className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#16162c]/80 p-6 shadow-xl backdrop-blur-sm"
+      className="flex h-[340px] flex-col justify-between rounded-2xl border border-white/10 bg-[#16162c]/80 p-6 shadow-xl backdrop-blur-sm"
       aria-hidden="true"
     >
       <div>

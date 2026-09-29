@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Lock, KeyRound } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 interface PriorityActionsCardProps {
   completionRate: number;

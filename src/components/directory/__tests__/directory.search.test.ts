@@ -276,3 +276,73 @@ test("DIR: each trainer card has non-empty required fields", () => {
     );
   }
 });
+
+// ── Sprint 3 Tests: Query Params, Filters & Metadata Generation ──────────────
+
+test("DIR: search query params correctly map and sanitize inputs", () => {
+  const criteria = {
+    q: "  Strategy  ",
+    expertise: " Executive Coaching ",
+    industry: " Banking & Finance ",
+    language: " English ",
+    page: 2,
+    limit: 10,
+  };
+  const result = filterDirectory({
+    q: criteria.q.trim(),
+    expertise: criteria.expertise.trim(),
+    industry: criteria.industry.trim(),
+    language: criteria.language.trim(),
+    page: criteria.page,
+    limit: criteria.limit,
+  });
+
+  assert.equal(result.page, 2);
+  assert.ok(Array.isArray(result.trainers));
+});
+
+test("DIR: profile metadata generation for valid trainer ID", async () => {
+  const { buildTrainerMetadata } =
+    await import("../../../lib/metadata/trainerProfileMetadata");
+  const sampleTrainer = SEED_TRAINERS[0];
+  const metadata = buildTrainerMetadata({
+    ...sampleTrainer,
+    bioAr: null,
+    titleEn: null,
+    titleAr: null,
+    badgeType: "STANDARD",
+    linkedinUrl: null,
+  });
+
+  assert.ok(metadata.title, "Metadata title must be defined");
+  assert.match(
+    String(metadata.title),
+    new RegExp(sampleTrainer.fullNameEn || sampleTrainer.firstName, "i")
+  );
+  assert.ok(metadata.description, "Metadata description must be defined");
+  const robots = metadata.robots as { index?: boolean } | null;
+  assert.equal(robots?.index, true);
+});
+
+test("DIR: profile metadata generation for invalid UUID returns Not Found title", async () => {
+  const { buildTrainerMetadata } =
+    await import("../../../lib/metadata/trainerProfileMetadata");
+  const metadata = buildTrainerMetadata(null);
+
+  assert.equal(metadata.title, "Trainer Not Found — IBDL Freelancers Hub");
+});
+
+test("DIR: security sanitization verifies outbound links and rejects javascript: schemes", async () => {
+  const { sanitizeUrl, getSafeLinkProps } =
+    await import("../../../lib/security");
+
+  assert.equal(sanitizeUrl("javascript:alert(1)"), "#");
+  assert.equal(sanitizeUrl("data:text/html,<script>alert(1)</script>"), "#");
+
+  const safeLink = getSafeLinkProps(
+    "https://linkedin.com/in/ibdl-trainer",
+    "_blank"
+  );
+  assert.equal(safeLink.rel, "noopener noreferrer");
+  assert.equal(safeLink.target, "_blank");
+});

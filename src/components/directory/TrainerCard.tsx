@@ -37,7 +37,7 @@ export function TrainerCard({ trainer, locale = "en" }: TrainerCardProps) {
 
   return (
     <article
-      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#16162c]/80 shadow-xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-2xl motion-reduce:hover:transform-none"
+      className="group relative flex min-h-[340px] flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#16162c]/80 shadow-xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-2xl motion-reduce:hover:transform-none"
       aria-label={displayName}
     >
       {/* Subtle glow accent based on tier */}

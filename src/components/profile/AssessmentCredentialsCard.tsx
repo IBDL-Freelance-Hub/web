@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { useLocale } from "@/components/common/DirectionProvider";
 import {
-  KeyRound,
-  ExternalLink,
   Copy,
   Check,
   Eye,
@@ -12,10 +10,6 @@ import {
   GraduationCap,
   Sparkles,
   Info,
-  ShieldCheck,
-  Award,
-  Compass,
-  Layers,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import type { AssessmentPortalItem } from "@/types/member";
@@ -46,54 +40,49 @@ interface AssessmentPortalDisplay {
   descAr: string;
   logoUrl: string;
   url: string;
-  icon: React.ComponentType<{ className?: string }>;
 }
 
 const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
   {
     key: "pqp",
     code: "PQP™",
-    nameEn: "Professional Quality Practitioner (PQP™)",
-    nameAr: "محترف الجودة المهنية (PQP™)",
-    tagEn: "Quality & Operations",
-    tagAr: "معايير الجودة والعمليات",
+    nameEn: "PQP™",
+    nameAr: "PQP™",
+    tagEn: "Personality & Qualities",
+    tagAr: "السمات والكفاءات الشخصية",
     descEn:
-      "Diagnostic benchmark for quality assurance, continuous process improvement, and operational excellence.",
-    descAr:
-      "أداة تشخيصية دولية لقياس الكفاءة والتميز في معايير الجودة وإدارة العمليات والتحسين المستمر.",
+      "Work-based behavioral diagnostic measuring 20 key personality & motive dimensions.",
+    descAr: "تقييم سلوكي تشخيصي يقيس ٢٠ بعداً رئيسياً للشخصية ودوافع العمل.",
     logoUrl: "/tools_logos/pqp.png",
     url: "https://pqp.ibdl.net/start",
-    icon: Award,
   },
   {
     key: "cpat",
     code: "CPAT™",
-    nameEn: "Certified Professional Agile Trainer (CPAT™)",
-    nameAr: "مدرب أجايل المعتمد دولياً (CPAT™)",
-    tagEn: "Agile Facilitation",
-    tagAr: "التدريب الرشيق وتيسير الورش",
+    nameEn: "CPAT™",
+    nameAr: "CPAT™",
+    tagEn: "Professional Assessment",
+    tagAr: "التقييم المهني للمدربين",
     descEn:
-      "Diagnostic assessment for agile training facilitation, interactive workshop mastery, and modern coaching.",
+      "Comprehensive competency evaluator assessing technical, managerial, and operational skills.",
     descAr:
-      "تقييم تشخيصي معتمد لقياس منهجيات التدريب الرشيق والكفاءة في تيسير ورش العمل التفاعلية.",
+      "تقييم شامل للكفاءات والمهارات الفنية والإدارية والتشغيلية للمدربين.",
     logoUrl: "/tools_logos/cpat.png",
     url: "https://cpat.ibdl.net/start",
-    icon: Compass,
   },
   {
     key: "md",
     code: "Management Drives®",
-    nameEn: "Management Drives® Assessment",
-    nameAr: "محركات الإدارة والسلوك (Management Drives®)",
-    tagEn: "Leadership & Culture",
-    tagAr: "أنماط القيادة والدوافع المؤسسية",
+    nameEn: "Management Drives®",
+    nameAr: "Management Drives®",
+    tagEn: "Leadership Dynamics",
+    tagAr: "ديناميكيات القيادة",
     descEn:
-      "Scientific profiling of leadership drivers, personal motivations, and organizational behavioral patterns.",
+      "Evaluates organizational drive dynamics & leadership behavior patterns across 6 core drives.",
     descAr:
-      "دراسة علمية تشخيصية لتحليل أنماط الدوافع الفردية والمؤسسية عبر محركات القيادة الستة المعتمدة.",
+      "تقييم علمي متقدم لتحليل أنماط السلوك والدوافع المؤسسية عبر محركات القيادة الستة.",
     logoUrl: "/tools_logos/management-drives.png",
     url: "https://md.ibdl.net/start",
-    icon: Layers,
   },
 ];
 
@@ -192,10 +181,10 @@ export function AssessmentCredentialsCard({
       {/* Top Brand Subtle Bar (Navy to Red accent) */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#e11119] via-[#1d1d39] to-[#419257]" />
 
-      {/* Header with Title and Prominent Badges */}
-      <div className="border-b border-slate-100 pb-6">
+      {/* Header with Title and Badges */}
+      <div className="border-b border-slate-100 pb-5">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d39] text-white shadow-xs">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d39] text-white shadow-xs">
             <GraduationCap className="h-6 w-6" />
           </div>
           <div className="space-y-1">
@@ -214,7 +203,7 @@ export function AssessmentCredentialsCard({
             </div>
             <h2
               id="assessment-credentials-title"
-              className="text-lg font-extrabold tracking-tight text-[#16162c] sm:text-xl"
+              className="text-base font-extrabold tracking-tight text-[#16162c] sm:text-lg"
             >
               {isAr
                 ? "بيانات الدخول لبوابات التقييمات الثلاثة (PQP™، CPAT™، Management Drives®)"
@@ -229,290 +218,206 @@ export function AssessmentCredentialsCard({
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="mt-6 space-y-6">
-        {/* 1. Unified Single Login Box (Styled to Hub Design System) */}
-        <div className="rounded-2xl border border-[#e2e2ec] bg-[#f8fafc] p-5 shadow-2xs">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="grid h-7 w-7 place-items-center rounded-lg bg-[#1d1d39] text-white shadow-xs">
-                <KeyRound className="h-3.5 w-3.5" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-[#16162c]">
-                  {isAr
-                    ? "بيانات الدخول الموحدة (صالحة للبوابات الثلاث)"
-                    : "Unified Login Credentials (Works for all 3 portals)"}
-                </h3>
-                <p className="text-[11px] text-[#6a6a86]">
-                  {isAr
-                    ? "استخدم نفس اسم المستخدم وكلمة المرور أدناه لتسجيل الدخول إلى أي بوابة من بوابات التقييم الثلاث."
-                    : "Use this exact username and password to log in to any of the 3 assessment portals below."}
-                </p>
-              </div>
-            </div>
-
-            <div className="self-start sm:self-auto">
-              <span className="inline-flex items-center gap-1 rounded-full border border-[#419257]/30 bg-[#419257]/10 px-2.5 py-0.5 text-[10.5px] font-bold text-[#419257]">
-                <ShieldCheck className="h-3 w-3" />
-                <span>{isAr ? "حساب دخول موحد" : "Single Unified Sign-on"}</span>
+      {/* Middle 2-Column Section */}
+      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-12">
+        {/* Left Column: Credentials in Light Gray Box */}
+        <div className="flex flex-col justify-between gap-3 rounded-2xl border border-[#e2e2ec] bg-[#f8fafc] p-4 lg:col-span-7">
+          {/* Username Card (Top) */}
+          <div className="flex flex-col justify-between rounded-xl border border-[#e2e2ec] bg-white p-4 shadow-2xs">
+            <div>
+              <span className="text-[10px] font-bold tracking-wider text-[#6a6a86] uppercase">
+                {isAr ? "اسم المستخدم الموحد" : "UNIFIED PORTAL USERNAME"}
               </span>
+              <p className="mt-1 font-mono text-sm font-bold tracking-wide text-[#16162c] select-all">
+                {username || "—"}
+              </p>
+            </div>
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => copyToClipboard(username, "username")}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-3 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
+                title={isAr ? "نسخ اسم المستخدم" : "Copy username"}
+              >
+                {copiedField === "username" ? (
+                  <Check className="h-3.5 w-3.5 text-[#419257]" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5 text-[#6a6a86]" />
+                )}
+                <span>
+                  {copiedField === "username"
+                    ? isAr
+                      ? "تم النسخ"
+                      : "Copied"
+                    : isAr
+                      ? "نسخ اسم المستخدم"
+                      : "Copy Username"}
+                </span>
+              </button>
             </div>
           </div>
 
-          {/* Username & Password Grid */}
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {/* Username */}
-            <div className="flex flex-col justify-between rounded-xl border border-[#e2e2ec] bg-white p-4 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-bold tracking-wider text-[#6a6a86] uppercase">
-                  {isAr ? "اسم المستخدم الموحد (Unified Username)" : "Unified Portal Username"}
-                </span>
-                <p className="mt-1 font-mono text-sm font-bold tracking-wide text-[#16162c] select-all">
-                  {username || "—"}
-                </p>
-              </div>
-              <div className="mt-3 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => copyToClipboard(username, "username")}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-3 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
-                  title={isAr ? "نسخ اسم المستخدم" : "Copy username"}
-                >
-                  {copiedField === "username" ? (
-                    <Check className="h-3.5 w-3.5 text-[#419257]" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5 text-[#6a6a86]" />
-                  )}
-                  <span>
-                    {copiedField === "username"
-                      ? isAr
-                        ? "تم النسخ"
-                        : "Copied"
-                      : isAr
-                        ? "نسخ اسم المستخدم"
-                        : "Copy Username"}
-                  </span>
-                </button>
-              </div>
+          {/* Password Card (Bottom) */}
+          <div className="flex flex-col justify-between rounded-xl border border-[#e2e2ec] bg-white p-4 shadow-2xs">
+            <div>
+              <span className="text-[10px] font-bold tracking-wider text-[#6a6a86] uppercase">
+                {isAr ? "كلمة المرور الموحدة" : "UNIFIED PORTAL PASSWORD"}
+              </span>
+              <p className="mt-1 font-mono text-sm font-bold tracking-wide text-[#16162c] select-all">
+                {showPassword ? password : "••••••••••"}
+              </p>
             </div>
-
-            {/* Password */}
-            <div className="flex flex-col justify-between rounded-xl border border-[#e2e2ec] bg-white p-4 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-bold tracking-wider text-[#6a6a86] uppercase">
-                  {isAr ? "كلمة المرور الموحدة (Unified Password)" : "Unified Portal Password"}
+            <div className="mt-3 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-3 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
+                title={
+                  showPassword
+                    ? isAr
+                      ? "إخفاء"
+                      : "Hide"
+                    : isAr
+                      ? "إظهار"
+                      : "Show"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff className="h-3.5 w-3.5 text-[#6a6a86]" />
+                ) : (
+                  <Eye className="h-3.5 w-3.5 text-[#6a6a86]" />
+                )}
+                <span>
+                  {showPassword
+                    ? isAr
+                      ? "إخفاء"
+                      : "Hide"
+                    : isAr
+                      ? "Show"
+                      : "Show"}
                 </span>
-                <p className="mt-1 font-mono text-sm font-bold tracking-wide text-[#16162c] select-all">
-                  {showPassword ? password : "••••••••••••"}
-                </p>
-              </div>
-              <div className="mt-3 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-2.5 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
-                  title={showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-3.5 w-3.5 text-[#6a6a86]" />
-                  ) : (
-                    <Eye className="h-3.5 w-3.5 text-[#6a6a86]" />
-                  )}
-                  <span>{showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => copyToClipboard(password, "password")}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-3 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
-                  title={isAr ? "نسخ كلمة المرور" : "Copy password"}
-                >
-                  {copiedField === "password" ? (
-                    <Check className="h-3.5 w-3.5 text-[#419257]" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5 text-[#6a6a86]" />
-                  )}
-                  <span>
-                    {copiedField === "password"
-                      ? isAr
-                        ? "تم النسخ"
-                        : "Copied"
-                      : isAr
-                        ? "نسخ كلمة المرور"
-                        : "Copy Password"}
-                  </span>
-                </button>
-              </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard(password, "password")}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e2e2ec] bg-[#f8fafc] px-3 py-1 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
+                title={isAr ? "نسخ كلمة المرور" : "Copy password"}
+              >
+                {copiedField === "password" ? (
+                  <Check className="h-3.5 w-3.5 text-[#419257]" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5 text-[#6a6a86]" />
+                )}
+                <span>
+                  {copiedField === "password"
+                    ? isAr
+                      ? "تم النسخ"
+                      : "Copied"
+                    : isAr
+                      ? "نسخ كلمة المرور"
+                      : "Copy Password"}
+                </span>
+              </button>
             </div>
           </div>
 
           {/* Master Copy All Button */}
-          <div className="mt-3">
-            <button
-              type="button"
-              onClick={copyAllCredentials}
-              className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all ${
-                copiedField === "all"
-                  ? "border-[#419257] bg-[#419257] text-white shadow-sm"
-                  : "border-[#e2e2ec] bg-white text-[#1d1d39] shadow-2xs hover:border-[#1d1d39]/30 hover:bg-[#f8fafc]"
-              }`}
-            >
-              {copiedField === "all" ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  <span>
-                    {isAr
-                      ? "✓ تم نسخ كافة بيانات الدخول الموحدة وروابط البوابات الثلاث بنجاح!"
-                      : "✓ All Unified Credentials & 3 Portal URLs Copied to Clipboard!"}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4 text-[#1d1d39]" />
-                  <span>
-                    {isAr
-                      ? "نسخ كافة بيانات الدخول الموحدة (اسم المستخدم + كلمة المرور + روابط البوابات الـ 3)"
-                      : "Copy All Unified Credentials (Username + Password + 3 Portal URLs)"}
-                  </span>
-                </>
-              )}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={copyAllCredentials}
+            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-bold transition-all ${
+              copiedField === "all"
+                ? "border-[#419257] bg-[#419257] text-white shadow-xs"
+                : "border-[#e2e2ec] bg-white text-[#1d1d39] shadow-2xs hover:border-[#1d1d39]/40 hover:bg-[#f8fafc]"
+            }`}
+          >
+            {copiedField === "all" ? (
+              <>
+                <Check className="h-4 w-4" />
+                <span>
+                  {isAr
+                    ? "✓ تم نسخ كافة بيانات الدخول الموحدة وروابط البوابات الثلاث بنجاح!"
+                    : "✓ All Unified Credentials & 3 Portal URLs Copied to Clipboard!"}
+                </span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-4 w-4 text-[#1d1d39]" />
+                <span>
+                  {isAr
+                    ? "نسخ كافة بيانات الدخول الموحدة (اسم المستخدم + كلمة المرور + روابط البوابات الـ 3)"
+                    : "Copy All Unified Credentials (Username + Password + 3 Portal URLs)"}
+                </span>
+              </>
+            )}
+          </button>
         </div>
 
-        {/* 2. The 3 Diagnostic Assessment Portals Launchpad Grid (With Logos) */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold tracking-wider text-[#16162c] uppercase">
-              {isAr
-                ? "بوابات التقييمات التشخيصية الثلاث (اضغط لبدء التقييم):"
-                : "The 3 Diagnostic Assessment Portals (Click to Launch):"}
-            </h3>
-            <span className="text-[11px] font-semibold text-[#6a6a86]">
-              {isAr ? "١ محاولة مكتملة لكل أداة" : "1 completed attempt per tool"}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            {portals.map((portal) => {
-              const PortalIcon = portal.icon;
-              const isLinkCopied = copiedField === `portal_${portal.key}`;
-              return (
-                <div
-                  key={portal.key}
-                  className="group flex flex-col justify-between rounded-2xl border border-[#e2e2ec] bg-white p-5 shadow-2xs transition-all duration-200 hover:border-[#1d1d39]/40 hover:shadow-md"
-                >
-                  <div className="space-y-4">
-                    {/* Top Pills */}
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold text-[#16162c]">
-                        <PortalIcon className="h-3 w-3 text-[#1d1d39]" />
-                        <span>{portal.code}</span>
-                      </span>
-                      <span className="rounded-md bg-[#f4f4f8] px-2 py-0.5 text-[10px] font-semibold text-[#6a6a86]">
-                        {isAr ? portal.tagAr : portal.tagEn}
-                      </span>
-                    </div>
-
-                    {/* Dedicated Logo Box */}
-                    <div className="flex h-20 w-full items-center justify-center rounded-xl border border-[#e2e2ec] bg-[#fbfbfe] p-3 shadow-2xs transition-colors group-hover:border-[#1d1d39]/20 group-hover:bg-[#f8fafc]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={portal.logoUrl}
-                        alt={`${portal.code} Logo`}
-                        className="max-h-12 max-w-[170px] object-contain transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-
-                    {/* Title & Description */}
-                    <div>
-                      <h4 className="text-sm font-bold text-[#16162c] transition-colors group-hover:text-[#1d1d39]">
-                        {isAr ? portal.nameAr : portal.nameEn}
-                      </h4>
-                      <p className="mt-1.5 text-xs leading-relaxed text-[#6a6a86]">
-                        {isAr ? portal.descAr : portal.descEn}
-                      </p>
-                    </div>
-
-                    {/* Portal URL Box */}
-                    <div className="rounded-xl border border-[#e2e2ec] bg-[#f8fafc] p-2.5 font-mono text-[11px]">
-                      <span className="block text-[9.5px] font-bold tracking-wider text-[#6a6a86] uppercase">
-                        {isAr ? "رابط البوابة:" : "Portal URL:"}
-                      </span>
-                      <p
-                        className="mt-0.5 truncate font-semibold text-[#16162c]"
-                        title={portal.url}
-                      >
-                        {portal.url}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Actions: Launch + Copy URL */}
-                  <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
-                    <a
-                      href={portal.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#1d1d39] px-3 py-2 text-xs font-bold text-white shadow-2xs transition-all hover:bg-[#141428] active:scale-98"
-                    >
-                      <span>
-                        {isAr
-                          ? `بدء تقييم ${portal.code} ←`
-                          : `Start ${portal.code} →`}
-                      </span>
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        copyToClipboard(portal.url, `portal_${portal.key}`)
-                      }
-                      className="inline-flex items-center gap-1 rounded-xl border border-[#e2e2ec] bg-[#f8fafc] px-2.5 py-2 text-xs font-semibold text-[#1d1d39] transition hover:bg-[#f1f1f7]"
-                      title={isAr ? "نسخ رابط البوابة" : "Copy portal URL"}
-                    >
-                      {isLinkCopied ? (
-                        <Check className="h-3.5 w-3.5 text-[#419257]" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5 text-[#6a6a86]" />
-                      )}
-                    </button>
+        {/* Right Column: 3 Diagnostic Assessment Cards with Brand Logos */}
+        <div className="flex flex-col justify-between gap-3 lg:col-span-5">
+          {portals.map((portal) => (
+            <a
+              key={portal.key}
+              href={portal.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex cursor-pointer flex-col justify-between rounded-xl border border-[#e2e2ec] bg-white p-3.5 shadow-2xs transition-all duration-200 hover:border-[#1d1d39]/40 hover:shadow-xs"
+            >
+              <div>
+                {/* Header row: Brand Logo + AVAILABLE badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex h-7 items-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={portal.logoUrl}
+                      alt={`${portal.code} Logo`}
+                      className="h-6 max-w-[150px] object-contain object-left transition-transform duration-200 group-hover:scale-102 rtl:object-right"
+                    />
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* 3. Detailed Access Instructions (Mandated by QA Issue #6) */}
-        <div className="rounded-2xl border border-[#e2e2ec] bg-[#f8fafc] p-4.5 text-xs text-[#16162c]">
-          <div className="flex items-start gap-2.5">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#1d1d39]" />
-            <div className="space-y-1.5">
-              <h4 className="font-bold text-[#16162c]">
+                {/* Subtitle / Tag */}
+                <p className="mt-2 text-[11px] font-semibold text-[#6a6a86]">
+                  {isAr ? portal.tagAr : portal.tagEn}
+                </p>
+
+                {/* Short Description */}
+                <p className="mt-1 text-[10.5px] leading-relaxed text-[#85859e]">
+                  {isAr ? portal.descAr : portal.descEn}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Instructions Box */}
+      <div className="mt-5 rounded-2xl border border-[#e2e2ec] bg-[#f8fafc] p-4.5 text-xs text-[#16162c]">
+        <div className="flex items-start gap-2.5">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#1d1d39]" />
+          <div className="space-y-1.5">
+            <h4 className="font-bold text-[#16162c]">
+              {isAr
+                ? "تعليمات هامة للاختبار والتقييمات الثلاثة:"
+                : "Important Diagnostic Assessments Instructions:"}
+            </h4>
+            <ul className="list-inside list-disc space-y-1 text-[11px] leading-relaxed font-medium text-[#6a6a86]">
+              <li>
                 {isAr
-                  ? "تعليمات هامة للاختبار والتقييمات الثلاثة:"
-                  : "Important Diagnostic Assessments Instructions:"}
-              </h4>
-              <ul className="list-inside list-disc space-y-1 leading-relaxed font-medium text-[#6a6a86]">
-                <li>
-                  {isAr
-                    ? "بيانات الدخول الموحدة أعلاه مخصصة حصرياً لبوابات التقييمات الثلاث (تختلف عن كلمة مرور حسابك في منصة Freelancers Hub)."
-                    : "The unified credentials above are strictly for the 3 assessment portals (separate from your Freelancers Hub account login)."}
-                </li>
-                <li>
-                  {isAr
-                    ? "يمنحك استحقاق المرحلة الأولى محاولة مكتملة واحدة فقط لكل أداة تقييم (PQP™، CPAT™، Management Drives®). البيانات غير قابلة للمشاركة أو التحويل."
-                    : "Your complimentary Phase 1 entitlement covers 1 completed attempt per tool (PQP™, CPAT™, Management Drives®). Credentials are single-use per module."}
-                </li>
-                <li>
-                  {isAr
-                    ? "يُرجى التأكد من استقرار الاتصال بالإنترنت قبل بدء جلسة التقييم لضمان حفظ الإجابات والنتائج واعتماد التقرير."
-                    : "Ensure a stable internet connection before beginning any assessment to guarantee your progress and diagnostic report are saved."}
-                </li>
-              </ul>
-            </div>
+                  ? "بيانات الدخول الموحدة أعلاه مخصصة حصرياً لبوابات التقييمات الثلاث (تختلف عن كلمة مرور حسابك في منصة Freelancers Hub)."
+                  : "The unified credentials above are strictly for the 3 assessment portals (separate from your Freelancers Hub account login)."}
+              </li>
+              <li>
+                {isAr
+                  ? "يمنحك استحقاق المرحلة الأولى محاولة مكتملة واحدة فقط لكل أداة تقييم (PQP™، CPAT™، Management Drives®). البيانات غير قابلة للمشاركة أو التحويل."
+                  : "Your complimentary Phase 1 entitlement covers 1 completed attempt per tool (PQP™, CPAT™, Management Drives®). Credentials are single-use per module."}
+              </li>
+              <li>
+                {isAr
+                  ? "يُرجى التأكد من استقرار الاتصال بالإنترنت قبل بدء جلسة التقييم لضمان حفظ الإجابات والنتائج واعتماد التقرير."
+                  : "Ensure a stable internet connection before beginning any assessment to guarantee your progress and diagnostic report are saved."}
+              </li>
+            </ul>
           </div>
         </div>
       </div>

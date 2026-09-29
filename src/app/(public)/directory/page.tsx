@@ -36,25 +36,6 @@ interface DirectoryPageProps {
   }>;
 }
 
-async function DirectoryResults({
-  searchParams,
-}: {
-  searchParams: DirectorySearchParams;
-}) {
-  const result = await getPublicDirectory(searchParams);
-
-  return (
-    <>
-      <TrainerGrid trainers={result.trainers} />
-      <DirectoryPagination
-        currentPage={result.page}
-        totalPages={result.totalPages}
-        searchParams={searchParams as Record<string, string>}
-      />
-    </>
-  );
-}
-
 export default async function DirectoryPage({
   searchParams,
 }: DirectoryPageProps) {
@@ -69,9 +50,7 @@ export default async function DirectoryPage({
     page: resolvedParams.page ? Number(resolvedParams.page) : 1,
   };
 
-  // Pre-fetch the count for the header (fast path, no waterfall)
-  const headerResult = await getPublicDirectory(criteria);
-
+  const result = await getPublicDirectory(criteria);
   const hasActiveSearch = !!(resolvedParams.q && resolvedParams.q.trim());
 
   return (
@@ -83,7 +62,7 @@ export default async function DirectoryPage({
       <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <DirectoryHeader
-          totalCount={headerResult.total}
+          totalCount={result.total}
           hasSearch={hasActiveSearch}
           searchQuery={resolvedParams.q}
         />
@@ -98,7 +77,7 @@ export default async function DirectoryPage({
           />
         </div>
 
-        {/* Trainer Grid with Suspense streaming */}
+        {/* Trainer Grid wrapped in Suspense */}
         <Suspense
           fallback={
             <div
@@ -111,8 +90,15 @@ export default async function DirectoryPage({
             </div>
           }
         >
-          <DirectoryResults searchParams={criteria} />
+          <TrainerGrid trainers={result.trainers} />
         </Suspense>
+
+        {/* Pagination */}
+        <DirectoryPagination
+          currentPage={result.page}
+          totalPages={result.totalPages}
+          searchParams={resolvedParams as Record<string, string>}
+        />
       </div>
     </main>
   );
