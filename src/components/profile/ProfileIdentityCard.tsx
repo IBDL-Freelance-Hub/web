@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { useLocale } from "@/components/common/DirectionProvider";
 import { useOptionalToast } from "@/components/ui/Toast";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, KeyRound } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { MemberDto, MembershipDto } from "@/types/api";
@@ -289,6 +289,23 @@ export function ProfileIdentityCard({
                       ? "غير منشور في الدليل"
                       : "Not published in directory"}
                 </Badge>
+
+                {Boolean(
+                  (member as unknown as { assessmentCredentials?: unknown })
+                    ?.assessmentCredentials
+                ) && (
+                  <a
+                    href="#assessment-credentials"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50/90 px-3 py-1 text-xs font-bold text-indigo-700 shadow-2xs transition hover:border-indigo-300 hover:bg-indigo-100"
+                  >
+                    <KeyRound className="h-3 w-3" />
+                    <span>
+                      {isAr
+                        ? "بيانات التقييم (PQP™) جاهزة"
+                        : "PQP™ Credentials Ready"}
+                    </span>
+                  </a>
+                )}
               </div>
             </div>
           </div>

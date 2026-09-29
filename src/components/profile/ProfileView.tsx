@@ -65,27 +65,25 @@ export function ProfileView({
           initials={initials}
         />
 
+        {/* 2. PROMINENT Assessment Credentials Section (QA Issue #6) */}
+        <AssessmentCredentialsCard
+          credentials={member.assessmentCredentials}
+          userStatus={user.status}
+        />
+
         {/* 2-Column Details Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* 2. Personal Details Card (SCR-63 / PRO-04) */}
+          {/* 3. Personal Details Card (SCR-63 / PRO-04) */}
           <ProfilePersonalCard user={user} member={member} />
 
-          {/* 3. Professional Practice Card (SCR-63) */}
+          {/* 4. Professional Practice Card (SCR-63) */}
           <ProfileProfessionalCard member={member} />
 
-          {/* 4. Biography Card (SCR-63) */}
+          {/* 5. Biography Card (SCR-63) */}
           <ProfileBioCard member={member} />
 
-          {/* 5. Documents Card (SCR-63 / PRO-52) */}
+          {/* 6. Documents Card (SCR-63 / PRO-52) */}
           <ProfileDocumentsCard member={member} initialCvFile={initialCvFile} />
-
-          {/* 6. Assessment Credentials Card (Issue #6) */}
-          <div className="lg:col-span-2">
-            <AssessmentCredentialsCard
-              credentials={member.assessmentCredentials}
-              userStatus={user.status}
-            />
-          </div>
 
           {/* 7. Trainer Directory Opt-In Panel (PRO-34 & PRO-35) */}
           <div className="lg:col-span-2">

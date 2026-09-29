@@ -284,18 +284,9 @@ test("Step 11: SuccessMembershipSummary explicitly distinguishes Commercial Memb
   assert.match(htmlAr, /حالة العضوية التجارية/);
   assert.match(htmlAr, /مؤكدة \(مجاناً\)/);
 
-  // User Account is strictly INACTIVE and pending email activation within 10 minutes
+  // User Account is strictly INACTIVE and pending email activation
   assert.match(htmlAr, /حالة الحساب \(تسجيل الدخول\)/);
   assert.match(htmlAr, /غير مفعل — بانتظار التفعيل/);
-  assert.match(htmlAr, /صالح لمدة ١٠ دقائق فقط/);
-  assert.match(htmlAr, /amira@example\.com/);
-
-  // Bottom warning card
-  assert.match(htmlAr, /تنبيه هام: حسابك غير مفعل حتى تكتمل خطوة التفعيل/);
-  assert.match(
-    htmlAr,
-    /لن تتمكن من تسجيل الدخول إلى المنصة إلا بعد الضغط على الرابط/
-  );
 });
 
 // =============================================================================

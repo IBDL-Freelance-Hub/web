@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Lock, KeyRound } from "lucide-react";
 
 interface PriorityActionsCardProps {
   completionRate: number;
@@ -83,30 +83,32 @@ export function PriorityActionsCard({
           </span>
         </Link>
 
-        {/* Action 3: Take Accreditation Assessment (Disabled / Coming Soon per SCR-27) */}
-        <div
-          aria-disabled="true"
-          className="flex cursor-not-allowed items-center justify-between rounded-xl border border-slate-100 bg-slate-50/40 p-4 text-slate-400 select-none"
+        {/* Action 3: PQP Diagnostic Assessment Credentials (LIVE route to profile) */}
+        <Link
+          href="/profile#assessment-credentials"
+          className="flex items-center justify-between rounded-xl border border-indigo-200/90 bg-indigo-50/50 p-4 transition hover:border-indigo-300 hover:bg-indigo-100/70"
         >
-          <div className="flex items-center gap-2">
-            <Lock className="h-4 w-4 text-slate-400" />
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white">
+              <KeyRound className="h-4 w-4" />
+            </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-500">
+              <h4 className="text-xs font-bold text-slate-900">
                 {isAr
-                  ? "اختبار التقييم والاعتماد الدولي"
-                  : "Accreditation assessment exam"}
+                  ? "بيانات التقييم المهني (PQP™)"
+                  : "Assessment Credentials (PQP™)"}
               </h4>
-              <p className="mt-0.5 text-[11px] text-slate-400">
+              <p className="mt-0.5 text-[11px] text-indigo-950/80">
                 {isAr
-                  ? "متاح لأعضاء الفئات المهنية المعتمدة قريباً."
-                  : "Available for accredited members soon."}
+                  ? "عرض بيانات الدخول ورابط البوابة لبدء الاختبار."
+                  : "View your login credentials and launch your exam portal."}
               </p>
             </div>
           </div>
-          <span className="rounded-full bg-slate-200/80 px-2 py-0.5 text-[10px] font-medium text-slate-600">
-            {isAr ? "قريباً" : "Coming soon"}
+          <span className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-xs font-bold text-indigo-700 shadow-2xs">
+            {isAr ? "عرض" : "View"}
           </span>
-        </div>
+        </Link>
       </div>
     </section>
   );
