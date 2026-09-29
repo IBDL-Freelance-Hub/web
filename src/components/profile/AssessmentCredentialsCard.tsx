@@ -193,7 +193,7 @@ export function AssessmentCredentialsCard({
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#e11119] via-[#1d1d39] to-[#419257]" />
 
       {/* Header with Title and Prominent Badges */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-b border-slate-100 pb-6">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d39] text-white shadow-xs">
             <GraduationCap className="h-6 w-6" />
@@ -226,19 +226,6 @@ export function AssessmentCredentialsCard({
                 : "Unified single login credentials for all 3 international diagnostic assessment portals"}
             </p>
           </div>
-        </div>
-
-        {/* Quick Launch CTA Button */}
-        <div className="flex items-center gap-2 sm:self-center">
-          <a
-            href={portals[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1d1d39] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#141428] hover:shadow active:scale-98"
-          >
-            <span>{isAr ? "بدء التقييمات عبر البوابات ←" : "Launch Assessment Portals →"}</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
         </div>
       </div>
 
