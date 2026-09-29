@@ -76,6 +76,7 @@ export interface AssessmentPortalItem {
   nameAr: string;
   tagEn?: string;
   tagAr?: string;
+  logoUrl?: string;
   url: string;
 }
 

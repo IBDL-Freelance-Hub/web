@@ -44,6 +44,7 @@ interface AssessmentPortalDisplay {
   tagAr: string;
   descEn: string;
   descAr: string;
+  logoUrl: string;
   url: string;
   badgeStyle: string;
   buttonStyle: string;
@@ -62,6 +63,7 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "Diagnostic benchmark for quality assurance, continuous process improvement, and operational excellence.",
     descAr:
       "أداة تشخيصية دولية لقياس الكفاءة والتميز في معايير الجودة وإدارة العمليات والتحسين المستمر.",
+    logoUrl: "/tools_logos/pqp.png",
     url: "https://pqp.ibdl.net/start",
     badgeStyle: "bg-emerald-100/90 text-emerald-800 border-emerald-200",
     buttonStyle:
@@ -79,6 +81,7 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "Diagnostic assessment for agile training facilitation, interactive workshop mastery, and modern coaching.",
     descAr:
       "تقييم تشخيصي معتمد لقياس منهجيات التدريب الرشيق والكفاءة في تيسير ورش العمل التفاعلية.",
+    logoUrl: "/tools_logos/cpat.png",
     url: "https://cpat.ibdl.net/start",
     badgeStyle: "bg-sky-100/90 text-sky-800 border-sky-200",
     buttonStyle:
@@ -96,6 +99,7 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "Scientific profiling of leadership drivers, personal motivations, and organizational behavioral patterns.",
     descAr:
       "دراسة علمية تشخيصية لتحليل أنماط الدوافع الفردية والمؤسسية عبر محركات القيادة الستة المعتمدة.",
+    logoUrl: "/tools_logos/management-drives.png",
     url: "https://md.ibdl.net/start",
     badgeStyle: "bg-purple-100/90 text-purple-800 border-purple-200",
     buttonStyle:
@@ -128,12 +132,13 @@ export function AssessmentCredentialsCard({
   const username = credentials?.username || "";
   const password = credentials?.password || "";
 
-  // Merge backend portals with defaults (for URLs or custom configs)
+  // Merge backend portals with defaults (for URLs or logos)
   const portals: AssessmentPortalDisplay[] = DEFAULT_PORTALS.map((def) => {
     const matchedBackend = credentials?.portals?.find((p) => p.key === def.key);
     return {
       ...def,
       url: matchedBackend?.url || def.url,
+      logoUrl: matchedBackend?.logoUrl || def.logoUrl,
       nameEn: matchedBackend?.nameEn || def.nameEn,
       nameAr: matchedBackend?.nameAr || def.nameAr,
       tagEn: matchedBackend?.tagEn || def.tagEn,
@@ -234,7 +239,7 @@ export function AssessmentCredentialsCard({
           </div>
         </div>
 
-        {/* Quick Launch CTA Dropdown or Button */}
+        {/* Quick Launch CTA Button */}
         <div className="flex items-center gap-2 sm:self-center">
           <a
             href={portals[0].url}
@@ -242,11 +247,7 @@ export function AssessmentCredentialsCard({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-800 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-600/20 transition-all hover:brightness-110 active:scale-98"
           >
-            <span>
-              {isAr
-                ? "بدء التقييمات عبر البوابات ←"
-                : "Launch Assessment Portals →"}
-            </span>
+            <span>{isAr ? "بدء التقييمات عبر البوابات ←" : "Launch Assessment Portals →"}</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -269,8 +270,8 @@ export function AssessmentCredentialsCard({
                 </h3>
                 <p className="text-[11px] text-indigo-900/80">
                   {isAr
-                    ? "استخدم نفس اسم المستخدم وكلمة المرور أدناه لتسجيل الدخول إلى أي بوابة من بوابات التقييم."
-                    : "Use this exact username and password to log in to any of the 3 assessment portals below."}
+                    ? "استخدم نفس اسم المستخدم وكلمة المرور أدناه لتسجيل الدخول إلى أي بوابة من بوابات التقييم الثلاث."
+                    : "Use this single username and password to log in to any of the 3 assessment portals below."}
                 </p>
               </div>
             </div>
@@ -278,9 +279,7 @@ export function AssessmentCredentialsCard({
             <div className="self-start sm:self-auto">
               <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-white px-2.5 py-0.5 text-[10.5px] font-bold text-indigo-700">
                 <ShieldCheck className="h-3 w-3 text-indigo-600" />
-                <span>
-                  {isAr ? "تسجيل دخول موحد" : "Single Unified Sign-on"}
-                </span>
+                <span>{isAr ? "حساب دخول موحد" : "Single Unified Sign-on"}</span>
               </span>
             </div>
           </div>
@@ -291,9 +290,7 @@ export function AssessmentCredentialsCard({
             <div className="flex flex-col justify-between rounded-xl border border-indigo-100 bg-white p-3.5 shadow-2xs">
               <div>
                 <span className="text-[10.5px] font-bold tracking-wider text-slate-500 uppercase">
-                  {isAr
-                    ? "اسم المستخدم الموحد (Unified Username)"
-                    : "Unified Portal Username"}
+                  {isAr ? "اسم المستخدم الموحد (Unified Username)" : "Unified Portal Username"}
                 </span>
                 <p className="mt-1 font-mono text-sm font-bold tracking-wide text-slate-900 select-all">
                   {username || "—"}
@@ -328,9 +325,7 @@ export function AssessmentCredentialsCard({
             <div className="flex flex-col justify-between rounded-xl border border-indigo-100 bg-white p-3.5 shadow-2xs">
               <div>
                 <span className="text-[10.5px] font-bold tracking-wider text-slate-500 uppercase">
-                  {isAr
-                    ? "كلمة المرور الموحدة (Unified Password)"
-                    : "Unified Portal Password"}
+                  {isAr ? "كلمة المرور الموحدة (Unified Password)" : "Unified Portal Password"}
                 </span>
                 <p className="mt-1 font-mono text-sm font-bold tracking-wide text-indigo-950 select-all">
                   {showPassword ? password : "••••••••••••"}
@@ -341,30 +336,14 @@ export function AssessmentCredentialsCard({
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
-                  title={
-                    showPassword
-                      ? isAr
-                        ? "إخفاء"
-                        : "Hide"
-                      : isAr
-                        ? "إظهار"
-                        : "Show"
-                  }
+                  title={showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}
                 >
                   {showPassword ? (
                     <EyeOff className="h-3.5 w-3.5 text-slate-600" />
                   ) : (
                     <Eye className="h-3.5 w-3.5 text-slate-600" />
                   )}
-                  <span>
-                    {showPassword
-                      ? isAr
-                        ? "إخفاء"
-                        : "Hide"
-                      : isAr
-                        ? "إظهار"
-                        : "Show"}
-                  </span>
+                  <span>{showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}</span>
                 </button>
                 <button
                   type="button"
@@ -425,7 +404,7 @@ export function AssessmentCredentialsCard({
           </div>
         </div>
 
-        {/* 2. The 3 Diagnostic Assessment Portals Launchpad Grid */}
+        {/* 2. The 3 Diagnostic Assessment Portals Launchpad Grid (With Logos) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold tracking-wider text-slate-900 uppercase">
@@ -434,9 +413,7 @@ export function AssessmentCredentialsCard({
                 : "The 3 Diagnostic Assessment Portals (Click to Launch):"}
             </h3>
             <span className="text-[11px] font-semibold text-slate-500">
-              {isAr
-                ? "١ محاولة مكتملة لكل أداة"
-                : "1 completed attempt per tool"}
+              {isAr ? "١ محاولة مكتملة لكل أداة" : "1 completed attempt per tool"}
             </span>
           </div>
 
@@ -447,9 +424,9 @@ export function AssessmentCredentialsCard({
               return (
                 <div
                   key={portal.key}
-                  className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs transition-all hover:border-indigo-200 hover:shadow-md"
+                  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs transition-all duration-200 hover:border-indigo-300 hover:shadow-md"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {/* Top Pills */}
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span
@@ -463,9 +440,19 @@ export function AssessmentCredentialsCard({
                       </span>
                     </div>
 
+                    {/* Dedicated Logo Header Box */}
+                    <div className="flex h-20 w-full items-center justify-center rounded-xl border border-slate-100 bg-gradient-to-b from-slate-50/90 to-slate-100/50 p-3 shadow-2xs transition-colors group-hover:border-indigo-100 group-hover:bg-slate-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={portal.logoUrl}
+                        alt={`${portal.code} Logo`}
+                        className="max-h-12 max-w-[170px] object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+
                     {/* Title & Description */}
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-900">
+                      <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-indigo-950">
                         {isAr ? portal.nameAr : portal.nameEn}
                       </h4>
                       <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
@@ -474,7 +461,7 @@ export function AssessmentCredentialsCard({
                     </div>
 
                     {/* Portal URL Box */}
-                    <div className="border-slate-150 rounded-xl border bg-slate-50 p-2.5 font-mono text-[11px]">
+                    <div className="rounded-xl border border-slate-200/80 bg-slate-50 p-2.5 font-mono text-[11px]">
                       <span className="block text-[9.5px] font-bold tracking-wider text-slate-500 uppercase">
                         {isAr ? "رابط البوابة:" : "Portal URL:"}
                       </span>
