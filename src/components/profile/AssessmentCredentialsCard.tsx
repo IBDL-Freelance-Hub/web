@@ -64,7 +64,8 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "أداة تشخيصية دولية لقياس الكفاءة والتميز في معايير الجودة وإدارة العمليات والتحسين المستمر.",
     url: "https://pqp.ibdl.net/start",
     badgeStyle: "bg-emerald-100/90 text-emerald-800 border-emerald-200",
-    buttonStyle: "from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-emerald-700/20",
+    buttonStyle:
+      "from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-emerald-700/20",
     icon: Award,
   },
   {
@@ -80,7 +81,8 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "تقييم تشخيصي معتمد لقياس منهجيات التدريب الرشيق والكفاءة في تيسير ورش العمل التفاعلية.",
     url: "https://cpat.ibdl.net/start",
     badgeStyle: "bg-sky-100/90 text-sky-800 border-sky-200",
-    buttonStyle: "from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white shadow-sky-700/20",
+    buttonStyle:
+      "from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white shadow-sky-700/20",
     icon: Compass,
   },
   {
@@ -96,7 +98,8 @@ const DEFAULT_PORTALS: AssessmentPortalDisplay[] = [
       "دراسة علمية تشخيصية لتحليل أنماط الدوافع الفردية والمؤسسية عبر محركات القيادة الستة المعتمدة.",
     url: "https://md.ibdl.net/start",
     badgeStyle: "bg-purple-100/90 text-purple-800 border-purple-200",
-    buttonStyle: "from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white shadow-purple-700/20",
+    buttonStyle:
+      "from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white shadow-purple-700/20",
     icon: Layers,
   },
 ];
@@ -239,7 +242,11 @@ export function AssessmentCredentialsCard({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-800 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-600/20 transition-all hover:brightness-110 active:scale-98"
           >
-            <span>{isAr ? "بدء التقييمات عبر البوابات ←" : "Launch Assessment Portals →"}</span>
+            <span>
+              {isAr
+                ? "بدء التقييمات عبر البوابات ←"
+                : "Launch Assessment Portals →"}
+            </span>
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -271,7 +278,9 @@ export function AssessmentCredentialsCard({
             <div className="self-start sm:self-auto">
               <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-white px-2.5 py-0.5 text-[10.5px] font-bold text-indigo-700">
                 <ShieldCheck className="h-3 w-3 text-indigo-600" />
-                <span>{isAr ? "تسجيل دخول موحد" : "Single Unified Sign-on"}</span>
+                <span>
+                  {isAr ? "تسجيل دخول موحد" : "Single Unified Sign-on"}
+                </span>
               </span>
             </div>
           </div>
@@ -282,7 +291,9 @@ export function AssessmentCredentialsCard({
             <div className="flex flex-col justify-between rounded-xl border border-indigo-100 bg-white p-3.5 shadow-2xs">
               <div>
                 <span className="text-[10.5px] font-bold tracking-wider text-slate-500 uppercase">
-                  {isAr ? "اسم المستخدم الموحد (Unified Username)" : "Unified Portal Username"}
+                  {isAr
+                    ? "اسم المستخدم الموحد (Unified Username)"
+                    : "Unified Portal Username"}
                 </span>
                 <p className="mt-1 font-mono text-sm font-bold tracking-wide text-slate-900 select-all">
                   {username || "—"}
@@ -317,7 +328,9 @@ export function AssessmentCredentialsCard({
             <div className="flex flex-col justify-between rounded-xl border border-indigo-100 bg-white p-3.5 shadow-2xs">
               <div>
                 <span className="text-[10.5px] font-bold tracking-wider text-slate-500 uppercase">
-                  {isAr ? "كلمة المرور الموحدة (Unified Password)" : "Unified Portal Password"}
+                  {isAr
+                    ? "كلمة المرور الموحدة (Unified Password)"
+                    : "Unified Portal Password"}
                 </span>
                 <p className="mt-1 font-mono text-sm font-bold tracking-wide text-indigo-950 select-all">
                   {showPassword ? password : "••••••••••••"}
@@ -328,14 +341,30 @@ export function AssessmentCredentialsCard({
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
-                  title={showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}
+                  title={
+                    showPassword
+                      ? isAr
+                        ? "إخفاء"
+                        : "Hide"
+                      : isAr
+                        ? "إظهار"
+                        : "Show"
+                  }
                 >
                   {showPassword ? (
                     <EyeOff className="h-3.5 w-3.5 text-slate-600" />
                   ) : (
                     <Eye className="h-3.5 w-3.5 text-slate-600" />
                   )}
-                  <span>{showPassword ? (isAr ? "إخفاء" : "Hide") : isAr ? "إظهار" : "Show"}</span>
+                  <span>
+                    {showPassword
+                      ? isAr
+                        ? "إخفاء"
+                        : "Hide"
+                      : isAr
+                        ? "إظهار"
+                        : "Show"}
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -405,7 +434,9 @@ export function AssessmentCredentialsCard({
                 : "The 3 Diagnostic Assessment Portals (Click to Launch):"}
             </h3>
             <span className="text-[11px] font-semibold text-slate-500">
-              {isAr ? "١ محاولة مكتملة لكل أداة" : "1 completed attempt per tool"}
+              {isAr
+                ? "١ محاولة مكتملة لكل أداة"
+                : "1 completed attempt per tool"}
             </span>
           </div>
 
@@ -443,11 +474,14 @@ export function AssessmentCredentialsCard({
                     </div>
 
                     {/* Portal URL Box */}
-                    <div className="rounded-xl border border-slate-150 bg-slate-50 p-2.5 font-mono text-[11px]">
+                    <div className="border-slate-150 rounded-xl border bg-slate-50 p-2.5 font-mono text-[11px]">
                       <span className="block text-[9.5px] font-bold tracking-wider text-slate-500 uppercase">
                         {isAr ? "رابط البوابة:" : "Portal URL:"}
                       </span>
-                      <p className="mt-0.5 truncate font-semibold text-slate-800" title={portal.url}>
+                      <p
+                        className="mt-0.5 truncate font-semibold text-slate-800"
+                        title={portal.url}
+                      >
                         {portal.url}
                       </p>
                     </div>
@@ -471,7 +505,9 @@ export function AssessmentCredentialsCard({
 
                     <button
                       type="button"
-                      onClick={() => copyToClipboard(portal.url, `portal_${portal.key}`)}
+                      onClick={() =>
+                        copyToClipboard(portal.url, `portal_${portal.key}`)
+                      }
                       className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
                       title={isAr ? "نسخ رابط البوابة" : "Copy portal URL"}
                     >
