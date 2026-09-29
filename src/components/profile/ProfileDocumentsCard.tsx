@@ -94,7 +94,7 @@ export function ProfileDocumentsCard({
       "application/msword",
     ];
 
-    if (!isDocExtension && !allowedMimes.includes(file.type)) {
+    if (!isDocExtension || (file.type && !allowedMimes.includes(file.type))) {
       toast?.showToast(
         "error",
         isAr ? "صيغة مستند غير مدعومة" : "Unsupported document format",

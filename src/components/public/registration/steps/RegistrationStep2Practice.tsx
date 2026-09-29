@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useRegistration } from "../RegistrationProvider";
 import { useLocale } from "@/components/common/DirectionProvider";
+import { useToast } from "@/components/ui/Toast";
 import {
   EXPERTISE_OPTIONS,
   EXPERIENCE_BANDS,
@@ -23,6 +24,7 @@ import {
   type Locale,
 } from "@/lib/validations/registrationErrors";
 import { scrollToAndFocusFirstError } from "@/lib/dom";
+import { validateCvFile, IMAGE_EXTENSIONS } from "@/lib/validations/files";
 
 interface RegistrationStep2PracticeProps {
   setShowTopErrorBanner: (show: boolean) => void;
@@ -32,6 +34,7 @@ export function RegistrationStep2Practice({
   setShowTopErrorBanner,
 }: RegistrationStep2PracticeProps) {
   const { locale } = useLocale();
+  const { showToast } = useToast();
   const currentLocale = (locale as Locale) || "en";
   const isAr = currentLocale === "ar";
   const {
@@ -47,6 +50,9 @@ export function RegistrationStep2Practice({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [step2Attempted, setStep2Attempted] = useState(false);
+  const [fileValidationError, setFileValidationError] = useState<string | null>(
+    null
+  );
 
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
@@ -57,6 +63,7 @@ export function RegistrationStep2Practice({
       : null);
 
   const cvFileError =
+    fileValidationError ||
     fieldErrors?.cvFile?.[0] ||
     (step2Attempted && !formData.cvFileName
       ? getLocalizedErrorMessage("cvFile", "required", currentLocale)
@@ -67,7 +74,7 @@ export function RegistrationStep2Practice({
     setStep2Attempted(true);
     setShowTopErrorBanner(false);
 
-    if (validateStep2(currentLocale)) {
+    if (!fileValidationError && validateStep2(currentLocale)) {
       setStep(3);
     } else {
       setShowTopErrorBanner(true);
@@ -75,7 +82,7 @@ export function RegistrationStep2Practice({
       if (!formData.yearsExperience) {
         failedFieldIds.push("reg-years-experience");
       }
-      if (!formData.cvFileName) {
+      if (!formData.cvFileName || fileValidationError) {
         failedFieldIds.push("reg-cv-upload");
       }
       scrollToAndFocusFirstError(failedFieldIds);
@@ -92,10 +99,46 @@ export function RegistrationStep2Practice({
     }
   }, [fieldErrors]);
 
+  const validateAndSetCvFile = (file: File) => {
+    setFileValidationError(null);
+
+    const validation = validateCvFile(file);
+    if (!validation.valid) {
+      const fileExt = file.name.split(".").pop()?.toLowerCase();
+      const isImg =
+        Boolean(file.type && file.type.startsWith("image/")) ||
+        IMAGE_EXTENSIONS.includes(fileExt || "");
+
+      const errorMsg = isImg
+        ? isAr
+          ? "لا يمكن رفع صورة كـ سيرة ذاتية. يُرجى رفع ملف PDF أو Word فقط (وليس صورة)."
+          : "Images cannot be uploaded as a CV. Please upload a PDF or Word document (.pdf, .docx, .doc)."
+        : isAr
+          ? "صيغة الملف غير مدعومة. يُرجى رفع ملف PDF أو Word فقط."
+          : validation.error || "Only PDF and Word documents are supported.";
+
+      setFileValidationError(errorMsg);
+      showToast(
+        "error",
+        isAr ? "صيغة غير مدعومة" : "Unsupported File Format",
+        errorMsg,
+        "public"
+      );
+      updateFormData({ cvFileName: "", cvFile: null });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    setFileValidationError(null);
+    updateFormData({ cvFileName: file.name, cvFile: file });
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      updateFormData({ cvFileName: file.name, cvFile: file });
+      validateAndSetCvFile(file);
     }
   };
 
@@ -115,7 +158,7 @@ export function RegistrationStep2Practice({
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      updateFormData({ cvFileName: file.name, cvFile: file });
+      validateAndSetCvFile(file);
     }
   };
 
@@ -213,7 +256,7 @@ export function RegistrationStep2Practice({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.doc,.docx"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={handleFileChange}
               className="hidden"
             />
