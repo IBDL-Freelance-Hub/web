@@ -61,17 +61,17 @@ export function RegistrationSuccess() {
       />
 
       {/* 3. Mandated 5-Step Activation Lifecycle Flow (QA Issue #4) */}
-      <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50/70 p-5 shadow-xs">
-        <div className="mb-3.5 flex items-center gap-2 text-sky-900">
-          <Lock className="h-4 w-4 shrink-0 text-sky-700" />
-          <h4 className="text-sm font-bold">
+      <div className="mb-6 rounded-2xl border border-[#1d1d39]/35 bg-[#f8fafc] p-5 shadow-xs">
+        <div className="mb-3.5 flex items-center gap-2 text-[#16162c]">
+          <Lock className="h-4 w-4 shrink-0 text-[#1d1d39]" />
+          <h4 className="text-sm font-bold text-[#16162c]">
             {isAr
               ? "خطوات تفعيل الحساب والوصول للتقييم المهني (PQP™)"
               : "Required Steps to Activate & Unlock Assessment Access"}
           </h4>
         </div>
 
-        <p className="mb-4 text-xs leading-relaxed font-medium text-sky-800">
+        <p className="mb-4 text-xs leading-relaxed font-medium text-[#6a6a86]">
           {isAr
             ? "لحماية حسابك وضمان أمان بيانات التقييم، يتم حجب بيانات الدخول حتى إتمام تفعيل الحساب عبر الخطوات التالية:"
             : "For account security, assessment credentials are locked until your account is activated through the following required steps:"}
@@ -80,88 +80,88 @@ export function RegistrationSuccess() {
         {/* 5-Step Visual Flowchart */}
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-5">
           {/* Step 1 */}
-          <div className="flex flex-col rounded-xl border border-sky-100 bg-white p-3 text-start shadow-2xs">
+          <div className="flex flex-col rounded-xl border border-[#e2e2ec] bg-white p-3 text-start shadow-2xs">
             <div className="flex items-center justify-between gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1d1d39] text-[10px] font-bold text-white">
                 1
               </span>
-              <Mail className="h-3.5 w-3.5 text-sky-600" />
+              <Mail className="h-3.5 w-3.5 text-[#1d1d39]" />
             </div>
-            <span className="mt-2 text-xs font-bold text-slate-900">
+            <span className="mt-2 text-xs font-bold text-[#16162c]">
               {isAr ? "افحص بريدك" : "Check Email"}
             </span>
-            <span className="mt-0.5 text-[10px] leading-tight text-slate-500">
+            <span className="mt-0.5 text-[10px] leading-tight text-[#6a6a86]">
               {isAr ? "رابط صالح ١٠ دقائق" : "Link valid for 10 min"}
             </span>
           </div>
 
           {/* Step 2 */}
-          <div className="flex flex-col rounded-xl border border-sky-100 bg-white p-3 text-start shadow-2xs">
+          <div className="flex flex-col rounded-xl border border-[#e2e2ec] bg-white p-3 text-start shadow-2xs">
             <div className="flex items-center justify-between gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1d1d39] text-[10px] font-bold text-white">
                 2
               </span>
-              <CheckCircle2 className="h-3.5 w-3.5 text-sky-600" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#1d1d39]" />
             </div>
-            <span className="mt-2 text-xs font-bold text-slate-900">
+            <span className="mt-2 text-xs font-bold text-[#16162c]">
               {isAr ? "فعّل الحساب" : "Activate Account"}
             </span>
-            <span className="mt-0.5 text-[10px] leading-tight text-slate-500">
+            <span className="mt-0.5 text-[10px] leading-tight text-[#6a6a86]">
               {isAr ? "اضغط على الرابط" : "Click activation link"}
             </span>
           </div>
 
           {/* Step 3 */}
-          <div className="flex flex-col rounded-xl border border-sky-100 bg-white p-3 text-start shadow-2xs">
+          <div className="flex flex-col rounded-xl border border-[#e2e2ec] bg-white p-3 text-start shadow-2xs">
             <div className="flex items-center justify-between gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1d1d39] text-[10px] font-bold text-white">
                 3
               </span>
-              <KeyRound className="h-3.5 w-3.5 text-sky-600" />
+              <KeyRound className="h-3.5 w-3.5 text-[#1d1d39]" />
             </div>
-            <span className="mt-2 text-xs font-bold text-slate-900">
+            <span className="mt-2 text-xs font-bold text-[#16162c]">
               {isAr ? "عيّن كلمة المرور" : "Set Password"}
             </span>
-            <span className="mt-0.5 text-[10px] leading-tight text-slate-500">
+            <span className="mt-0.5 text-[10px] leading-tight text-[#6a6a86]">
               {isAr ? "أنشئ كلمة مرور" : "Create password"}
             </span>
           </div>
 
           {/* Step 4 */}
-          <div className="flex flex-col rounded-xl border border-sky-100 bg-white p-3 text-start shadow-2xs">
+          <div className="flex flex-col rounded-xl border border-[#e2e2ec] bg-white p-3 text-start shadow-2xs">
             <div className="flex items-center justify-between gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1d1d39] text-[10px] font-bold text-white">
                 4
               </span>
-              <LogIn className="h-3.5 w-3.5 text-sky-600" />
+              <LogIn className="h-3.5 w-3.5 text-[#1d1d39]" />
             </div>
-            <span className="mt-2 text-xs font-bold text-slate-900">
+            <span className="mt-2 text-xs font-bold text-[#16162c]">
               {isAr ? "سجل الدخول" : "Sign In"}
             </span>
-            <span className="mt-0.5 text-[10px] leading-tight text-slate-500">
+            <span className="mt-0.5 text-[10px] leading-tight text-[#6a6a86]">
               {isAr ? "ادخل لحسابك" : "Log in to Hub"}
             </span>
           </div>
 
           {/* Step 5 */}
-          <div className="flex flex-col rounded-xl border border-emerald-200 bg-emerald-50/80 p-3 text-start shadow-2xs">
+          <div className="flex flex-col rounded-xl border border-[#419257]/40 bg-[#419257]/10 p-3 text-start shadow-2xs">
             <div className="flex items-center justify-between gap-1">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#419257] text-[10px] font-bold text-white">
                 5
               </span>
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <ShieldCheck className="h-3.5 w-3.5 text-[#419257]" />
             </div>
-            <span className="mt-2 text-xs font-bold text-emerald-950">
+            <span className="mt-2 text-xs font-bold text-[#16162c]">
               {isAr ? "بيانات التقييم" : "Access Credentials"}
             </span>
-            <span className="mt-0.5 text-[10px] leading-tight text-emerald-800">
+            <span className="mt-0.5 text-[10px] leading-tight font-medium text-[#419257]">
               {isAr ? "متاحة في ملفك" : "Unlocked in Profile"}
             </span>
           </div>
         </div>
 
-        <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-sky-100/70 p-2.5 text-[11px] font-medium text-sky-900">
-          <Lock className="h-3.5 w-3.5 shrink-0 text-sky-700" />
+        <div className="mt-3.5 flex items-center gap-2 rounded-xl border border-[#1d1d39]/15 bg-[#1d1d39]/[0.04] p-2.5 text-[11px] font-medium text-[#16162c]">
+          <Lock className="h-3.5 w-3.5 shrink-0 text-[#1d1d39]" />
           <span>
             {isAr
               ? "تنبيه أمني: لن تظهر بيانات الدخول أو روابط التقييم على هذه الشاشة حفاظاً على أمان حسابك حتى إتمام التفعيل."
