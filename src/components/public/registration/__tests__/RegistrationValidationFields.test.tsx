@@ -18,11 +18,11 @@ test("VAL-43 1: All required registration fields have specific inline error mess
   // Mobile invalid
   assert.equal(
     getLocalizedErrorMessage("mobile", "invalid", "en"),
-    "Enter your number with the country code (e.g. +20 for Egypt)."
+    "Please enter a valid mobile number matching your selected country code."
   );
   assert.equal(
     getLocalizedErrorMessage("mobile", "invalid", "ar"),
-    "أدخل رقمك مع رمز الدولة (مثلاً +20 لمصر)."
+    "يرجى إدخال رقم هاتف صحيح يبدأ بـ (010, 011, 012, 015) لمصر، أو رقم خليجي صالح."
   );
 
   // Full Name
@@ -125,7 +125,7 @@ test("VAL-43 3: scrollToAndFocusFirstError calls scrollIntoView with block: 'cen
     scrollIntoView: (options: unknown) => {
       scrollCalledWith = options;
     },
-    focus: (_options?: unknown) => {
+    focus: () => {
       focusCalled = true;
     },
   };
@@ -326,4 +326,108 @@ test("VAL-43 5: Test scenario: submit with only mobile missing country code rend
   // The first (and only) failing field is exactly reg-mobile
   assert.deepEqual(failedFieldIds, ["reg-mobile"]);
   assert.equal(failedFieldIds[0], "reg-mobile");
+});
+
+test("Multi-Country Phone Validation: validates Egypt, Saudi Arabia, UAE, and Kuwait", () => {
+  const schemaEn = getRegisterMemberSchema("en");
+  const schemaAr = getRegisterMemberSchema("ar");
+
+  const base = {
+    fullName: "Ahmed Mansour",
+    email: "ahmed@example.com",
+    yearsOfExperience: "5-10",
+    areasOfExpertise: ["Leadership"],
+    industriesServed: ["Technology"],
+    termsAccepted: true,
+  };
+
+  // 1. Egypt: valid +2010... and rejection of invalid +2019...
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "EG", mobile: "+201012345678" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "EG", mobile: "+201112345678" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "EG", mobile: "+201212345678" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "EG", mobile: "+201512345678" })
+      .success,
+    true
+  );
+  const invalidEg = schemaEn.safeParse({
+    ...base,
+    country: "EG",
+    mobile: "+201912345678",
+  });
+  assert.equal(invalidEg.success, false);
+  assert.equal(
+    invalidEg.error?.format().mobile?._errors[0],
+    "Please enter a valid mobile number matching your selected country code."
+  );
+
+  // 2. Saudi Arabia: valid +9665... and rejection of +9664...
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "SA", mobile: "+966501234567" })
+      .success,
+    true
+  );
+  const invalidSa = schemaAr.safeParse({
+    ...base,
+    country: "SA",
+    mobile: "+966401234567",
+  });
+  assert.equal(invalidSa.success, false);
+  assert.equal(
+    invalidSa.error?.format().mobile?._errors[0],
+    "يرجى إدخال رقم هاتف صحيح يبدأ بـ (010, 011, 012, 015) لمصر، أو رقم خليجي صالح."
+  );
+
+  // 3. UAE: valid +97150..., +97152..., +97154..., +97155..., +97156..., +97158...
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "AE", mobile: "+971501234567" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "AE", mobile: "+971581234567" })
+      .success,
+    true
+  );
+  const invalidAe = schemaEn.safeParse({
+    ...base,
+    country: "AE",
+    mobile: "+971511234567",
+  });
+  assert.equal(invalidAe.success, false);
+
+  // 4. Kuwait: valid 8 digits starting with 5, 6, 9
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "KW", mobile: "+96551234567" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "KW", mobile: "+96561234567" })
+      .success,
+    true
+  );
+  assert.equal(
+    schemaEn.safeParse({ ...base, country: "KW", mobile: "+96591234567" })
+      .success,
+    true
+  );
+  const invalidKw = schemaEn.safeParse({
+    ...base,
+    country: "KW",
+    mobile: "+96541234567",
+  });
+  assert.equal(invalidKw.success, false);
 });

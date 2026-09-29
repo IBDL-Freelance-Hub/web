@@ -43,8 +43,8 @@ export const REGISTRATION_ERROR_DICTIONARY: Record<
       ar: "أدخل رقمك مع رمز الدولة (مثلاً +20 لمصر).",
     },
     invalid: {
-      en: "Enter your number with the country code (e.g. +20 for Egypt).",
-      ar: "أدخل رقمك مع رمز الدولة (مثلاً +20 لمصر).",
+      en: "Please enter a valid mobile number matching your selected country code.",
+      ar: "يرجى إدخال رقم هاتف صحيح يبدأ بـ (010, 011, 012, 015) لمصر، أو رقم خليجي صالح.",
     },
   },
   country: {

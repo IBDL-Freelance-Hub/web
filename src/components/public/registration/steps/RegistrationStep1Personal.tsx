@@ -13,6 +13,7 @@ import {
   type Locale,
 } from "@/lib/validations/registrationErrors";
 import { scrollToAndFocusFirstError } from "@/lib/dom";
+import { isValidMobileForCountry } from "@/lib/validations/registration";
 
 interface RegistrationStep1PersonalProps {
   setShowTopErrorBanner: (show: boolean) => void;
@@ -63,7 +64,6 @@ export function RegistrationStep1Personal({
           : null));
 
   const phoneTrim = formData.phone.trim();
-  const cleanPhone = phoneTrim.replace(/[\s\-\(\)\+]/g, "");
   const mobileErrorMessage =
     fieldErrors?.mobile?.[0] ||
     phoneError ||
@@ -76,7 +76,7 @@ export function RegistrationStep1Personal({
               "missingCountryCode",
               currentLocale
             )
-          : cleanPhone.length < 7
+          : !isValidMobileForCountry(phoneTrim, formData.country)
             ? getLocalizedErrorMessage("mobile", "invalid", currentLocale)
             : null));
 
@@ -85,6 +85,20 @@ export function RegistrationStep1Personal({
     (step1Attempted && !formData.country.trim()
       ? getLocalizedErrorMessage("country", "required", currentLocale)
       : null);
+
+  useEffect(() => {
+    if (fieldErrors) {
+      if (fieldErrors.fullName) {
+        scrollToAndFocusFirstError(["reg-fullname"]);
+      } else if (fieldErrors.email) {
+        scrollToAndFocusFirstError(["reg-email"]);
+      } else if (fieldErrors.mobile) {
+        scrollToAndFocusFirstError(["reg-mobile"]);
+      } else if (fieldErrors.country) {
+        scrollToAndFocusFirstError(["reg-country-select"]);
+      }
+    }
+  }, [fieldErrors]);
 
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,7 +121,11 @@ export function RegistrationStep1Personal({
       if (!emailTrim || !/\S+@\S+\.\S+/.test(emailTrim)) {
         failedFieldIds.push("reg-email");
       }
-      if (!phoneTrim || !phoneTrim.startsWith("+") || cleanPhone.length < 7) {
+      if (
+        !phoneTrim ||
+        !phoneTrim.startsWith("+") ||
+        !isValidMobileForCountry(phoneTrim, formData.country)
+      ) {
         failedFieldIds.push("reg-mobile");
       }
       if (!formData.country.trim()) {
@@ -117,30 +135,6 @@ export function RegistrationStep1Personal({
       scrollToAndFocusFirstError(failedFieldIds);
     }
   };
-
-  // Auto-scroll when fieldErrors are set externally (e.g. from server or duplicate check)
-  useEffect(() => {
-    if (fieldErrors && Object.keys(fieldErrors).length > 0) {
-      const order = [
-        { key: "fullName", id: "reg-fullname" },
-        { key: "email", id: "reg-email" },
-        { key: "mobile", id: "reg-mobile" },
-        { key: "country", id: "reg-country-select" },
-      ];
-      const firstFailing = order.find((item) => fieldErrors[item.key]);
-      if (firstFailing) {
-        scrollToAndFocusFirstError([firstFailing.id]);
-      }
-    }
-  }, [fieldErrors]);
-
-  useEffect(() => {
-    if (phoneError) {
-      scrollToAndFocusFirstError(["reg-mobile"]);
-    } else if (emailError) {
-      scrollToAndFocusFirstError(["reg-email"]);
-    }
-  }, [phoneError, emailError]);
 
   return (
     <form onSubmit={handleNextStep1} noValidate className="animate-step-enter">

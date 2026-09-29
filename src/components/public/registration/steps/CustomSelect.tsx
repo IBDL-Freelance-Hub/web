@@ -30,6 +30,7 @@ export function CustomSelect({
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const listboxId = id ? `${id}-listbox` : "custom-select-listbox";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -61,6 +62,7 @@ export function CustomSelect({
         type="button"
         role="combobox"
         aria-expanded={isOpen}
+        aria-controls={listboxId}
         id={id ? `${id}-button` : undefined}
         aria-invalid={hasError}
         aria-describedby={ariaDescribedBy}
@@ -86,9 +88,15 @@ export function CustomSelect({
       </button>
 
       {isOpen && (
-        <div className="animate-in fade-in zoom-in-95 absolute start-0 end-0 top-full z-50 mt-1.5 max-h-60 overflow-y-auto rounded-xl border border-[#e2e2ec] bg-white p-1.5 shadow-xl duration-150">
+        <div
+          id={listboxId}
+          role="listbox"
+          className="animate-in fade-in zoom-in-95 absolute start-0 end-0 top-full z-50 mt-1.5 max-h-60 overflow-y-auto rounded-xl border border-[#e2e2ec] bg-white p-1.5 shadow-xl duration-150"
+        >
           <button
             type="button"
+            role="option"
+            aria-selected={!value}
             onClick={() => {
               onChange("");
               setIsOpen(false);
@@ -103,6 +111,8 @@ export function CustomSelect({
               <button
                 key={opt.value}
                 type="button"
+                role="option"
+                aria-selected={isSelected}
                 onClick={() => {
                   onChange(opt.value);
                   setIsOpen(false);
